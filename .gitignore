@@ -1,0 +1,15 @@
+# Archivos de sistema de macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Archivos de caché y logs
+.env
+.env.local
+*.log
+node_modules/
+dist/
+
+# IDEs
+.vscode/
+.idea/
