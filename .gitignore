@@ -9,6 +9,7 @@
 *.log
 node_modules/
 dist/
+crendenciales.php
 
 # IDEs
 .vscode/
