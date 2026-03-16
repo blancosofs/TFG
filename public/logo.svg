@@ -1,0 +1,10 @@
+<svg width="140" height="32" viewBox="0 0 140 32" xmlns="http://www.w3.org/2000/svg">
+  <!-- Icono cuadrado verde -->
+  <rect x="0" y="2" width="28" height="28" rx="5" fill="#47ad79"/>
+  <text x="14" y="21" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff">E</text>
+
+  <!-- Texto Edunoly junto -->
+  <text font-family="Arial, sans-serif" font-size="18" fill="#ffffff">
+    <tspan x="34" y="22" font-weight="700">Edu</tspan><tspan font-weight="400" fill="#a8edcc">noly</tspan>
+  </text>
+</svg>
