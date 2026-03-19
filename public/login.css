@@ -1,0 +1,587 @@
+/* ─────────────────────────────────────────
+   Edunoly · Login — Estilos
+   ───────────────────────────────────────── */
+
+/* ─── Base ─── */
+html, body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: #104541;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ─── Variables para el formulario de login ─── */
+:root {
+  --green:      #47ad79;
+  --green-mid:  #2a7a55;
+  --green-lt:   #d0f0e2;
+  --green-pale: #e6f7ef;
+  --dark:       #092422;
+  --card-bg:    #ffffff;
+  --card-ink:   #1a2e28;
+  --body-color: #3d5c54;
+  --muted:      #7a9e96;
+  --border:     #c8dfd9;
+  --white:      #ffffff;
+  --shadow-lg:  0 16px 48px rgba(9, 36, 34, .35), 0 4px 12px rgba(9, 36, 34, .2);
+  --radius:     14px;
+}
+
+/* box-sizing solo para los elementos del login, sin afectar a la nav */
+.card, .card *, .login-wrap, .login-wrap * {
+  box-sizing: border-box;
+}
+
+/* ─── Estilos de navegación (igual que PaginaInicio y PaginaContacto) ─── */
+.barraNav {
+  background: linear-gradient(to right, #47ad79, #092422);
+  padding: 0 40px;
+}
+
+.menu {
+  display: flex;
+  align-items: center;
+  list-style: none;
+  margin: 0 auto;
+  padding: 0;
+  max-width: 1800px;
+}
+
+.menu .derecha {
+  margin-left: auto;
+}
+
+.menu li a {
+  text-decoration: none;
+  color: white;
+  padding: 20px;
+  display: block;
+}
+
+.menu li a:hover {
+  background-color: blueviolet;
+}
+
+.logo {
+  display: inline-block;
+  padding: 20px;
+}
+
+.logo img {
+  vertical-align: middle;
+}
+
+/* CONTENEDOR DEL PERFIL */
+.menuSesion {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-left: 20px;
+}
+
+/* IMAGEN PERFIL */
+.fotoPerfil {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  cursor: pointer;
+  object-fit: cover;
+  display: block;
+}
+
+/* DROPDOWN */
+.dropdown {
+  position: absolute !important;
+  top: 100%;
+  right: 0;
+  margin-top: 8px;
+  background: white;
+  min-width: 170px;
+  list-style: none;
+  padding: 8px 0;
+  border-radius: 8px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.2s ease;
+  z-index: 1000;
+}
+
+.dropdown.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.menu > li {
+  position: relative;
+}
+
+.dropdown li a {
+  display: block;
+  padding: 10px 15px;
+  text-decoration: none;
+  color: #333;
+}
+
+.dropdown li a:hover {
+  background-color: #f2f2f2;
+}
+
+/* Fondo con degradados radiales sutiles */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background-image:
+    radial-gradient(circle at 20% 80%, rgba(71, 173, 121, .15) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(71, 173, 121, .10) 0%, transparent 45%);
+  pointer-events: none;
+}
+
+/* ─── Flecha volver ─── */
+.btnVolver {
+  position: fixed;
+  top: 1.2rem;
+  left: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  z-index: 100;
+  transition: color .2s ease;
+}
+
+.btnVolver:hover {
+  color: #47ad79;
+}
+
+.btnVolver svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* ─── Layout de página ─── */
+.page {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(1rem, 3vw, 2rem) clamp(1rem, 3vw, 2rem);
+  position: relative;
+  z-index: 1;
+}
+
+.login-wrap {
+  width: 100%;
+  max-width: 620px;
+  animation: fadeUp .5s ease both;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Card ─── */
+.card {
+  background: var(--card-bg);
+  border: 1px solid rgba(255, 255, 255, .12);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  overflow: visible;
+}
+
+.card-head {
+  background: linear-gradient(135deg, #1a6b4a 0%, #092422 100%);
+  padding: 2rem 2.4rem 1.8rem;
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius) var(--radius) 0 0;
+}
+
+.card-head::before {
+  content: '';
+  position: absolute;
+  right: -30px;
+  top: -30px;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  background: rgba(71, 173, 121, .18);
+}
+
+.card-head::after {
+  content: '';
+  position: absolute;
+  right: 40px;
+  bottom: -55px;
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  background: rgba(71, 173, 121, .10);
+}
+
+.card-head h1 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #fff;
+  position: relative;
+  z-index: 1;
+  margin-bottom: .35rem;
+}
+
+.card-head p {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, .65);
+  position: relative;
+  z-index: 1;
+}
+
+/* ─── Tabs de perfil ─── */
+.profile-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: .8rem;
+  padding: 1.6rem 2.4rem 0;
+}
+
+.tab {
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: .65rem .4rem;
+  text-align: center;
+  cursor: pointer;
+  background: var(--white);
+  transition: border-color .2s, background .2s, box-shadow .2s;
+}
+
+.tab:hover {
+  border-color: var(--green);
+  background: var(--green-pale);
+}
+
+.tab.active {
+  border-color: var(--green);
+  background: var(--green-pale);
+  box-shadow: 0 0 0 3px rgba(71, 173, 121, .15);
+}
+
+.tab-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  margin: 0 auto .4rem;
+  display: grid;
+  place-items: center;
+  background: #e0ece8;
+  transition: background .2s;
+}
+
+.tab.active .tab-icon,
+.tab:hover .tab-icon {
+  background: var(--green);
+}
+
+.tab-icon svg {
+  width: 17px;
+  height: 17px;
+  color: var(--muted);
+  transition: color .2s;
+}
+
+.tab.active .tab-icon svg,
+.tab:hover .tab-icon svg {
+  color: #fff;
+}
+
+.tab span {
+  display: block;
+  font-size: .72rem;
+  font-weight: 600;
+  color: var(--body);
+  transition: color .2s;
+}
+
+.tab.active span,
+.tab:hover span {
+  color: var(--green-mid);
+}
+
+/* ─── Cuerpo del formulario ─── */
+.card-body {
+  padding: 1.8rem 2.4rem 2.4rem;
+}
+
+.form-group {
+  margin-bottom: 1.4rem;
+}
+
+label {
+  display: block;
+  font-size: .85rem;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--body);
+  margin-bottom: .5rem;
+}
+
+/* ─── Inputs ─── */
+.input-wrap {
+  position: relative;
+}
+
+.input-wrap svg.ico {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  color: var(--muted);
+  pointer-events: none;
+  transition: color .2s;
+}
+
+.input-wrap:focus-within svg.ico {
+  color: var(--green);
+}
+
+input[type="text"],
+input[type="password"],
+input[type="email"] {
+  width: 100%;
+  padding: .9rem 2.8rem .9rem 2.8rem;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 1rem;
+  color: var(--card-ink);
+  background: var(--white);
+  transition: border-color .2s, box-shadow .2s;
+  outline: none;
+}
+
+input::placeholder {
+  color: var(--muted);
+}
+
+input:focus {
+  border-color: var(--green);
+  box-shadow: 0 0 0 3px rgba(71, 173, 121, .14);
+}
+
+.toggle-pw {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--muted);
+  padding: 2px;
+  display: grid;
+  place-items: center;
+  transition: color .2s;
+}
+
+.toggle-pw:hover {
+  color: var(--green);
+}
+
+.toggle-pw svg {
+  width: 16px;
+  height: 16px;
+}
+
+.field-hint {
+  font-size: .73rem;
+  color: var(--muted);
+  margin-top: .3rem;
+}
+
+/* ─── Fila recordar / olvidé contraseña ─── */
+.form-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: .2rem 0 1.4rem;
+  flex-wrap: wrap;
+  gap: .4rem;
+}
+
+.check-label {
+  display: flex;
+  align-items: center;
+  gap: .45rem;
+  cursor: pointer;
+  font-size: .82rem;
+  color: var(--body);
+  user-select: none;
+}
+
+.check-label input[type="checkbox"] {
+  display: none;
+}
+
+.check-box {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  border: 1.5px solid var(--border);
+  border-radius: 4px;
+  display: grid;
+  place-items: center;
+  transition: background .2s, border-color .2s;
+}
+
+.check-label input:checked ~ .check-box {
+  background: var(--green);
+  border-color: var(--green);
+}
+
+.check-box::after {
+  content: '';
+  width: 9px;
+  height: 5px;
+  border-left: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+  transform: rotate(-45deg) scale(0);
+  transition: transform .15s;
+  margin-top: -2px;
+}
+
+.check-label input:checked ~ .check-box::after {
+  transform: rotate(-45deg) scale(1);
+}
+
+.link {
+  font-size: .82rem;
+  color: var(--green-mid);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color .2s;
+}
+
+.link:hover {
+  color: var(--dark);
+  text-decoration: underline;
+}
+
+/* ─── Botón principal ─── */
+.btn-primary {
+  width: 100%;
+  padding: 1rem 1rem;
+  background: var(--green);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  transition: background .2s, transform .15s, box-shadow .2s;
+  box-shadow: 0 2px 10px rgba(71, 173, 121, .4);
+}
+
+.btn-primary svg {
+  width: 17px;
+  height: 17px;
+}
+
+.btn-primary:hover {
+  background: var(--green-mid);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(71, 173, 121, .45);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+/* ─── Aviso informativo ─── */
+.notice {
+  display: flex;
+  align-items: flex-start;
+  gap: .6rem;
+  background: #edfaf3;
+  border: 1px solid #a3dfc0;
+  border-radius: 8px;
+  padding: .7rem .9rem;
+  margin-bottom: 1.2rem;
+  font-size: .78rem;
+  color: #1a5c3a;
+  line-height: 1.5;
+}
+
+.notice svg {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  margin-top: 1px;
+  color: var(--green);
+}
+
+/* ─── Pie del card ─── */
+.card-foot {
+  border-top: 1px solid var(--border);
+  padding: 1rem 1.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  border-radius: 0 0 var(--radius) var(--radius);
+}
+
+.card-foot a {
+  font-size: .78rem;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color .2s;
+}
+
+.card-foot a:hover {
+  color: var(--green-mid);
+}
+
+/* ─── Pie de página ─── */
+.page-footer {
+  text-align: center;
+  padding: 1.5rem;
+  font-size: .75rem;
+  color: rgba(255, 255, 255, .4);
+}
+
+.page-footer a {
+  color: rgba(255, 255, 255, .4);
+  text-decoration: underline;
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 500px) {
+  .topbar { padding: 0 1.2rem; }
+  .card-head,
+  .card-body { padding-left: 1.3rem; padding-right: 1.3rem; }
+  .profile-tabs { padding-left: 1.3rem; padding-right: 1.3rem; }
+  .card-foot { padding-left: 1.3rem; padding-right: 1.3rem; gap: 1rem; }
+}
+
+@media (max-width: 360px) {
+  .profile-tabs { grid-template-columns: 1fr; }
+  .tab { display: flex; align-items: center; gap: .7rem; padding: .55rem .8rem; }
+  .tab-icon { margin: 0; flex-shrink: 0; }
+}
