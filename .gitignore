@@ -1,16 +1,24 @@
-# Archivos de sistema de macOS
-.DS_Store
-.AppleDouble
-.LSOverride
-
-# Archivos de caché y logs
-.env
-.env.local
 *.log
-node_modules/
-dist/
-crendenciales.php
-
-# IDEs
-.vscode/
-.idea/
+.DS_Store
+.env
+.env.backup
+.env.production
+.phpactor.json
+.phpunit.result.cache
+/.fleet
+/.idea
+/.nova
+/.phpunit.cache
+/.vscode
+/.zed
+/auth.json
+/node_modules
+/public/build
+/public/hot
+/public/storage
+/storage/*.key
+/storage/pail
+/vendor
+Homestead.json
+Homestead.yaml
+Thumbs.db
