@@ -213,73 +213,12 @@ textarea{
     resize: none;
 }
 
-
-#contInformacion {
-    background-color: #0a0a0a;
-    padding: 3rem 6% 1.5rem;
-
-    /* ── Punto de enganche ── */
-    scroll-snap-align: start;
-    scroll-snap-stop: always;
+#contInformacion{
+    background-color: black;
+    padding-bottom: 5%;
 }
 
-.infoColumnas {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 2rem;
-    justify-content: space-between;
-    max-width: 1100px;
-    margin: 0 auto 2rem;
-}
-
-.infoCol {
-    flex: 1;
-    min-width: 160px;
-}
-
-.infoTitulo {
-    color: #47ad79;
-    font-size: 14px;
-    font-weight: 700;
-    letter-spacing: .1em;
-    text-transform: uppercase;
-    margin-bottom: 1rem;
-}
-
-.infoLista {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    gap: .55rem;
-}
-
-.infoLista li {
-    font-size: 14px;
-    color: rgba(255, 255, 255, 0.55);
-}
-
-.infoLista a {
-    color: rgba(255, 255, 255, 0.55);
-    text-decoration: none;
-    transition: color .2s ease;
-}
-
-.infoLista a:hover {
-    color: #47ad79;
-}
-
-.infoCopyright {
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
-    padding-top: 1.2rem;
-    text-align: center;
-    max-width: 1100px;
-    margin: 0 auto;
-}
-
-.infoCopyright p {
-    font-size: 13px;
-    color: rgba(255, 255, 255, 0.3);
-    font-weight: normal;
+.info1{
+    margin-left: 2%;
+    color: white;
 }

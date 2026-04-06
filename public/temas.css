@@ -1,0 +1,670 @@
+/* ══════════════════════════════════════════════════════════════
+   Edunoly · temas.css  (versión completa)
+   Cargar en TODAS las páginas ANTES del CSS propio de cada una.
+══════════════════════════════════════════════════════════════ */
+
+/* ────────────────────────────────────────────────────────────
+   DEFINICIÓN DE TEMAS
+   Cada tema declara todas las variables necesarias.
+──────────────────────────────────────────────────────────── */
+
+:root,
+[data-tema="verde"] {
+    --nav-inicio:        #47ad79;
+    --nav-fin:           #092422;
+    --nav-hover:         #2a7a55;
+    --nav-texto:         #ffffff;
+
+    --fondo:             #104541;
+    --fondo-oscuro:      #092422;
+    --fondo-footer:      #0a0a0a;
+
+    --acento:            #47ad79;
+    --acento-medio:      #2a7a55;
+    --acento-claro:      #d0f0e2;
+    --acento-palido:     #e6f7ef;
+    --borde:             #c8dfd9;
+
+    --texto:             #ffffff;
+    --texto-suave:       rgba(255,255,255,0.65);
+    --texto-muy-suave:   rgba(255,255,255,0.35);
+    --texto-sobre-claro: #092422;   /* sobre acento-palido claro */
+
+    --input-fondo:       #104541;
+    --input-borde:       rgba(255,255,255,0.5);
+    --input-texto:       #ffffff;
+    --input-placeholder: rgba(255,255,255,0.45);
+
+    --select-fondo:      #ffffff;
+    --select-texto:      #333333;
+
+    --card-fondo:        #ffffff;
+    --card-texto:        #1a2e28;
+
+    --logo-fondo:        #47ad79;
+    --logo-texto:        #ffffff;
+    --logo-acento:       #a8edcc;
+}
+
+[data-tema="negro"] {
+    --nav-inicio:        #2a2a2a;
+    --nav-fin:           #0a0a0a;
+    --nav-hover:         #444444;
+    --nav-texto:         #ffffff;
+
+    --fondo:             #1a1a1a;
+    --fondo-oscuro:      #0a0a0a;
+    --fondo-footer:      #050505;
+
+    --acento:            #d0d0d0;
+    --acento-medio:      #aaaaaa;
+    --acento-claro:      #333333;
+    --acento-palido:     #222222;
+    --borde:             #444444;
+
+    --texto:             #f0f0f0;
+    --texto-suave:       rgba(240,240,240,0.65);
+    --texto-muy-suave:   rgba(240,240,240,0.35);
+    --texto-sobre-claro: #f0f0f0;   /* acento-palido es oscuro, texto claro */
+
+    --input-fondo:       #2a2a2a;
+    --input-borde:       rgba(255,255,255,0.3);
+    --input-texto:       #f0f0f0;
+    --input-placeholder: rgba(240,240,240,0.4);
+
+    --select-fondo:      #333333;
+    --select-texto:      #f0f0f0;
+
+    --card-fondo:        #2a2a2a;
+    --card-texto:        #f0f0f0;
+
+    --logo-fondo:        #d0d0d0;
+    --logo-texto:        #1a1a1a;
+    --logo-acento:       #888888;
+}
+
+[data-tema="blanco"] {
+    --nav-inicio:        #e0e0e0;
+    --nav-fin:           #c0c0c0;
+    --nav-hover:         #d0d0d0;
+    --nav-texto:         #1a1a1a;
+
+    --fondo:             #f5f5f5;
+    --fondo-oscuro:      #e8e8e8;
+    --fondo-footer:      #dddddd;
+
+    --acento:            #1a7a50;
+    --acento-medio:      #155f3e;
+    --acento-claro:      #c8e6d8;
+    --acento-palido:     #eaf5ee;
+    --borde:             #b0ccbc;
+
+    --texto:             #1a1a1a;
+    --texto-suave:       rgba(30,30,30,0.65);
+    --texto-muy-suave:   rgba(30,30,30,0.4);
+    --texto-sobre-claro: #1a1a1a;   /* acento-palido es claro, texto oscuro */
+
+    --input-fondo:       #ffffff;
+    --input-borde:       rgba(0,0,0,0.3);
+    --input-texto:       #1a1a1a;
+    --input-placeholder: rgba(0,0,0,0.35);
+
+    --select-fondo:      #ffffff;
+    --select-texto:      #1a1a1a;
+
+    --card-fondo:        #ffffff;
+    --card-texto:        #1a1a1a;
+
+    --logo-fondo:        #1a7a50;
+    --logo-texto:        #ffffff;
+    --logo-acento:       #7ecfa4;
+}
+
+[data-tema="azul"] {
+    --nav-inicio:        #1a6fa8;
+    --nav-fin:           #0a2540;
+    --nav-hover:         #1457a0;
+    --nav-texto:         #ffffff;
+
+    --fondo:             #0d2f4a;
+    --fondo-oscuro:      #071d30;
+    --fondo-footer:      #040f1a;
+
+    --acento:            #4fb3e8;
+    --acento-medio:      #1a8fcb;
+    --acento-claro:      #cceeff;
+    --acento-palido:     #e8f5ff;
+    --borde:             #a0d4f0;
+
+    --texto:             #e8f4ff;
+    --texto-suave:       rgba(220,240,255,0.65);
+    --texto-muy-suave:   rgba(220,240,255,0.35);
+    --texto-sobre-claro: #071d30;   /* acento-palido es claro, texto oscuro */
+
+    --input-fondo:       #0d2f4a;
+    --input-borde:       rgba(79,179,232,0.5);
+    --input-texto:       #e8f4ff;
+    --input-placeholder: rgba(220,240,255,0.4);
+
+    --select-fondo:      #0d3d5e;
+    --select-texto:      #e8f4ff;
+
+    --card-fondo:        #0d3d5e;
+    --card-texto:        #e8f4ff;
+
+    --logo-fondo:        #4fb3e8;
+    --logo-texto:        #071d30;
+    --logo-acento:       #a8dcf5;
+}
+
+[data-tema="purpura"] {
+    --nav-inicio:        #7c3aed;
+    --nav-fin:           #1e0a3c;
+    --nav-hover:         #6d28d9;
+    --nav-texto:         #ffffff;
+
+    --fondo:             #1e0a3c;
+    --fondo-oscuro:      #12062a;
+    --fondo-footer:      #080314;
+
+    --acento:            #a78bfa;
+    --acento-medio:      #7c3aed;
+    --acento-claro:      #ede9fe;
+    --acento-palido:     #f5f3ff;
+    --borde:             #c4b5fd;
+
+    --texto:             #f0ebff;
+    --texto-suave:       rgba(230,220,255,0.65);
+    --texto-muy-suave:   rgba(230,220,255,0.35);
+    --texto-sobre-claro: #12062a;   /* acento-palido es claro, texto oscuro */
+
+    --input-fondo:       #1e0a3c;
+    --input-borde:       rgba(167,139,250,0.5);
+    --input-texto:       #f0ebff;
+    --input-placeholder: rgba(230,220,255,0.4);
+
+    --select-fondo:      #2d1260;
+    --select-texto:      #f0ebff;
+
+    --card-fondo:        #2d1260;
+    --card-texto:        #f0ebff;
+
+    --logo-fondo:        #a78bfa;
+    --logo-texto:        #12062a;
+    --logo-acento:       #ddd6fe;
+}
+
+[data-tema="rojo"] {
+    --nav-inicio:        #c0392b;
+    --nav-fin:           #2c0a0a;
+    --nav-hover:         #a93226;
+    --nav-texto:         #ffffff;
+
+    --fondo:             #2c0a0a;
+    --fondo-oscuro:      #1a0505;
+    --fondo-footer:      #0a0202;
+
+    --acento:            #e74c3c;
+    --acento-medio:      #c0392b;
+    --acento-claro:      #fadbd8;
+    --acento-palido:     #fdedec;
+    --borde:             #f1948a;
+
+    --texto:             #fff0f0;
+    --texto-suave:       rgba(255,230,230,0.65);
+    --texto-muy-suave:   rgba(255,230,230,0.35);
+    --texto-sobre-claro: #1a0505;   /* acento-palido es claro, texto oscuro */
+
+    --input-fondo:       #2c0a0a;
+    --input-borde:       rgba(231,76,60,0.5);
+    --input-texto:       #fff0f0;
+    --input-placeholder: rgba(255,230,230,0.4);
+
+    --select-fondo:      #3d1010;
+    --select-texto:      #fff0f0;
+
+    --card-fondo:        #3d1010;
+    --card-texto:        #fff0f0;
+
+    --logo-fondo:        #e74c3c;
+    --logo-texto:        #ffffff;
+    --logo-acento:       #f5a89f;
+}
+
+
+/* ────────────────────────────────────────────────────────────
+   APLICACIÓN GLOBAL
+   Cubre todos los elementos con colores hardcodeados del proyecto
+──────────────────────────────────────────────────────────── */
+
+/* ── Fondo general del body ── */
+body {
+    background-color: var(--fondo) !important;
+    color: var(--texto) !important;
+}
+
+/* ── Navegación ── */
+.barraNav {
+    background: linear-gradient(to right, var(--nav-inicio), var(--nav-fin)) !important;
+}
+
+.menu li a {
+    color: var(--nav-texto) !important;
+}
+
+.menu li a:hover,
+.menu li.activo > a {
+    background-color: var(--nav-hover) !important;
+}
+
+/* ── Textos generales (sobre fondos del tema) ── */
+h1, h2, h3, h4, h5, h6,
+p, span, li, label, div,
+.titulo, .subtitulo,
+.titulo.visible, .subtitulo.visible,
+.texto-informacion,
+.texto-direccion,
+.pasoNombre, .pasoDesc,
+.tecnoNombre, .tecnoDesc,
+.ctaTitulo, .ctaSubtitulo,
+.seccionTitulo,
+.info1 p {
+    color: var(--texto) !important;
+}
+
+/* Textos atenuados */
+.seccionSubtitulo,
+.infoLista li,
+.infoLista a,
+.infoCopyright p {
+    color: var(--texto-suave) !important;
+}
+
+/* ── Textos sobre fondos CLAROS (#contSobreNosotros, #contPerfiles)
+   Usan --texto-sobre-claro que cada tema define apropiadamente    ── */
+#contSobreNosotros .textoNosotros,
+#contSobreNosotros .tituInfoNosotros,
+#contSobreNosotros .statNumero,
+#contSobreNosotros .statLabel,
+#contPerfiles .perfilNombre,
+#contPerfiles .perfilLista li,
+#contPerfiles .seccionTitulo,
+#contPerfiles .seccionSubtitulo,
+#contPerfiles .seccionEtiqueta {
+    color: var(--texto-sobre-claro) !important;
+}
+
+/* El acento (números stats, checkmarks) siempre en color acento */
+#contSobreNosotros .statNumero,
+.perfilLista li::before {
+    color: var(--acento) !important;
+}
+
+/* ── Secciones con fondo propio ── */
+#contPrincipal,
+#contPrincipal::before {
+    background-color: var(--fondo) !important;
+}
+
+#contComoFunciona { background-color: var(--fondo) !important; }
+#contTecnologia   { background-color: var(--fondo) !important; }
+#contFuncionalidades { background-color: var(--fondo-oscuro) !important; }
+#contInformacion  { background-color: var(--fondo-footer) !important; }
+#contSobreNosotros { background-color: var(--acento-palido) !important; }
+#contPerfiles      { background-color: var(--acento-palido) !important; }
+
+/* ── Formulario de contacto ── */
+.CajaContacto,
+.formulario {
+    background-color: var(--fondo) !important;
+    color: var(--texto) !important;
+}
+
+/* Inputs del formulario de contacto */
+input:not([type="radio"]):not([type="submit"]):not([type="checkbox"]) {
+    background-color: var(--input-fondo) !important;
+    color: var(--input-texto) !important;
+    border-color: var(--input-borde) !important;
+}
+
+input::placeholder {
+    color: var(--input-placeholder) !important;
+}
+
+/* Textarea */
+textarea {
+    background-color: var(--input-fondo) !important;
+    color: var(--input-texto) !important;
+    border-color: var(--input-borde) !important;
+}
+
+textarea::placeholder {
+    color: var(--input-placeholder) !important;
+}
+
+/* Select (del formulario de contacto) */
+select {
+    background-color: var(--select-fondo) !important;
+    color: var(--select-texto) !important;
+    border-color: var(--input-borde) !important;
+}
+
+select option {
+    background-color: var(--select-fondo) !important;
+    color: var(--select-texto) !important;
+}
+
+/* Labels del formulario */
+label:not(.radio-label),
+.caja2 label,
+.caja2 p {
+    color: var(--texto) !important;
+}
+
+/* Radio labels */
+.radio-label { color: var(--texto) !important; }
+
+/* ── Sección inferior de contacto ── */
+#contInformacion .info1 p {
+    color: var(--texto) !important;
+}
+
+/* ── Acentos de color ── */
+.seccionEtiqueta.verde,
+.verde,
+.pasoNumero,
+.statNumero,
+.infoTitulo,
+.tecnoEtiqueta {
+    color: var(--acento) !important;
+}
+
+.tituInfoNosotros::after { background: var(--acento) !important; }
+
+/* ── Cards de perfil — fondo claro, texto debe contrastar ── */
+.perfilCard {
+    background: var(--acento-palido) !important;
+    border-color: var(--borde) !important;
+}
+
+.perfilCardDestacado {
+    border-color: var(--acento) !important;
+    background: var(--acento-claro) !important;
+}
+
+.perfilIcono          { background: var(--acento-claro) !important; }
+.perfilIcono svg      { color: var(--acento) !important; }
+
+/* Texto dentro de las cards de perfil sobre --acento-palido */
+.perfilNombre         { color: var(--texto-sobre-claro) !important; }
+.perfilLista li       { color: var(--texto-sobre-claro) !important; opacity: 0.8; }
+.perfilLista li::before { color: var(--acento) !important; opacity: 1; }
+
+/* ── Cards de funcionalidades ── */
+.funcCard:hover   { border-color: var(--acento) !important; }
+.funcCard svg     { color: var(--acento) !important; }
+.funcCard h3      { color: var(--texto) !important; }
+.funcCard p       { color: var(--texto-suave) !important; }
+
+/* ── Cards de tecnología ── */
+.tecnoCard:hover,
+.tecnoCardDestacado { border-color: var(--acento) !important; }
+.tecnoIcono svg     { color: var(--acento) !important; }
+.tecnoBadgeVerde    { color: var(--acento) !important; border-color: var(--acento) !important; }
+
+/* ── CTA ── */
+#contCTA {
+    background: linear-gradient(135deg, var(--acento) 0%, var(--fondo) 100%) !important;
+}
+
+/* El botón CTA siempre oscuro sobre fondo claro */
+.ctaBoton {
+    background: white !important;
+    color: #092422 !important;
+}
+
+.ctaBoton:hover {
+    background: var(--acento-palido) !important;
+    color: var(--texto-sobre-claro) !important;
+}
+
+/* ── Footer / Info ── */
+.infoLista a:hover { color: var(--acento) !important; }
+.infoCopyright p   { color: var(--texto-muy-suave) !important; }
+
+/* ── Login — card ── */
+.card { background: var(--card-fondo) !important; }
+
+.card-head {
+    background: linear-gradient(135deg, var(--acento-medio) 0%, var(--fondo-oscuro) 100%) !important;
+}
+
+.card-head h1, .card-head p { color: #ffffff !important; }
+
+.card-body label  { color: var(--card-texto) !important; }
+.card-body .field-hint { color: var(--texto-suave) !important; }
+
+/* Inputs del login */
+input[type="text"],
+input[type="password"],
+input[type="email"] {
+    background: var(--card-fondo) !important;
+    color: var(--card-texto) !important;
+    border-color: var(--borde) !important;
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus,
+input[type="email"]:focus {
+    border-color: var(--acento) !important;
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--acento) 14%, transparent) !important;
+}
+
+/* Tabs de perfil */
+.tab { background: var(--card-fondo) !important; border-color: var(--borde) !important; }
+.tab span { color: var(--card-texto) !important; }
+
+.tab:hover,
+.tab.active {
+    border-color: var(--acento) !important;
+    background: var(--acento-palido) !important;
+}
+
+.tab.active .tab-icon,
+.tab:hover .tab-icon { background: var(--acento) !important; }
+
+/* Notice */
+.notice {
+    background: var(--acento-palido) !important;
+    border-color: var(--acento-claro) !important;
+    color: var(--acento-medio) !important;
+}
+
+/* Botón principal (login) */
+.btn-primary {
+    background: var(--acento) !important;
+    color: var(--texto-oscuro) !important;
+    box-shadow: 0 2px 10px color-mix(in srgb, var(--acento) 40%, transparent) !important;
+}
+
+.btn-primary:hover { background: var(--acento-medio) !important; }
+
+/* Pie de card */
+.card-foot { border-color: var(--borde) !important; }
+.card-foot a { color: var(--texto-suave) !important; }
+.card-foot a:hover { color: var(--acento-medio) !important; }
+
+/* link "¿Olvidaste la contraseña?" */
+.link { color: var(--acento-medio) !important; }
+.link:hover { color: var(--fondo-oscuro) !important; }
+
+/* Página footer */
+.page-footer, .page-footer a { color: var(--texto-muy-suave) !important; }
+
+/* ── Calendario — hero ── */
+.cal-hero {
+    background: linear-gradient(135deg, var(--fondo-oscuro) 0%, var(--fondo) 100%) !important;
+}
+
+.cal-hero-titulo,
+.cal-hero-sub,
+.cal-titulo { color: var(--texto) !important; }
+
+/* Mini calendario */
+.mini-titulo      { color: var(--texto) !important; }
+.mini-day         { color: var(--texto-suave) !important; }
+.mini-day.hoy     { color: var(--acento) !important; }
+.mini-day.sel     { background: var(--acento) !important; color: var(--texto-oscuro) !important; }
+.mini-dl          { color: var(--texto-muy-suave) !important; }
+
+/* Próximas clases */
+.prox-titulo  { color: var(--texto) !important; }
+.prox-sub     { color: var(--texto-suave) !important; }
+.prox-num     { color: var(--acento) !important; }
+.prox-mes     { color: var(--texto-muy-suave) !important; }
+.sin-clases   { color: var(--texto-suave) !important; }
+
+/* Celdas del mes */
+.mes-celda          { color: var(--texto) !important; }
+.celda-num          { color: var(--texto-suave) !important; }
+.mes-celda.hoy-celda .celda-num {
+    background: var(--acento) !important;
+    color: var(--texto-oscuro) !important;
+}
+
+.mes-wd-c           { color: var(--texto-muy-suave) !important; }
+.ev-mas             { color: var(--texto-suave) !important; }
+
+/* Semana */
+.sem-wd             { color: var(--texto-muy-suave) !important; }
+.sem-num            { color: var(--texto) !important; }
+.sem-hora-slot      { color: var(--texto-muy-suave) !important; }
+
+/* Botones del calendario */
+.btn-nav, .btn-hoy, .vbtn {
+    color: var(--texto-suave) !important;
+    border-color: rgba(255,255,255,0.12) !important;
+}
+
+.btn-nav:hover, .btn-hoy:hover { color: var(--texto) !important; }
+.vbtn.active { color: var(--texto) !important; }
+
+/* Spinner */
+.spinner { border-top-color: var(--acento) !important; }
+
+/* Modales del calendario */
+.modal         { background: var(--fondo-oscuro) !important; }
+.modal-titulo  { color: var(--texto) !important; }
+.flabel        { color: var(--texto-suave) !important; }
+.finput        { background: var(--input-fondo) !important; color: var(--texto) !important; border-color: var(--input-borde) !important; }
+.det-val       { color: var(--texto) !important; }
+.det-lbl       { color: var(--texto-suave) !important; }
+
+/* ── Configuración — secciones ── */
+.config-seccion { border-color: var(--input-borde) !important; }
+.seccion-titulo { color: var(--texto) !important; }
+.seccion-sub    { color: var(--texto-suave) !important; }
+.opcion-nombre  { color: var(--texto) !important; }
+.opcion-desc    { color: var(--texto-suave) !important; }
+.opcion-select  { background: var(--input-fondo) !important; color: var(--texto) !important; border-color: var(--input-borde) !important; }
+
+/* Botones de guardar */
+.btn-guardar  { background: var(--acento) !important; color: var(--texto-oscuro) !important; }
+.btn-cancelar { color: var(--texto-suave) !important; border-color: var(--input-borde) !important; }
+
+
+/* ── Logo SVG inline — colores por tema ── */
+.logo-fondo   { fill: var(--logo-fondo,  #47ad79); }
+.logo-letra-e { fill: var(--logo-texto,  #ffffff); }
+.logo-edu     { fill: var(--logo-texto,  #ffffff); }
+.logo-noly    { fill: var(--logo-acento, #a8edcc); }
+
+
+/* ══════════════════════════════════════════════════════════════
+   CORRECCIONES ADICIONALES — colores rgba hardcodeados
+══════════════════════════════════════════════════════════════ */
+
+/* ── Cards de tecnología — fondo y bordes con rgba del verde ── */
+.tecnoCard {
+    background: color-mix(in srgb, var(--acento) 5%, transparent) !important;
+    border-color: color-mix(in srgb, var(--acento) 10%, transparent) !important;
+    color: var(--texto) !important;
+}
+
+.tecnoCard:hover {
+    background: color-mix(in srgb, var(--acento) 9%, transparent) !important;
+    border-color: color-mix(in srgb, var(--acento) 40%, transparent) !important;
+}
+
+.tecnoCardDestacado {
+    background: color-mix(in srgb, var(--acento) 12%, transparent) !important;
+    border-color: color-mix(in srgb, var(--acento) 35%, transparent) !important;
+}
+
+.tecnoCardDestacado:hover {
+    background: color-mix(in srgb, var(--acento) 18%, transparent) !important;
+    border-color: color-mix(in srgb, var(--acento) 60%, transparent) !important;
+}
+
+.tecnoIcono {
+    background: color-mix(in srgb, var(--acento) 15%, transparent) !important;
+}
+
+.tecnoIcono svg { color: var(--acento) !important; }
+
+.tecnoNombre { color: var(--texto) !important; }
+.tecnoTitulo { color: var(--texto) !important; }
+.tecnoSubtitulo { color: var(--texto-suave) !important; }
+.tecnoDesc { color: var(--texto-suave) !important; }
+
+.tecnoBadge {
+    color: var(--texto-suave) !important;
+    background: color-mix(in srgb, var(--texto) 7%, transparent) !important;
+    border-color: color-mix(in srgb, var(--texto) 12%, transparent) !important;
+}
+
+.tecnoBadgeVerde {
+    color: var(--acento) !important;
+    background: color-mix(in srgb, var(--acento) 10%, transparent) !important;
+    border-color: color-mix(in srgb, var(--acento) 30%, transparent) !important;
+}
+
+/* ── Cards de funcionalidades — mismo problema ── */
+.funcCard {
+    background: color-mix(in srgb, var(--texto) 5%, transparent) !important;
+    border-color: color-mix(in srgb, var(--texto) 10%, transparent) !important;
+}
+
+.funcCard:hover {
+    background: color-mix(in srgb, var(--texto) 9%, transparent) !important;
+    border-color: color-mix(in srgb, var(--acento) 40%, transparent) !important;
+}
+
+/* ── Logo inline — texto "Edunoly" en la nav ── */
+.logo svg text,
+.logo svg tspan { fill: var(--logo-texto, #ffffff) !important; }
+.logo svg .logo-noly,
+.logo svg .logo-noly tspan { fill: var(--logo-acento, #a8edcc) !important; }
+.logo svg .logo-fondo { fill: var(--logo-fondo, #47ad79) !important; }
+.logo svg .logo-letra-e,
+.logo svg .logo-edu,
+.logo svg .logo-edu tspan { fill: var(--logo-texto, #ffffff) !important; }
+
+/* ── Paso cards (Cómo funciona) ── */
+.pasoCard {
+    background: color-mix(in srgb, var(--texto) 6%, transparent) !important;
+    border-color: color-mix(in srgb, var(--texto) 12%, transparent) !important;
+}
+
+.pasoFlecha { color: var(--acento) !important; }
+
+/* ── Sección sobre nosotros — fondo blanco hardcodeado ── */
+#contSobreNosotros {
+    background-color: var(--acento-palido) !important;
+}
+
+/* ── Hover del botón CTA ── */
+.ctaBoton:hover {
+    background: var(--acento-palido) !important;
+    color: var(--texto-sobre-claro) !important;
+}

@@ -17,15 +17,15 @@ document.addEventListener("DOMContentLoaded", function () {
     elemento1.forEach((el, index) => {
         setTimeout(() => {
             el.classList.add("visible");
-        }, index * 200);
+        }, 200 + index * 200);   // delay base 200 ms
     });
 
-        const elemento2 = document.querySelectorAll(".subtitulo");
+    const elemento2 = document.querySelectorAll(".subtitulo");
 
     elemento2.forEach((el, index) => {
         setTimeout(() => {
             el.classList.add("visible");
-        }, index * 200);
+        }, 400 + index * 200);   // después del título
     });
 
 });
