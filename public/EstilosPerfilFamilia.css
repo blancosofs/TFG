@@ -1,0 +1,206 @@
+/* ══════════════════════════════════════════════════════════════
+   Edunoly · EstilosPerfilFamilia.css
+   Estilos específicos del perfil de tutor/familiar.
+   Se carga junto con EstilosPerfil.css (que ya tiene la base).
+══════════════════════════════════════════════════════════════ */
+
+/* ── Texto de carga ── */
+.cargando-txt {
+    font-size: 13px; color: var(--texto-suave);
+    padding: 20px 0; text-align: center;
+}
+
+/* ── Sin hijos ── */
+.sin-hijos {
+    text-align: center; padding: 32px 16px;
+    color: var(--texto-suave); font-size: 13px;
+}
+
+.sin-hijos span { font-size: 32px; display: block; margin-bottom: 10px; }
+
+/* ══════════════════════════════════════════════════════════════
+   TARJETA DE HIJO
+══════════════════════════════════════════════════════════════ */
+#hijos-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.hijo-card {
+    background: color-mix(in srgb, var(--texto) 4%, transparent);
+    border: 1px solid color-mix(in srgb, var(--acento) 20%, transparent);
+    border-radius: 14px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    transition: border-color .2s;
+}
+
+.hijo-card:hover {
+    border-color: color-mix(in srgb, var(--acento) 45%, transparent);
+}
+
+/* ── Header de la tarjeta: foto + identidad ── */
+.hijo-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+/* Foto del hijo */
+.hijo-foto-wrap {
+    position: relative;
+    flex-shrink: 0;
+}
+
+.hijo-foto {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--acento);
+    box-shadow: 0 4px 16px color-mix(in srgb, var(--acento) 25%, transparent);
+    background: color-mix(in srgb, var(--texto) 10%, transparent);
+}
+
+/* Identidad del hijo */
+.hijo-identidad {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+
+.hijo-nombre {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--texto);
+    line-height: 1.2;
+}
+
+.hijo-curso {
+    font-size: 12px;
+    color: var(--texto-suave);
+    font-weight: 500;
+}
+
+.hijo-parentesco {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .07em;
+    padding: 3px 9px;
+    border-radius: 20px;
+    background: color-mix(in srgb, var(--acento) 12%, transparent);
+    color: var(--acento);
+    border: 1px solid color-mix(in srgb, var(--acento) 25%, transparent);
+    width: fit-content;
+}
+
+/* ── Datos académicos ── */
+.hijo-datos {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    padding: 14px;
+    background: color-mix(in srgb, var(--texto) 3%, transparent);
+    border-radius: 10px;
+    border: 1px solid color-mix(in srgb, var(--texto) 7%, transparent);
+}
+
+@media (max-width: 700px) {
+    .hijo-datos { grid-template-columns: repeat(2, 1fr); }
+}
+
+.hijo-dato {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.hijo-dato-lbl {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .07em;
+    color: var(--texto-suave);
+}
+
+.hijo-dato-val {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--texto);
+}
+
+/* Valor en alerta (muchas faltas) */
+.val-alerta {
+    color: #e74c3c !important;
+}
+
+/* ── Docentes asignados ── */
+.hijo-docentes {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.docentes-lista {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 4px;
+}
+
+.docente-chip {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 8px;
+    background: color-mix(in srgb, var(--texto) 5%, transparent);
+    border: 1px solid color-mix(in srgb, var(--texto) 10%, transparent);
+    font-size: 12px;
+    color: var(--texto);
+}
+
+.docente-ico { font-size: 13px; }
+
+.docente-asig {
+    font-size: 11px;
+    color: var(--acento);
+    font-weight: 600;
+    padding: 1px 6px;
+    border-radius: 4px;
+    background: color-mix(in srgb, var(--acento) 10%, transparent);
+}
+
+/* ── Botones de acción del hijo ── */
+.hijo-acciones {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    padding-top: 4px;
+    border-top: 1px solid color-mix(in srgb, var(--texto) 7%, transparent);
+}
+
+.hijo-btn {
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: 1px solid color-mix(in srgb, var(--texto) 15%, transparent);
+    background: color-mix(in srgb, var(--texto) 5%, transparent);
+    color: var(--texto);
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all .15s;
+}
+
+.hijo-btn:hover {
+    background: color-mix(in srgb, var(--acento) 12%, transparent);
+    border-color: color-mix(in srgb, var(--acento) 35%, transparent);
+    color: var(--acento);
+}

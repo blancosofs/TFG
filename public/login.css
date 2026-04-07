@@ -180,7 +180,7 @@ body::before {
 
 .login-wrap {
   width: 100%;
-  max-width: 620px;
+  max-width: 440px;
   animation: fadeUp .5s ease both;
 }
 
@@ -200,7 +200,7 @@ body::before {
 
 .card-head {
   background: linear-gradient(135deg, #1a6b4a 0%, #092422 100%);
-  padding: 2rem 2.4rem 1.8rem;
+  padding: 1.2rem 1.8rem 1rem;
   position: relative;
   overflow: hidden;
   border-radius: var(--radius) var(--radius) 0 0;
@@ -229,12 +229,12 @@ body::before {
 }
 
 .card-head h1 {
-  font-size: 1.6rem;
+  font-size: 1.2rem;
   font-weight: 700;
   color: #fff;
   position: relative;
   z-index: 1;
-  margin-bottom: .35rem;
+  margin-bottom: .2rem;
 }
 
 .card-head p {
@@ -248,8 +248,8 @@ body::before {
 .profile-tabs {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: .8rem;
-  padding: 1.6rem 2.4rem 0;
+  gap: .5rem;
+  padding: 1rem 1.6rem 0;
 }
 
 .tab {
@@ -316,11 +316,11 @@ body::before {
 
 /* ─── Cuerpo del formulario ─── */
 .card-body {
-  padding: 1.8rem 2.4rem 2.4rem;
+  padding: 1.2rem 1.6rem 1.6rem;
 }
 
 .form-group {
-  margin-bottom: 1.4rem;
+  margin-bottom: .9rem;
 }
 
 label {
@@ -479,7 +479,7 @@ input:focus {
 /* ─── Botón principal ─── */
 .btn-primary {
   width: 100%;
-  padding: 1rem 1rem;
+  padding: .75rem 1rem;
   background: var(--green);
   color: #fff;
   border: none;
@@ -520,8 +520,8 @@ input:focus {
   background: #edfaf3;
   border: 1px solid #a3dfc0;
   border-radius: 8px;
-  padding: .7rem .9rem;
-  margin-bottom: 1.2rem;
+  padding: .5rem .8rem;
+  margin-bottom: .8rem;
   font-size: .78rem;
   color: #1a5c3a;
   line-height: 1.5;
@@ -538,11 +538,11 @@ input:focus {
 /* ─── Pie del card ─── */
 .card-foot {
   border-top: 1px solid var(--border);
-  padding: 1rem 1.8rem;
+  padding: .7rem 1.6rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 1.5rem;
+  gap: 1.2rem;
   flex-wrap: wrap;
   border-radius: 0 0 var(--radius) var(--radius);
 }

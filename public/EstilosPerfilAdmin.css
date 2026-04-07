@@ -1,0 +1,145 @@
+/* ══════════════════════════════════════════════════════════════
+   Edunoly · EstilosPerfilAdmin.css
+   Estilos específicos del perfil de administrador.
+   Se carga junto con EstilosPerfil.css.
+══════════════════════════════════════════════════════════════ */
+
+/* ── Badge admin ── */
+.rol-badge-admin {
+    background: color-mix(in srgb, #e74c3c 15%, transparent) !important;
+    color: #e74c3c !important;
+    border-color: color-mix(in srgb, #e74c3c 30%, transparent) !important;
+}
+
+.foto-btn-admin {
+    background: #e74c3c !important;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   ESTADO DEL SISTEMA
+══════════════════════════════════════════════════════════════ */
+.sistema-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+}
+
+@media (max-width: 700px) {
+    .sistema-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+.sistema-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px;
+    border-radius: 10px;
+    border: 1px solid transparent;
+}
+
+.sistema-ok {
+    background: color-mix(in srgb, var(--acento) 8%, transparent);
+    border-color: color-mix(in srgb, var(--acento) 20%, transparent);
+}
+
+.sistema-error {
+    background: rgba(231,76,60,.08);
+    border-color: rgba(231,76,60,.2);
+}
+
+.sistema-ico { font-size: 18px; flex-shrink: 0; }
+
+.sistema-titulo {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--texto);
+}
+
+.sistema-estado {
+    font-size: 11px;
+    color: var(--acento);
+    margin-top: 2px;
+}
+
+.sistema-error .sistema-estado { color: #e74c3c; }
+
+/* ══════════════════════════════════════════════════════════════
+   RESUMEN DE COLEGIOS
+══════════════════════════════════════════════════════════════ */
+.colegio-fila {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid color-mix(in srgb, var(--texto) 7%, transparent);
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.colegio-fila:last-child { border-bottom: none; }
+
+.colegio-fila-info {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+}
+
+.colegio-fila-nombre {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--texto);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.colegio-fila-meta {
+    font-size: 11px;
+    color: var(--texto-suave);
+}
+
+.colegio-fila-coord {
+    font-size: 12px;
+    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: 20px;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.coord-ok {
+    background: color-mix(in srgb, var(--acento) 10%, transparent);
+    color: var(--acento);
+    border: 1px solid color-mix(in srgb, var(--acento) 25%, transparent);
+}
+
+.coord-sin {
+    background: rgba(231,76,60,.08);
+    color: #e74c3c;
+    border: 1px solid rgba(231,76,60,.2);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   AUDITORÍA
+══════════════════════════════════════════════════════════════ */
+.audit-tabla {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    padding: 2px 7px;
+    border-radius: 4px;
+    background: color-mix(in srgb, var(--texto) 8%, transparent);
+    color: var(--texto-suave);
+    margin-left: 6px;
+}
+
+/* ── Sin datos ── */
+.sin-datos {
+    text-align: center;
+    padding: 20px;
+    font-size: 13px;
+    color: var(--texto-suave);
+}
