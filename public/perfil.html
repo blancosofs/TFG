@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edunoly · Mi Perfil Familiar</title>
+    <title>Edunoly · Mi Perfil</title>
     <script src="temas.js"></script>
     <link rel="stylesheet" href="temas.css">
     <link rel="stylesheet" href="EstilosPerfil.css">
-    <link rel="stylesheet" href="EstilosPerfilFamilia.css">
 </head>
 <body>
 
@@ -21,15 +20,16 @@
                 </li>
                 <li><a href="PaginaInicio.html">Inicio</a></li>
                 <li><a href="PaginaContacto.html">Contacto</a></li>
-                <li class="activo"><a href="perfilFamilia.html">Mi Perfil</a></li>
+                <li><a href="calendario.html">Mi Horario</a></li>
+                <li class="activo"><a href="perfil.html">Mi Perfil</a></li>
 
                 <li class="derecha menuSesion">
                     <img src="perfil.png" class="fotoPerfil" alt="Perfil">
                     <ul class="dropdown">
                         <li class="dropdown-nombre"><span id="nav-nombre"></span></li>
-                        <li class="dropdown-rol"><span id="nav-rol">Tutor legal</span></li>
+                        <li class="dropdown-rol"><span id="nav-rol">Docente</span></li>
                         <li class="dropdown-sep"></li>
-                        <li><a href="perfilFamilia.html">👤 Mi perfil</a></li>
+                        <li><a href="perfil.html">👤 Mi perfil</a></li>
                         <li><a href="configuracion.html">⚙️ Configuración</a></li>
                         <li><a href="#" id="btn-logout">Cerrar sesión</a></li>
                     </ul>
@@ -42,9 +42,9 @@
 <!-- ── HERO ── -->
 <div class="perfil-hero">
     <div class="perfil-hero-inner">
-        <p class="etiqueta verde">Mi espacio familiar</p>
+        <p class="etiqueta verde">Mi espacio docente</p>
         <h1>Mi Perfil</h1>
-        <p class="hero-sub">Consulta la información de tus hijos y gestiona tus datos personales.</p>
+        <p class="hero-sub">Consulta y gestiona tu información personal y profesional.</p>
     </div>
 </div>
 
@@ -54,7 +54,7 @@
     <!-- ══ COLUMNA IZQUIERDA ══ -->
     <aside class="perfil-sidebar">
 
-        <!-- Foto + datos del tutor -->
+        <!-- Foto + datos principales -->
         <div class="card-perfil">
             <div class="foto-wrap">
                 <img src="perfil.png" alt="Foto de perfil" class="foto-grande" id="foto-preview">
@@ -66,7 +66,7 @@
 
             <div class="nombre-bloque">
                 <h2 id="perfil-nombre-completo">Cargando…</h2>
-                <span class="rol-badge">Tutor legal</span>
+                <span class="rol-badge">Docente</span>
             </div>
 
             <div class="info-rapida">
@@ -84,11 +84,19 @@
                 </div>
             </div>
 
-            <!-- Estadística: nº de hijos -->
+            <!-- Estadísticas rápidas -->
             <div class="stats-perfil">
-                <div class="stat-perfil" style="grid-column:1/-1">
-                    <span class="stat-num" id="stat-hijos">—</span>
-                    <span class="stat-lbl">Hijos registrados</span>
+                <div class="stat-perfil">
+                    <span class="stat-num" id="stat-clases">—</span>
+                    <span class="stat-lbl">Clases</span>
+                </div>
+                <div class="stat-perfil">
+                    <span class="stat-num" id="stat-asignaturas">—</span>
+                    <span class="stat-lbl">Asignaturas</span>
+                </div>
+                <div class="stat-perfil">
+                    <span class="stat-num" id="stat-alumnos">—</span>
+                    <span class="stat-lbl">Alumnos</span>
                 </div>
             </div>
         </div>
@@ -96,6 +104,11 @@
         <!-- Accesos rápidos -->
         <div class="card-links">
             <p class="card-section-titulo">Accesos rápidos</p>
+            <a href="calendario.html" class="link-rapido">
+                <span class="link-ico">📅</span>
+                <span>Mi horario</span>
+                <span class="link-arrow">›</span>
+            </a>
             <a href="configuracion.html" class="link-rapido">
                 <span class="link-ico">⚙️</span>
                 <span>Configuración</span>
@@ -103,7 +116,7 @@
             </a>
             <a href="PaginaContacto.html" class="link-rapido">
                 <span class="link-ico">✉️</span>
-                <span>Contactar con el centro</span>
+                <span>Contacto</span>
                 <span class="link-arrow">›</span>
             </a>
         </div>
@@ -113,25 +126,12 @@
     <!-- ══ COLUMNA DERECHA ══ -->
     <main class="perfil-main">
 
-        <!-- ── MIS HIJOS ── -->
+        <!-- ── Datos personales ── -->
         <div class="seccion-card">
             <div class="seccion-head">
                 <div>
-                    <h3 class="seccion-titulo">👨‍👩‍👧‍👦 Mis hijos</h3>
-                    <p class="seccion-sub">Información académica de los menores a tu cargo.</p>
-                </div>
-            </div>
-            <div id="hijos-lista">
-                <div class="cargando-txt">Cargando…</div>
-            </div>
-        </div>
-
-        <!-- ── DATOS PERSONALES ── -->
-        <div class="seccion-card">
-            <div class="seccion-head">
-                <div>
-                    <h3 class="seccion-titulo">👤 Mis datos personales</h3>
-                    <p class="seccion-sub">Tu información de contacto en la plataforma.</p>
+                    <h3 class="seccion-titulo">👤 Datos personales</h3>
+                    <p class="seccion-sub">Tu información básica en la plataforma.</p>
                 </div>
                 <button class="btn-editar" id="btn-editar-personal" onclick="toggleEditar('personal')">
                     ✏️ Editar
@@ -157,12 +157,12 @@
                     <span class="dato-val" id="v-telefono">—</span>
                 </div>
                 <div class="dato-item">
-                    <span class="dato-lbl">Usuario de acceso</span>
-                    <span class="dato-val" id="v-usuario">—</span>
+                    <span class="dato-lbl">Fecha de nacimiento</span>
+                    <span class="dato-val" id="v-fnacimiento">—</span>
                 </div>
                 <div class="dato-item">
-                    <span class="dato-lbl">Centro educativo</span>
-                    <span class="dato-val" id="v-colegio">—</span>
+                    <span class="dato-lbl">Usuario de acceso</span>
+                    <span class="dato-val" id="v-usuario">—</span>
                 </div>
             </div>
 
@@ -177,9 +177,13 @@
                         <label class="flabel">Apellidos</label>
                         <input class="finput" id="e-apellidos" type="text">
                     </div>
-                    <div class="fgroup full">
+                    <div class="fgroup">
                         <label class="flabel">Teléfono</label>
                         <input class="finput" id="e-telefono" type="tel">
+                    </div>
+                    <div class="fgroup">
+                        <label class="flabel">Fecha de nacimiento</label>
+                        <input class="finput" id="e-fnacimiento" type="date">
                     </div>
                 </div>
                 <div class="form-edicion-acciones">
@@ -189,7 +193,38 @@
             </div>
         </div>
 
-        <!-- ── SEGURIDAD ── -->
+        <!-- ── Información profesional ── -->
+        <div class="seccion-card">
+            <div class="seccion-head">
+                <div>
+                    <h3 class="seccion-titulo">🎓 Información profesional</h3>
+                    <p class="seccion-sub">Tu rol y asignaturas asignadas en el centro.</p>
+                </div>
+            </div>
+
+            <div class="datos-grid">
+                <div class="dato-item">
+                    <span class="dato-lbl">Centro educativo</span>
+                    <span class="dato-val" id="v-colegio">—</span>
+                </div>
+                <div class="dato-item">
+                    <span class="dato-lbl">Rol</span>
+                    <span class="dato-val">
+                        <span class="badge-rol">Docente</span>
+                    </span>
+                </div>
+                <div class="dato-item full">
+                    <span class="dato-lbl">Asignaturas que imparte</span>
+                    <div class="tags-wrap" id="v-asignaturas">—</div>
+                </div>
+                <div class="dato-item full">
+                    <span class="dato-lbl">Clases asignadas</span>
+                    <div class="tags-wrap" id="v-clases">—</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── Seguridad ── -->
         <div class="seccion-card">
             <div class="seccion-head">
                 <div>
@@ -202,9 +237,7 @@
             </div>
 
             <div id="vista-pass">
-                <p class="pass-info">••••••••••••
-                    <span class="pass-hint">Tu contraseña está cifrada y protegida.</span>
-                </p>
+                <p class="pass-info">••••••••••••  <span class="pass-hint">Tu contraseña está cifrada y protegida.</span></p>
             </div>
 
             <div id="form-pass" class="form-edicion" style="display:none">
@@ -230,7 +263,7 @@
             </div>
         </div>
 
-        <!-- ── ACTIVIDAD RECIENTE ── -->
+        <!-- ── Actividad reciente ── -->
         <div class="seccion-card">
             <div class="seccion-head">
                 <div>
@@ -247,9 +280,9 @@
                     </div>
                 </div>
                 <div class="actividad-item">
-                    <span class="actividad-ico">👁️</span>
+                    <span class="actividad-ico">📅</span>
                     <div class="actividad-info">
-                        <span class="actividad-texto">Consulta de perfil de hijo</span>
+                        <span class="actividad-texto">Consulta de horario</span>
                         <span class="actividad-fecha">Hoy</span>
                     </div>
                 </div>
@@ -263,6 +296,6 @@
 
 <script src="temas.js"></script>
 <script src="MenuSesion.js"></script>
-<script src="perfilFamilia.js"></script>
+<script src="perfil.js"></script>
 </body>
 </html>

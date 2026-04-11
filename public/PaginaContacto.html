@@ -18,16 +18,9 @@
                         </li>
                         <li><a href="PaginaInicio.html">Inicio</a></li>
                         <li><a href="PaginaContacto.html">Contacto</a></li>
+                        <li><a href="configuracion.html">Configuración</a></li>
 
                         <li class="derecha"><a href="login.html">Iniciar Sesión</a></li>
-                        <li class="menuSesion">
-                    <img src="perfil.png" class="fotoPerfil" alt="Perfil">
-                    <ul class="dropdown">
-                        <li><a href="#">Mi perfil</a></li>
-                        <li><a href="configuracion.html">Configuración</a></li>
-                        <li><a href="#">Cerrar sesión</a></li>
-                    </ul>
-                        </li>
                     </ul>
                 </div>
             </nav>
