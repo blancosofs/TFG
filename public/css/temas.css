@@ -668,3 +668,14 @@ input[type="email"]:focus {
     background: var(--acento-palido) !important;
     color: var(--texto-sobre-claro) !important;
 }
+
+
+/* ── Dropdown siempre con fondo blanco y texto oscuro ──
+   El dropdown tiene background blanco en todos los temas,
+   por eso el texto debe ser siempre oscuro independientemente
+   del tema activo.                                         ── */
+.dropdown                { background: white !important; }
+.dropdown li a           { color: #333 !important; }
+.dropdown li a:hover     { background-color: #f2f2f2 !important; color: #111 !important; }
+.dropdown-nombre         { color: #111 !important; padding: 10px 15px 2px !important; font-size: 13px !important; font-weight: 700 !important; }
+.dropdown-rol            { color: #888 !important; padding: 0 15px 8px !important; font-size: 11px !important; }
