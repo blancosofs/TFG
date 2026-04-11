@@ -1,0 +1,286 @@
+body{
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #104541;
+}
+
+/* Estilos barra menú */
+.barraNav{
+    background: linear-gradient(to right, #47ad79, #092422);
+    padding: 0 40px;
+}
+
+.menu{
+    display: flex;
+    align-items: center;
+    list-style: none;
+    margin: 0 auto;
+    padding: 0;
+    max-width: 1800px;
+}
+
+.contenedor {
+    width: 90%;
+    max-width: 1200px;
+    margin: 40px auto;
+}
+
+.menu .derecha {
+    margin-left: auto;
+}
+
+.menu li a{
+    text-decoration: none;
+    color: white;
+    padding: 20px;
+    display: block;
+} 
+
+.menu li a:hover{
+    background-color: #2a7a55;
+}
+
+.logo {
+    display: inline-block;
+    padding: 20px;
+}
+
+.logo img {
+    vertical-align: middle;
+}
+
+/* CONTENEDOR DEL PERFIL */
+.menuSesion {
+    position: relative;
+    display: flex;
+    align-items: center;   /* 👈 centra verticalmente */
+    margin-left: 20px;
+}
+
+/* IMAGEN PERFIL */
+.fotoPerfil {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    cursor: pointer;
+    object-fit: cover;
+    display: block; /* 👈 elimina espacio raro de imágenes inline */
+}
+
+/* DROPDOWN */
+.dropdown {
+    position: absolute !important;   /* forzamos */
+    top: 100%;
+    right: 0;
+    margin-top: 8px;
+
+    background: white;
+    min-width: 170px;
+    list-style: none;
+    padding: 8px 0;
+    border-radius: 8px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.2s ease;
+
+    z-index: 1000;  /* importante */
+}
+
+/* Cuando está activo */
+.dropdown.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.menu > li {
+    position: relative;
+}
+
+.dropdown li a {
+    display: block;
+    padding: 10px 15px;
+    text-decoration: none;
+    color: #333;
+}
+
+.dropdown li a:hover {
+    background-color: #f2f2f2;
+}
+
+.CajaContacto{
+    padding-bottom: 5%;
+    background-color: #104541;
+    color: white;
+}
+
+.formulario{
+    display: flex;
+    margin: 0;
+    background-color: #104541;
+    gap: 40px;
+    flex-wrap: wrap;
+}
+
+.caja1{
+    flex: 1;
+    min-width: 300px;
+}
+
+.caja2{
+    font-size: 22px;
+    max-width: 600px;
+    width: 100%;
+    margin-left: 2%;
+    flex: 1;
+    min-width: 300px;
+}
+
+.titulo{
+    font-size: 40px;
+}
+
+.texto-informacion{
+    font-size: 26px;
+    max-width: 600px;
+    width: 100%;
+    word-wrap: break-word;
+}
+
+.texto-direccion{
+    font-size: 26px;
+    max-width: 600px;
+    width: 100%;
+    white-space: pre-line;
+    word-wrap: break-word;
+}
+
+label:not(.radio-label) {
+    display: block;
+    margin-bottom: 8px;
+    margin-top: 18px;
+    font-weight: bold;
+}
+
+input:not([type="radio"]):not([type="submit"]) {
+    font-size: 18px;
+    width: 98%;
+    padding: 5px 0px 5px 8px;
+    border-color: white;
+    border-style: solid;
+    border-top: none;
+    border-right: none;
+    border-left: none;
+    background-color: #104541;
+    color: white;
+}
+
+select{
+    font-size: 18px;
+    width: 99%;
+    padding: 5px 0px 5px 8px;
+}
+
+p{
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.boton{
+    display: block;
+    margin-top: 22px;
+    background: linear-gradient(to right, #ff7e5f, #feb47b);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 20px;
+    font-weight: bold;
+    padding: 15px 30px;
+    margin-left: 40%;
+}
+
+textarea{
+    width: 98%;
+    height: 180px;
+    background-color: #104541;
+    color: white;
+    border-color: white;
+    border-style: solid;
+    resize: none;
+}
+
+
+#contInformacion {
+    background-color: #0a0a0a;
+    padding: 3rem 6% 1.5rem;
+
+    /* ── Punto de enganche ── */
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+}
+
+.infoColumnas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    justify-content: space-between;
+    max-width: 1100px;
+    margin: 0 auto 2rem;
+}
+
+.infoCol {
+    flex: 1;
+    min-width: 160px;
+}
+
+.infoTitulo {
+    color: #47ad79;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+}
+
+.infoLista {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: .55rem;
+}
+
+.infoLista li {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.55);
+}
+
+.infoLista a {
+    color: rgba(255, 255, 255, 0.55);
+    text-decoration: none;
+    transition: color .2s ease;
+}
+
+.infoLista a:hover {
+    color: #47ad79;
+}
+
+.infoCopyright {
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding-top: 1.2rem;
+    text-align: center;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.infoCopyright p {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.3);
+    font-weight: normal;
+}
+
