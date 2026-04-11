@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Página Contacto</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <script src="temas.js"></script>
+        <link rel="stylesheet" href="temas.css">
+        <link rel="stylesheet" href="EstilosPaginaContacto.css">
+    </head>
+    <body>
+        <header>
+            <nav id="Navegador">
+                <div class="barraNav">
+                    <ul class="menu">
+                        <li class="logo">
+                            <img src="logo.svg" alt="Edunoly">
+                        </li>
+                        <li><a href="PaginaInicio.html">Inicio</a></li>
+                        <li><a href="PaginaContacto.html">Contacto</a></li>
+
+                        <li class="derecha"><a href="login.html">Iniciar Sesión</a></li>
+                        <li class="menuSesion">
+                    <img src="perfil.png" class="fotoPerfil" alt="Perfil">
+                    <ul class="dropdown">
+                        <li><a href="#">Mi perfil</a></li>
+                        <li><a href="configuracion.html">Configuración</a></li>
+                        <li><a href="#">Cerrar sesión</a></li>
+                    </ul>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </header>
+        <div class="contenedor">
+            <div id="Contacto">
+                <form action="servicio.php" method="post">
+                <div class="CajaContacto">
+                    <div class="formulario">
+                        <div class="caja1">
+                            <h1 class="titulo">Contactenos</h1>
+                            <div class="texto-informacion">
+                                Solicita información sobre Educamos y un asesor se pondrá en contacto contigo lo antes posible. Si ya eres usuario y necesitas resolver cualquier cuestión, dirígete a tu centro escolar para que sean ellos quienes abran un canal de comunicación con nosotros a través de Educamos Cerca.
+
+                            </div>
+                            <div class="texto-direccion">
+                                Dirección:
+                                C/ Impresores, 2. 28660.
+                                Boadilla del Monte, Madrid.
+                                T: 91 42 2 88 00
+                            </div>
+                        </div>
+                        <div class="caja2">
+                            <label for="nombre">Nombre*</label>
+                                <input type="text" id="nombre" name="nombre" placeholder="Ejemplo: Juan" maxlength="25" required>
+                            <label for="apellido">Apellido*</label>
+                                <input type="text" id="apellido" name="apellido" placeholder="Ejemplo: Gutierrez" maxlength="25" required>                                  
+                            <label for="correo">Email*</label>
+                                <input type="email" id="correo" name="correo" placeholder="ejemplo@gmail.com" maxlength="60" required>
+                            <label for="telefono">Telefono*</label>
+                                <input type="tel" id="telefono" name="telefono" placeholder="+34 698 251 235"pattern="^\+?[0-9\s]{9,15}$" required>
+                            <label for="perfil">Perfil*</label>
+                            <select name="perfil" id="perfil" required>
+                                <option value="">Seleccione una opción</option>                                
+                                <option value="coordinador">Coordinador</option>
+                                <option value="docente">Docente</option>
+                                <option value="tutor">Tutor legal</option>
+                                <option value="otro">Otro</option>
+                            </select>
+                            <label for="codigo_Postal">Codigo Postal (XXXXX)*</label>
+                                <input type="text" name="codigo_Postal" pattern="[0-9]{5}" title="5 dígitos" placeholder="28016" maxlength="10" required>
+                            <label for="centro">Centro educativo*</label>
+                                <input type="text" id="centro" name="centro" placeholder="Colegio Salesiano Santo Domingo Savio" maxlength="50" required>
+                            <p>¿Eres usuario/a de la web?*</p>
+                                <input type="radio" id="si" name="seleccion2" value="si" required><label class="radio-label" for="si">Sí</label>
+                                <input type="radio" id="no" name="seleccion2" value="no"><label class="radio-label" for="no">No</label>
+                            <label for="textarea">Escriba aqui su consulta</label>
+                                <textarea name="textarea" id="textarea"></textarea>
+                            <input class="boton" type="submit" value="Enviar">
+                        </div>
+                    </div>
+                </div>
+                </form>
+            </div>
+        </div>
+            <div id="contInformacion">
+                <div class="info">
+                    <div class="info1">
+                        <p>njfakjs</p>
+                    </div>
+                </div>
+            </div>
+        <script src="menuSesion.js"></script>
+    </body>
+</html>
