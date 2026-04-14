@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edunoly · Mi Horario</title>
-    <script src="temas.js"></script>
-    <link rel="stylesheet" href="temas.css">
-    <link rel="stylesheet" href="EstilosCalendario.css"> 
+    <script src="{{ asset('js/temas.js') }}"></script>
+    <link rel="stylesheet" href="{{ asset('css/temas.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/EstilosCalendario.css') }}"> 
 </head>
 <body>
 
@@ -16,14 +16,14 @@
         <div class="barraNav">
             <ul class="menu">
                 <li class="logo">
-                    <img src="logo.svg" alt="Edunoly">
+                    <img src="{{ asset('img/logo.svg') }}" alt="Edunoly">
                 </li>
-                <li><a href="PaginaInicio.html">Inicio</a></li>
-                <li><a href="PaginaContacto.html">Contacto</a></li>
-                <li class="activo"><a href="calendario.html">Mi Horario</a></li>
+                <li><a href="{{ route('inicio') }}">Inicio</a></li>
+                <li><a href="{{ route('contacto') }}">Contacto</a></li>
+                <li class="activo"><a href="{{ route('calendario') }}">Mi Horario</a></li>
 
                 <li class="derecha menuSesion">
-                    <img src="perfil.png" class="fotoPerfil" alt="Perfil">
+                    <img src="{{ asset('img/perfil.png') }}" class="fotoPerfil" alt="Perfil">
                     <ul class="dropdown">
                         <li class="dropdown-nombre"><span id="nav-nombre"></span></li>
                         <li class="dropdown-rol"><span id="nav-rol"></span></li>

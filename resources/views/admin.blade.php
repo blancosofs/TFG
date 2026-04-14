@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edunoly · Panel de Administración</title>
-    <script src="temas.js"></script>
-    <link rel="stylesheet" href="temas.css">
+    <script src="{{ asset('js/temas.js') }}"></script>
+    <link rel="stylesheet" href="{{ asset('css/temas.css') }}">
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -365,8 +365,8 @@
     <nav>
         <div class="barraNav">
             <ul class="menu">
-                <li class="logo"><img src="logo.svg" alt="Edunoly"></li>
-                <li><a href="PaginaInicio.html">Inicio</a></li>
+                <li class="logo"><img src="{{ asset('img/logo.svg') }}" alt="Edunoly"></li>
+                <li><a href="{{ route('inicio') }}">Inicio</a></li>
                 <li><span class="badge-admin">⚙ Admin</span></li>
                 <li class="derecha" style="display:flex;align-items:center;padding-right:20px">
                     <span style="font-size:13px;color:var(--nav-texto);opacity:.7">Panel de Administración</span>
@@ -649,8 +649,8 @@
 
 <div class="toast" id="toast"></div>
 
-<script src="temas.js"></script>
-<script src="MenuSesion.js"></script>
+<script src="{{ asset('js/temas.js') }}"></script>
+<script src="{{ asset('js/MenuSesion.js') }}"></script>
 <script>
 /* ══════════════════════════════════════════════════════════════
    CONFIG

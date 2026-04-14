@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Unete a nosotros</title>
-    <link rel="stylesheet" href="EstilosPaginaUnete.css">
+    <link rel="stylesheet" href="{{ asset('css/EstilosPaginaUnete.css') }}">
 </head>
 
 <body>
@@ -16,15 +16,15 @@
             <div class="barraNav">
                 <ul class="menu">
                     <li class="logo">
-                        <img src="logo.svg" alt="Edunoly">
+                        <img src="{{ asset('img/logo.svg') }}" alt="Edunoly">
                     </li>
-                    <li><a href="PaginaInicio.html">Inicio</a></li>
-                    <li><a href="PaginaContacto.html">Contacto</a></li>
-                    <li><a href="PaginaUnete.html">Unete</a></li>
+                    <li><a href="{{ route('index') }}">Inicio</a></li>
+                    <li><a href="{{ route('contacto') }}">Contacto</a></li>
+                    <li><a href="{{ route('unete') }}">Unete</a></li>
 
-                    <li class="derecha"><a href="login.html">Iniciar Sesión</a></li>
+                    <li class="derecha"><a href="{{ route('login') }}">Iniciar Sesión</a></li>
                     <li class="menuSesion">
-                        <img src="perfil.png" class="fotoPerfil" alt="Perfil">
+                        <img src="{{ asset('img/perfil.png') }}" class="fotoPerfil" alt="Perfil">
                         <ul class="dropdown">
                             <li><a href="#">Mi perfil</a></li>
                             <li><a href="#">Configuración</a></li>
@@ -157,7 +157,7 @@
                 <ul class="infoLista">
                     <li><a href="#">Sobre nosotros</a></li>
                     <li><a href="#">Nuestro equipo</a></li>
-                    <li><a href="PaginaContacto.html">Contacto</a></li>
+                    <li><a href="{{ route('contacto') }}">Contacto</a></li>
                 </ul>
             </div>
 
@@ -197,7 +197,7 @@
             <p>© 2026 Edunoly · Todos los derechos reservados</p>
         </div>
     </div>
-    <script src="menuSesion.js"></script>
+    <script src="{{ asset('js/menuSesion.js') }}"></script>
 </body>
 
 </html>
