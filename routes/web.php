@@ -8,7 +8,7 @@ Route::view('/contacto', 'PaginaContacto')->name('contacto');
 Route::view('/unete', 'PaginaUnete')->name('unete');
 
 Route::view('/login', 'login')->name('login');
-Route::view('/configuracion', 'config')->name('config');
+Route::view('/configuracion', 'configuracion')->name('config');
 
 
 Route::view('/perfil', 'perfil')->name('perfil');
