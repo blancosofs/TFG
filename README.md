@@ -1,19 +1,15 @@
-## PULL INSTRUCTIONS
+## INSTRUCTIONS
 
-Holap, para hacer trabajar en el repo hay que hacer un par de cosas antes.
+Holap, para hacer trabajar en el repo hay que hacer un par de cosas antes. Cualquier duda darme un toque o revisar la documentacion :)))
 
---> Para laravel si es la primera vez con Windows XAMPP
+--> Para trabajar en un nuevo entorno:
+1. Instalar Herd con versión 8.3 de PHP y abrir el repo (carpeta TFG) en terminal y ejecutar: $composer install.
 
-1. Ir a getcomposer.org, descargar el .exe e instalar 
+--> Variables 
+1. Abrir el archivo .env.example y renombrarlo a .env
+2. abrir el repo (carpeta TFG) en terminal y ejecutar: $php artisan key:generate
+3. Añadir esa key a APP_KEY=
 
-2. Abrir el repo (carpeta TFG) en terminal y ejecutar: $composer install
-
-3. Abrir el repo (carpeta TFG) en vscode y crear el .env 
-==> Abrir el archivo .env.example y renombrarlo a .env 
-==> Comprobar q esta igual que el de whats
-
-4. Abrir el repo (carpeta TFG) en terminal y ejecutar: $php artisan key:generate
-
-5. Abrir el repo (carpeta TFG) en terminal y ejecutar: $php artisan serve
-
-6. Git pull editar y git push normal 
+--> Deploy local
+1. En terminal ejecutar $php artisan serve
+Saldra el link para nuestra pagina web
