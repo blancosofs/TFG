@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edunoly · Mi Perfil</title>
-    <script src="temas.js"></script>
-    <link rel="stylesheet" href="temas.css">
-    <link rel="stylesheet" href="EstilosPerfil.css">
+    <script src="{{ asset('js/temas.js') }}"></script>
+    <link rel="stylesheet" href="{{ asset('css/temas.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/EstilosPerfil.css') }}">
 </head>
 <body>
 
@@ -16,21 +16,21 @@
         <div class="barraNav">
             <ul class="menu">
                 <li class="logo">
-                    <img src="logo.svg" alt="Edunoly">
+                    <img src="{{ asset('img/logo.svg') }}" alt="Edunoly">
                 </li>
-                <li><a href="PaginaInicio.html">Inicio</a></li>
-                <li><a href="PaginaContacto.html">Contacto</a></li>
-                <li><a href="calendario.html">Mi Horario</a></li>
-                <li class="activo"><a href="perfil.html">Mi Perfil</a></li>
+                <li><a href="{{ route('index') }}">Inicio</a></li>
+                <li><a href="{{ route('contacto') }}">Contacto</a></li>
+                <li><a href="{{ route('calendario') }}">Mi Horario</a></li>
+                <li class="activo"><a href="{{ route('perfil') }}">Mi Perfil</a></li>
 
                 <li class="derecha menuSesion">
-                    <img src="perfil.png" class="fotoPerfil" alt="Perfil">
+                    <img src="{{ asset('img/perfil.png') }}" class="fotoPerfil" alt="Perfil">
                     <ul class="dropdown">
                         <li class="dropdown-nombre"><span id="nav-nombre"></span></li>
                         <li class="dropdown-rol"><span id="nav-rol">Docente</span></li>
                         <li class="dropdown-sep"></li>
-                        <li><a href="perfil.html">👤 Mi perfil</a></li>
-                        <li><a href="configuracion.html">⚙️ Configuración</a></li>
+                        <li><a href="{{ route('perfil') }}">👤 Mi perfil</a></li>
+                        <li><a href="{{ route('config') }}">⚙️ Configuración</a></li>
                         <li><a href="#" id="btn-logout">Cerrar sesión</a></li>
                     </ul>
                 </li>
@@ -57,7 +57,7 @@
         <!-- Foto + datos principales -->
         <div class="card-perfil">
             <div class="foto-wrap">
-                <img src="perfil.png" alt="Foto de perfil" class="foto-grande" id="foto-preview">
+                <img src="{{ asset('img/perfil.png') }}" alt="Foto de perfil" class="foto-grande" id="foto-preview">
                 <label class="foto-btn" title="Cambiar foto">
                     📷
                     <input type="file" id="input-foto" accept="image/*" style="display:none" onchange="previsualizarFoto(this)">
@@ -104,17 +104,17 @@
         <!-- Accesos rápidos -->
         <div class="card-links">
             <p class="card-section-titulo">Accesos rápidos</p>
-            <a href="calendario.html" class="link-rapido">
+            <a href="{{ route('calendario') }}" class="link-rapido">
                 <span class="link-ico">📅</span>
                 <span>Mi horario</span>
                 <span class="link-arrow">›</span>
             </a>
-            <a href="configuracion.html" class="link-rapido">
+            <a href="{{ route('config') }}" class="link-rapido">
                 <span class="link-ico">⚙️</span>
                 <span>Configuración</span>
                 <span class="link-arrow">›</span>
             </a>
-            <a href="PaginaContacto.html" class="link-rapido">
+            <a href="{{ route('contacto') }}" class="link-rapido">
                 <span class="link-ico">✉️</span>
                 <span>Contacto</span>
                 <span class="link-arrow">›</span>
@@ -294,8 +294,8 @@
 
 <div class="toast" id="toast"></div>
 
-<script src="temas.js"></script>
-<script src="MenuSesion.js"></script>
+<script src="{{ asset('js/temas.js') }}"></script>
+<script src="{{ asset('js/MenuSesion.js') }}"></script>
 <script>
 /* ══════════════════════════════════════════════════════════════
    CONFIG
@@ -519,7 +519,7 @@ function previsualizarFoto(input) {
 document.getElementById('btn-logout')?.addEventListener('click', async e => {
     e.preventDefault();
     await api('POST', '/api/logout');
-    window.location.href = 'login.html';
+    window.location.href = '{{ route('login') }}';
 });
 
 /* ── Utilidades ── */

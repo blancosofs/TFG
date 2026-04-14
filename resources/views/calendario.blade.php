@@ -18,7 +18,7 @@
                 <li class="logo">
                     <img src="{{ asset('img/logo.svg') }}" alt="Edunoly">
                 </li>
-                <li><a href="{{ route('inicio') }}">Inicio</a></li>
+                <li><a href="{{ route('index') }}">Inicio</a></li>
                 <li><a href="{{ route('contacto') }}">Contacto</a></li>
                 <li class="activo"><a href="{{ route('calendario') }}">Mi Horario</a></li>
 
@@ -178,13 +178,13 @@ async function api(method, ruta, body) {
 
     // Sin sesión → login
     if (!data || !data.id) {
-        window.location.href = 'login.html';
+        window.location.href = '{{ route('login') }}';
         return;
     }
 
     // Rol incorrecto → login (no es docente)
     if (data.rol !== 'docente') {
-        window.location.href = 'login.html';
+        window.location.href = '{{ route('login') }}';
         return;
     }
 
@@ -214,7 +214,7 @@ function iniciarApp() {
 document.getElementById('btn-logout').addEventListener('click', async e => {
     e.preventDefault();
     await api('POST', '/api/logout');
-    window.location.href = 'login.html';
+    window.location.href = '{{ route('login') }}';
 });
 
 /* ══════════════════════════════════════════════════════════════

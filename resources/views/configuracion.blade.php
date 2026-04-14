@@ -18,9 +18,9 @@
         <div class="barraNav">
             <ul class="menu">
                 <li class="logo"><img src="{{ asset('img/logo.svg') }}" alt="Edunoly"></li>
-                <li><a href="{{ route('inicio') }}">Inicio</a></li>
+                <li><a href="{{ route('index') }}">Inicio</a></li>
                 <li><a href="{{ route('contacto') }}">Contacto</a></li>
-                <li class="activo"><a href="{{ route('configuracion') }}">Configuración</a></li>
+                <li class="activo"><a href="{{ route('config') }}">Configuración</a></li>
             </ul>
         </div>
     </nav>

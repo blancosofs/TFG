@@ -366,7 +366,7 @@
         <div class="barraNav">
             <ul class="menu">
                 <li class="logo"><img src="{{ asset('img/logo.svg') }}" alt="Edunoly"></li>
-                <li><a href="{{ route('inicio') }}">Inicio</a></li>
+                <li><a href="{{ route('index') }}">Inicio</a></li>
                 <li><span class="badge-admin">⚙ Admin</span></li>
                 <li class="derecha" style="display:flex;align-items:center;padding-right:20px">
                     <span style="font-size:13px;color:var(--nav-texto);opacity:.7">Panel de Administración</span>
