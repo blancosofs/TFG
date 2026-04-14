@@ -4,9 +4,9 @@
         <title>Página Contacto</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <script src="temas.js"></script>
-        <link rel="stylesheet" href="temas.css">
-        <link rel="stylesheet" href="EstilosPaginaContacto.css">
+        <script src="{{ asset('js/temas.js') }}"></script>
+        <link rel="stylesheet" href="{{ asset('css/temas.css') }}">
+        <link rel="stylesheet" href="{{ asset('css/EstilosPaginaContacto.css') }}">
     </head>
     <body>
         <header>
@@ -14,13 +14,13 @@
                 <div class="barraNav">
                     <ul class="menu">
                         <li class="logo">
-                            <img src="logo.svg" alt="Edunoly">
+                            <img src="{{ asset('img/logo.svg') }}" alt="Edunoly">
                         </li>
-                        <li><a href="PaginaInicio.html">Inicio</a></li>
-                        <li><a href="PaginaContacto.html">Contacto</a></li>
-                        <li><a href="configuracion.html">Configuración</a></li>
+                        <li><a href="{{ route('index') }}">Inicio</a></li>
+                        <li><a href="{{ route('contacto') }}">Contacto</a></li>
+                        <li><a href="{{ route('config') }}">Configuración</a></li>
 
-                        <li class="derecha"><a href="login.html">Iniciar Sesión</a></li>
+                        <li class="derecha"><a href="{{ route('login') }}">Iniciar Sesión</a></li>
                     </ul>
                 </div>
             </nav>
@@ -83,6 +83,6 @@
                     </div>
                 </div>
             </div>
-        <script src="menuSesion.js"></script>
+        <script src="{{ asset('js/menuSesion.js') }}"></script>
     </body>
 </html>

@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edunoly · Perfil Admin</title>
-    <script src="temas.js"></script>
-    <link rel="stylesheet" href="temas.css">
-    <link rel="stylesheet" href="EstilosPerfil.css">
-    <link rel="stylesheet" href="EstilosPerfilAdmin.css">
+    <script src="{{ asset('js/temas.js') }}"></script>
+    <link rel="stylesheet" href="{{ asset('css/temas.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/EstilosPerfil.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/EstilosPerfilAdmin.css') }}">
 </head>
 <body>
 
@@ -16,18 +16,18 @@
     <nav id="Navegador">
         <div class="barraNav">
             <ul class="menu">
-                <li class="logo"><img src="logo.svg" alt="Edunoly"></li>
-                <li><a href="admin.html">Panel Admin</a></li>
-                <li class="activo"><a href="perfilAdmin.html">Mi Perfil</a></li>
+                <li class="logo"><img src="{{ asset('img/logo.svg') }}" alt="Edunoly"></li>
+                <li><a href="{{ route('admin') }}">Panel Admin</a></li>
+                <li class="activo"><a href="{{ route('perfilAdmin') }}">Mi Perfil</a></li>
 
                 <li class="derecha menuSesion">
-                    <img src="perfil.png" class="fotoPerfil" alt="Perfil">
+                    <img src="{{ asset('img/perfil.png') }}" class="fotoPerfil" alt="Perfil">
                     <ul class="dropdown">
                         <li class="dropdown-nombre"><span id="nav-nombre">Administrador</span></li>
                         <li class="dropdown-rol">Sistema</li>
                         <li class="dropdown-sep"></li>
-                        <li><a href="perfilAdmin.html">👤 Mi perfil</a></li>
-                        <li><a href="configuracion.html">⚙️ Configuración</a></li>
+                        <li><a href="{{ route('perfilAdmin') }}">👤 Mi perfil</a></li>
+                        <li><a href="{{ route('config') }}">⚙️ Configuración</a></li>
                         <li><a href="#" id="btn-logout">Cerrar sesión</a></li>
                     </ul>
                 </li>
@@ -54,7 +54,7 @@
         <!-- Foto + datos -->
         <div class="card-perfil">
             <div class="foto-wrap">
-                <img src="perfil.png" alt="Admin" class="foto-grande" id="foto-preview">
+                <img src="{{ asset('img/perfil.png') }}" alt="Admin" class="foto-grande" id="foto-preview">
                 <label class="foto-btn foto-btn-admin" title="Cambiar foto">
                     📷
                     <input type="file" id="input-foto" accept="image/*" style="display:none" onchange="previsualizarFoto(this)">
@@ -97,12 +97,12 @@
         <!-- Accesos rápidos -->
         <div class="card-links">
             <p class="card-section-titulo">Accesos rápidos</p>
-            <a href="admin.html" class="link-rapido">
+            <a href="{{ route('admin') }}" class="link-rapido">
                 <span class="link-ico">🏫</span>
                 <span>Gestión de colegios</span>
                 <span class="link-arrow">›</span>
             </a>
-            <a href="configuracion.html" class="link-rapido">
+            <a href="{{ route('config') }}" class="link-rapido">
                 <span class="link-ico">⚙️</span>
                 <span>Configuración</span>
                 <span class="link-arrow">›</span>
@@ -162,7 +162,7 @@
                     <h3 class="seccion-titulo">🏫 Resumen de colegios</h3>
                     <p class="seccion-sub">Últimos centros registrados en el sistema.</p>
                 </div>
-                <a href="admin.html" class="btn-editar">Ver todos ›</a>
+                <a href="{{ route('admin') }}" class="btn-editar">Ver todos ›</a>
             </div>
 
             <div id="colegios-resumen">
@@ -231,8 +231,8 @@
 
 <div class="toast" id="toast"></div>
 
-<script src="temas.js"></script>
-<script src="MenuSesion.js"></script>
-<script src="perfilAdmin.js"></script>
+<script src="{{ asset('js/temas.js') }}"></script>
+<script src="{{ asset('js/MenuSesion.js') }}"></script>
+<script src="{{ asset('js/perfilAdmin.js') }}"></script>
 </body>
 </html>

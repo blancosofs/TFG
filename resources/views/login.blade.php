@@ -5,14 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Edunoly · Acceso</title>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
-  <script src="temas.js"></script>
-  <link rel="stylesheet" href="temas.css">
-  <link rel="stylesheet" href="login.css">
+  <script src="{{ asset('js/temas.js') }}"></script>
+  <link rel="stylesheet" href="{{ asset('css/temas.css') }}">
+  <link rel="stylesheet" href="{{ asset('css/login.css') }}">
 </head>
 <body>
 
 <!-- ── FLECHA VOLVER ── -->
-<a href="PaginaInicio.html" class="btnVolver" aria-label="Volver al inicio">
+<a href="{{ route('index') }}" class="btnVolver" aria-label="Volver al inicio">
   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
     <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"/>
   </svg>
@@ -140,6 +140,6 @@
   </div>
 </main>
 
-<script src="login.js"></script>
+<script src="{{ asset('js/login.js') }}"></script>
 </body>
 </html>

@@ -3,9 +3,9 @@
         <title>Página inicio</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <script src="temas.js"></script>
-        <link rel="stylesheet" href="temas.css">
-        <link rel="stylesheet" href="EstilosPaginaInicio.css">
+        <script src="{{ asset('js/temas.js') }}"></script>
+        <link rel="stylesheet" href="{{ asset('css/temas.css') }}">
+        <link rel="stylesheet" href="{{ asset('css/EstilosPaginaInicio.css') }}">
     </head>
     <body>
         <header>
@@ -13,13 +13,13 @@
                 <div class="barraNav">
                     <ul class="menu">
                         <li class="logo">
-                            <img src="logo.svg" alt="Edunoly">
+                            <img src="{{ asset('img/logo.svg') }}" alt="Edunoly">
                         </li>
-                        <li><a href="PaginaInicio.html">Inicio</a></li>
-                        <li><a href="PaginaContacto.html">Contacto</a></li>
-                        <li><a href="configuracion.html">Configuración</a></li>
+                        <li><a href="{{ route('index') }}">Inicio</a></li>
+                        <li><a href="{{ route('contacto') }}">Contacto</a></li>
+                        <li><a href="{{ route('config') }}">Configuración</a></li>
 
-                        <li class="derecha"><a href="login.html">Iniciar Sesión</a></li>
+                        <li class="derecha"><a href="{{ route('login') }}">Iniciar Sesión</a></li>
                     </ul>
                 </div>
             </nav>
@@ -30,7 +30,7 @@
             </div>
             <div id="contSobreNosotros">
                 <div class="imagenSobreNosotros">
-                    <img src="imagenSobreNosotros.png" alt="Equipo de Edunoly trabajando con centros educativos">
+                    <img src="{{ asset('img/imagenSobreNosotros.png') }}" alt="Equipo de Edunoly trabajando con centros educativos">
                 </div>
                 <div class="textoSobreNosotros">
                     <p class="tituInfoNosotros">Sobre Nosotros</p>
@@ -248,7 +248,7 @@
                 <div class="ctaContenido">
                     <h2 class="ctaTitulo">¿Tu centro quiere unirse a Edunoly?</h2>
                     <p class="ctaSubtitulo">Cuéntanos tu caso y un asesor se pondrá en contacto contigo para explicarte todo sin compromiso.</p>
-                    <a href="PaginaContacto.html" class="ctaBoton">Contactar ahora</a>
+                    <a href="{{ route('contacto') }}" class="ctaBoton">Contactar ahora</a>
                 </div>
             </div>
 
@@ -260,7 +260,7 @@
                         <ul class="infoLista">
                             <li><a href="#">Sobre nosotros</a></li>
                             <li><a href="#">Nuestro equipo</a></li>
-                            <li><a href="PaginaContacto.html">Contacto</a></li>
+                            <li><a href="{{ route('contacto') }}">Contacto</a></li>
                         </ul>
                     </div>
 
@@ -299,6 +299,6 @@
                 </div>
             </div>
 
-    <script src="PaginaInicio.js"></script>
+    <script src="{{ asset('js/PaginaInicio.js') }}"></script>
     </body>
 </html>

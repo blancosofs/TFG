@@ -6,9 +6,9 @@
     <title>Edunoly · Configuración</title>
 
     <!-- Temas PRIMERO para evitar flash de color incorrecto -->
-    <script src="temas.js"></script>
-    <link rel="stylesheet" href="temas.css">
-    <link rel="stylesheet" href="EstilosConfiguracion.css">
+    <script src="{{ asset('js/temas.js') }}"></script>
+    <link rel="stylesheet" href="{{ asset('css/temas.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/EstilosConfiguracion.css') }}">
 </head>
 <body>
 
@@ -17,10 +17,10 @@
     <nav>
         <div class="barraNav">
             <ul class="menu">
-                <li class="logo"><img src="logo.svg" alt="Edunoly"></li>
-                <li><a href="PaginaInicio.html">Inicio</a></li>
-                <li><a href="PaginaContacto.html">Contacto</a></li>
-                <li class="activo"><a href="configuracion.html">Configuración</a></li>
+                <li class="logo"><img src="{{ asset('img/logo.svg') }}" alt="Edunoly"></li>
+                <li><a href="{{ route('index') }}">Inicio</a></li>
+                <li><a href="{{ route('contacto') }}">Contacto</a></li>
+                <li class="activo"><a href="{{ route('config') }}">Configuración</a></li>
             </ul>
         </div>
     </nav>
@@ -228,8 +228,8 @@
 
 <div class="toast" id="toast"></div>
 
-<script src="temas.js"></script>
-<script src="MenuSesion.js"></script>
+<script src="{{ asset('js/temas.js') }}"></script>
+<script src="{{ asset('js/MenuSesion.js') }}"></script>
 <script>
 /* ── Marca el tema activo al cargar ── */
 document.addEventListener('DOMContentLoaded', () => {
@@ -290,7 +290,7 @@ function mostrarToast(msg) {
 document.getElementById('btn-logout')?.addEventListener('click', async e => {
     e.preventDefault();
     await fetch('/api/logout', { method: 'POST', credentials: 'include' });
-    window.location.href = 'login.html';
+    window.location.href = '{{ route('login') }}';
 });
 </script>
 </body>
