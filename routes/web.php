@@ -1,21 +1,20 @@
 <?php
 
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
-//html
-Route::view('/', 'PaginaInicio')->name('index');
-Route::view('/contacto', 'PaginaContacto')->name('contacto');
-Route::view('/unete', 'PaginaUnete')->name('unete');
+Route::get('/', function () {
+    return view('welcome');
+});
 
-Route::view('/login', 'login')->name('login');
-Route::view('/configuracion', 'configuracion')->name('config');
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
 
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
 
-Route::view('/perfil', 'perfil')->name('perfil');
-Route::view('/perfil/admin', 'perfilAdmin')->name('perfil.admin');
-Route::view('/perfil/familia', 'perfilFamilia')->name('perfil.familia');
-Route::view('/perfil/profesor', 'perfilProfesor')->name('perfil.profesor');
-
-
-Route::view('/calendario', 'calendario')->name('calendario');
-Route::view('/admin-panel', 'admin')->name('admin.panel');
+require __DIR__.'/auth.php';
