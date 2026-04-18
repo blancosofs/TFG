@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 //html
@@ -7,7 +8,7 @@ Route::view('/', 'PaginaInicio')->name('index');
 Route::view('/contacto', 'PaginaContacto')->name('contacto');
 Route::view('/unete', 'PaginaUnete')->name('unete');
 
-Route::view('/login', 'login')->name('login');
+//Route::view('/login', 'login')->name('login');
 Route::view('/configuracion', 'configuracion')->name('config');
 
 
@@ -19,3 +20,5 @@ Route::view('/perfil/profesor', 'perfilProfesor')->name('perfil.profesor');
 
 Route::view('/calendario', 'calendario')->name('calendario');
 Route::view('/admin-panel', 'admin')->name('admin.panel');
+
+require __DIR__.'/auth.php';
