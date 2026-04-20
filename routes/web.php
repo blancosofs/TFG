@@ -2,6 +2,11 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\SolicitudController; //para el formulario de unete
+
+//controladores
+Route::post('/unete', [SolicitudController::class, 'enviar'])->name('solicitud.enviar'); //aqui se maneja el formulario de unete, se llama al metodo enviar del controlador SolicitudController
+
 
 //html
 Route::view('/', 'PaginaInicio')->name('index');
