@@ -679,3 +679,137 @@ input[type="email"]:focus {
 .dropdown li a:hover     { background-color: #f2f2f2 !important; color: #111 !important; }
 .dropdown-nombre         { color: #111 !important; padding: 10px 15px 2px !important; font-size: 13px !important; font-weight: 700 !important; }
 .dropdown-rol            { color: #888 !important; padding: 0 15px 8px !important; font-size: 11px !important; }
+
+
+/* ══════════════════════════════════════════════════════════════
+   NAVEGACIÓN RESPONSIVE — aplica a todas las páginas
+   Punto de corte: 768px
+══════════════════════════════════════════════════════════════ */
+
+/* ── Botón hamburguesa (oculto en escritorio) ── */
+.menu-toggle {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 12px;
+    margin-left: auto;
+    z-index: 200;
+}
+
+.menu-toggle span {
+    display: block;
+    width: 24px;
+    height: 2px;
+    background: var(--nav-texto);
+    border-radius: 2px;
+    transition: transform .3s, opacity .3s;
+}
+
+/* Animación X al abrir */
+.menu-toggle.abierto span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.menu-toggle.abierto span:nth-child(2) { opacity: 0; }
+.menu-toggle.abierto span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+@media (max-width: 768px) {
+
+    /* Mostrar el botón hamburguesa */
+    .menu-toggle { display: flex; }
+
+    /* El logo ocupa el lado izquierdo, el botón el derecho */
+    .barraNav { padding: 0 16px; position: relative; }
+
+    .menu {
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    /* Ocultar todos los li excepto logo y botón hamburguesa */
+    .menu li:not(.logo):not(.menu-toggle-li) {
+        display: none;
+        width: 100%;
+    }
+
+    /* Cuando el menú está abierto, mostrar todos */
+    .menu.abierto li:not(.logo):not(.menu-toggle-li) {
+        display: block;
+    }
+
+    /* Estilo de los enlaces en modo móvil */
+    .menu.abierto li a {
+        padding: 14px 20px;
+        border-top: 1px solid color-mix(in srgb, var(--nav-texto) 10%, transparent);
+        font-size: 15px;
+        display: block;
+    }
+
+    .menu.abierto li.derecha {
+        margin-left: 0;
+    }
+
+    .menu.abierto li.derecha a {
+        color: var(--acento);
+        font-weight: 700;
+    }
+
+    /* Ocultar el li derecha que no es el botón de sesión en móvil */
+    .menu li.derecha:not(.menu-toggle-li) {
+        display: none;
+    }
+
+    .menu.abierto li.derecha:not(.menu-toggle-li) {
+        display: block;
+    }
+}
+
+
+/* ══════════════════════════════════════════════════════════════
+   TAMAÑO DE FUENTE — nunca afecta a formularios
+══════════════════════════════════════════════════════════════ */
+
+/* Excluir formularios del cambio de tamaño */
+body.fuente-grande   .caja2 *,
+body.fuente-muy-grande .caja2 * { font-size: revert !important; }
+
+/* Grande 18px — solo texto de contenido */
+body.fuente-grande .menu li a,
+body.fuente-grande p:not(.caja2 p),
+body.fuente-grande .opcion-nombre,
+body.fuente-grande .opcion-desc,
+body.fuente-grande .seccion-titulo,
+body.fuente-grande .seccion-sub,
+body.fuente-grande .dato-val,
+body.fuente-grande .dato-lbl,
+body.fuente-grande .etiqueta,
+body.fuente-grande .hero-sub,
+body.fuente-grande .pasoDesc,
+body.fuente-grande .textoNosotros,
+body.fuente-grande .infoLista li,
+body.fuente-grande .infoCopyright p { font-size: 18px !important; }
+
+body.fuente-grande h1 { font-size: 36px !important; }
+body.fuente-grande h2 { font-size: 28px !important; }
+body.fuente-grande h3:not(.infoTitulo) { font-size: 22px !important; }
+
+/* Muy grande 24px */
+body.fuente-muy-grande .menu li a,
+body.fuente-muy-grande p:not(.caja2 p),
+body.fuente-muy-grande .opcion-nombre,
+body.fuente-muy-grande .opcion-desc,
+body.fuente-muy-grande .seccion-titulo,
+body.fuente-muy-grande .seccion-sub,
+body.fuente-muy-grande .dato-val,
+body.fuente-muy-grande .dato-lbl,
+body.fuente-muy-grande .etiqueta,
+body.fuente-muy-grande .hero-sub,
+body.fuente-muy-grande .pasoDesc,
+body.fuente-muy-grande .textoNosotros,
+body.fuente-muy-grande .infoLista li,
+body.fuente-muy-grande .infoCopyright p { font-size: 24px !important; }
+
+body.fuente-muy-grande h1 { font-size: 44px !important; }
+body.fuente-muy-grande h2 { font-size: 34px !important; }
+body.fuente-muy-grande h3:not(.infoTitulo) { font-size: 28px !important; }

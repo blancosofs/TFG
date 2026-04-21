@@ -192,9 +192,9 @@ body {
 
 .tema-card.activo .tema-check { display: flex; }
 
-.tema-info   { padding: 10px 12px; background: rgba(0,0,0,.25); }
-.tema-nombre { font-size: 13px; font-weight: 600; color: #ffffff; }
-.tema-desc   { font-size: 11px; color: rgba(255,255,255,.55); margin-top: 2px; }
+.tema-info   { padding: 10px 12px; background: rgba(0,0,0,.65); }
+.tema-nombre { font-size: 13px; font-weight: 600; color: #ffffff !important; }
+.tema-desc   { font-size: 11px; color: rgba(255,255,255,.65) !important; margin-top: 2px; }
 
 /* Miniaturas fijas — colores intencionales del tema representado */
 .p-verde   .tema-preview-nav   { background: linear-gradient(to right, #47ad79, #092422); }

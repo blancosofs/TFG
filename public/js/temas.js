@@ -7,6 +7,46 @@
 (function () {
     const tema = localStorage.getItem('edunoly-tema') || 'verde';
     document.documentElement.setAttribute('data-tema', tema);
+
+    // Aplicar opciones de accesibilidad guardadas en todas las páginas
+    try {
+        const opts = JSON.parse(localStorage.getItem('edunoly-config') || '{}');
+
+        // Tamaño de fuente — aplica clase al body
+        document.addEventListener('DOMContentLoaded', () => {
+            document.body.classList.remove('fuente-grande', 'fuente-muy-grande');
+            if (opts.fuente === 'grande')      document.body.classList.add('fuente-grande');
+            if (opts.fuente === 'muy-grande')  document.body.classList.add('fuente-muy-grande');
+        });
+
+        // Animaciones reducidas
+        if (opts.animaciones) {
+            const s = document.createElement('style');
+            s.id = 'estilo-animaciones';
+            s.textContent = `*, *::before, *::after {
+                animation-duration: 0ms !important;
+                transition-duration: 0ms !important;
+            }`;
+            document.head.appendChild(s);
+        }
+
+        // Alto contraste
+        if (opts.contraste) {
+            const s = document.createElement('style');
+            s.id = 'estilo-contraste';
+            s.textContent = `body { filter: contrast(1.25); }`;
+            document.head.appendChild(s);
+        }
+
+        // Subrayar enlaces
+        if (opts.enlaces) {
+            const s = document.createElement('style');
+            s.id = 'estilo-enlaces';
+            s.textContent = `a { text-decoration: underline !important; }`;
+            document.head.appendChild(s);
+        }
+
+    } catch(e) {}
 })();
 
 /* ──────────────────────────────────────────────────────────────
@@ -48,16 +88,24 @@ function inyectarLogo() {
 ────────────────────────────────────────────────────────────── */
 
 /**
- * Cambia el tema activo y lo persiste en localStorage.
- * @param {string} nombre — 'verde'|'negro'|'blanco'|'azul'|'purpura'|'rojo'
+ * Aplica el tema visualmente SIN guardarlo en localStorage.
+ * Usar para vista previa en la página de configuración.
  */
 function aplicarTema(nombre) {
     document.documentElement.setAttribute('data-tema', nombre);
-    localStorage.setItem('edunoly-tema', nombre);
-    /* El logo ya es inline, las variables CSS lo actualizan solas */
+    /* NO guarda en localStorage — solo vista previa */
 }
 
-/** Devuelve el tema actualmente activo. */
+/**
+ * Aplica el tema Y lo guarda en localStorage.
+ * Llamar solo cuando el usuario pulse "Guardar cambios".
+ */
+function guardarTema(nombre) {
+    document.documentElement.setAttribute('data-tema', nombre);
+    localStorage.setItem('edunoly-tema', nombre);
+}
+
+/** Devuelve el tema actualmente guardado. */
 function temaActual() {
     return localStorage.getItem('edunoly-tema') || 'verde';
 }
