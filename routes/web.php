@@ -2,6 +2,11 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\SolicitudController; //para el formulario de unete
+
+//controladores
+//Route::post('/unete', [SolicitudController::class, 'enviar'])->name('solicitud.enviar'); //aqui se maneja el formulario de unete, se llama al metodo enviar del controlador SolicitudController
+
 
 //html
 Route::view('/', 'PaginaInicio')->name('index');
@@ -20,5 +25,7 @@ Route::view('/perfil/profesor', 'perfilProfesor')->name('perfil.profesor');
 
 Route::view('/calendario', 'calendario')->name('calendario');
 Route::view('/admin-panel', 'admin')->name('admin.panel');
+
+Route::view('/desarrollo', 'dev')->middleware('auth')->name('dev.panel');
 
 require __DIR__.'/auth.php';

@@ -16,11 +16,24 @@
 <header>
     <nav>
         <div class="barraNav">
-            <ul class="menu">
+            <ul class="menu" id="menuPrincipal">
                 <li class="logo"><img src="{{ asset('img/logo.svg') }}" alt="Edunoly"></li>
+                <li class="menu-toggle-li">
+                    <button class="menu-toggle" id="menuToggle" aria-label="Abrir menú">
+                        <span></span><span></span><span></span>
+                    </button>
+                </li>
                 <li><a href="{{ route('index') }}">Inicio</a></li>
                 <li><a href="{{ route('contacto') }}">Contacto</a></li>
                 <li class="activo"><a href="{{ route('config') }}">Configuración</a></li>
+                <li class="derecha menuSesion">
+                    <img src="{{ asset('img/perfil.png') }}" class="fotoPerfil" alt="Perfil">
+                    <ul class="dropdown">
+                        <li><a href="{{ route('config') }}">⚙️ Configuración</a></li>
+                        <li><a href="#">Mi perfil</a></li>
+                        <li><a href="#" id="btn-logout">Cerrar sesión</a></li>
+                    </ul>
+                </li>
             </ul>
         </div>
     </nav>
@@ -41,8 +54,8 @@
     <!-- SECCIÓN: ESTILO VISUAL -->
     <div class="config-seccion">
         <div class="seccion-header">
-            <div class="seccion-titulo">🎨 Estilo visual</div>
-            <div class="seccion-sub">Elige el tema de color que se aplicará en todas las páginas de Edunoly.</div>
+            <div class="seccion-titulo" data-i18n="config.estiloVisual">🎨 Estilo visual</div>
+            <div class="seccion-sub" data-i18n="config.estiloVisualSub">Elige el tema de color que se aplicará en todas las páginas de Edunoly.</div>
         </div>
 
         <div class="temas-grid" id="temas-grid">
@@ -149,14 +162,14 @@
     <!-- SECCIÓN: ACCESIBILIDAD -->
     <div class="config-seccion">
         <div class="seccion-header">
-            <div class="seccion-titulo">♿ Accesibilidad</div>
-            <div class="seccion-sub">Ajustes para mejorar la experiencia de uso.</div>
+            <div class="seccion-titulo" data-i18n="config.accesibilidad">♿ Accesibilidad</div>
+            <div class="seccion-sub" data-i18n="config.accesibilidadSub">Ajustes para mejorar la experiencia de uso.</div>
         </div>
 
         <div class="opcion-fila">
             <div class="opcion-info">
-                <div class="opcion-nombre">Animaciones reducidas</div>
-                <div class="opcion-desc">Desactiva las transiciones y animaciones de entrada para reducir el movimiento.</div>
+                <div class="opcion-nombre" data-i18n="config.animaciones">Animaciones reducidas</div>
+                <div class="opcion-desc">Desactiva las transiciones y animaciones para reducir el movimiento.</div>
             </div>
             <label class="toggle">
                 <input type="checkbox" id="opt-animaciones" onchange="guardarOpcion('animaciones', this.checked)">
@@ -166,62 +179,132 @@
 
         <div class="opcion-fila">
             <div class="opcion-info">
-                <div class="opcion-nombre">Tamaño de fuente</div>
-                <div class="opcion-desc">Ajusta el tamaño base del texto en toda la plataforma.</div>
+                <div class="opcion-nombre" data-i18n="config.fuente">Tamaño de fuente</div>
+                <div class="opcion-desc">Ajusta el tamaño del texto en toda la plataforma. El cambio se aplica al guardar.</div>
             </div>
             <select class="opcion-select" id="opt-fuente" onchange="guardarOpcion('fuente', this.value)">
                 <option value="normal">Normal (14px)</option>
-                <option value="grande">Grande (16px)</option>
-                <option value="muy-grande">Muy grande (18px)</option>
+                <option value="grande">Grande (18px)</option>
+                <option value="muy-grande">Muy grande (24px)</option>
             </select>
         </div>
 
         <div class="opcion-fila">
             <div class="opcion-info">
-                <div class="opcion-nombre">Alto contraste</div>
-                <div class="opcion-desc">Aumenta el contraste de texto y bordes para mayor legibilidad.</div>
+                <div class="opcion-nombre" data-i18n="config.contraste">Alto contraste</div>
+                <div class="opcion-desc">Aumenta el contraste de textos y bordes para mayor legibilidad.</div>
             </div>
             <label class="toggle">
                 <input type="checkbox" id="opt-contraste" onchange="guardarOpcion('contraste', this.checked)">
                 <span class="toggle-slider"></span>
             </label>
         </div>
+
+        <div class="opcion-fila">
+            <div class="opcion-info">
+                <div class="opcion-nombre" data-i18n="config.enlaces">Subrayar enlaces</div>
+                <div class="opcion-desc">Muestra un subrayado en todos los enlaces para identificarlos más fácilmente.</div>
+            </div>
+            <label class="toggle">
+                <input type="checkbox" id="opt-enlaces" onchange="guardarOpcion('enlaces', this.checked)">
+                <span class="toggle-slider"></span>
+            </label>
+        </div>
+
+    </div>
+
+    <!-- SECCIÓN: IDIOMA -->
+    <div class="config-seccion">
+        <div class="seccion-header">
+            <div class="seccion-titulo" data-i18n="config.idioma">🌐 Idioma</div>
+            <div class="seccion-sub" data-i18n="config.idiomaSub">Selecciona el idioma de la interfaz.</div>
+        </div>
+
+        <div class="opcion-fila">
+            <div class="opcion-info">
+                <div class="opcion-nombre" data-i18n="config.idiomaPlataforma">Idioma de la plataforma</div>
+                <div class="opcion-desc">Cambia el idioma en el que se muestra la interfaz de Edunoly.</div>
+            </div>
+            <select class="opcion-select" id="opt-idioma" onchange="guardarOpcion('idioma', this.value)">
+                <option value="es">🇪🇸 Español</option>
+                <option value="en">🇬🇧 English</option>
+                <option value="ca">🏴 Català</option>
+                <option value="eu">🏴 Euskara</option>
+                <option value="gl">🏴 Galego</option>
+            </select>
+        </div>
+
+        <div class="opcion-fila">
+            <div class="opcion-info">
+                <div class="opcion-nombre" data-i18n="config.formatoFecha">Formato de fecha</div>
+                <div class="opcion-desc">Elige cómo se muestran las fechas en la plataforma.</div>
+            </div>
+            <select class="opcion-select" id="opt-fecha" onchange="guardarOpcion('fecha', this.value)">
+                <option value="dd/mm/yyyy">DD/MM/AAAA (31/12/2026)</option>
+                <option value="mm/dd/yyyy">MM/DD/AAAA (12/31/2026)</option>
+                <option value="yyyy-mm-dd">AAAA-MM-DD (2026-12-31)</option>
+            </select>
+        </div>
+
     </div>
 
     <!-- SECCIÓN: NOTIFICACIONES -->
     <div class="config-seccion">
         <div class="seccion-header">
-            <div class="seccion-titulo">🔔 Notificaciones</div>
-            <div class="seccion-sub">Decide qué notificaciones quieres recibir.</div>
+            <div class="seccion-titulo" data-i18n="config.notificaciones">🔔 Notificaciones</div>
+            <div class="seccion-sub" data-i18n="config.notificacionesSub">Decide qué notificaciones quieres recibir.</div>
         </div>
 
         <div class="opcion-fila">
             <div class="opcion-info">
-                <div class="opcion-nombre">Recordatorio de clases</div>
+                <div class="opcion-nombre" data-i18n="config.recordatorio">Recordatorio de clases</div>
                 <div class="opcion-desc">Aviso 15 minutos antes de que empiece cada clase.</div>
             </div>
             <label class="toggle">
-                <input type="checkbox" id="opt-recordatorio" checked onchange="guardarOpcion('recordatorio', this.checked)">
+                <input type="checkbox" id="opt-recordatorio" onchange="guardarOpcion('recordatorio', this.checked)">
                 <span class="toggle-slider"></span>
             </label>
         </div>
 
         <div class="opcion-fila">
             <div class="opcion-info">
-                <div class="opcion-nombre">Cambios en el horario</div>
+                <div class="opcion-nombre" data-i18n="config.cambios">Cambios en el horario</div>
                 <div class="opcion-desc">Notificar cuando el coordinador modifique alguna clase.</div>
             </div>
             <label class="toggle">
-                <input type="checkbox" id="opt-cambios" checked onchange="guardarOpcion('cambios', this.checked)">
+                <input type="checkbox" id="opt-cambios" onchange="guardarOpcion('cambios', this.checked)">
                 <span class="toggle-slider"></span>
             </label>
         </div>
+
+        <div class="opcion-fila">
+            <div class="opcion-info">
+                <div class="opcion-nombre" data-i18n="config.faltas">Nuevas faltas de asistencia</div>
+                <div class="opcion-desc">Recibir aviso cuando se registre una falta de un alumno a tu cargo.</div>
+            </div>
+            <label class="toggle">
+                <input type="checkbox" id="opt-faltas" onchange="guardarOpcion('faltas', this.checked)">
+                <span class="toggle-slider"></span>
+            </label>
+        </div>
+
+        <div class="opcion-fila">
+            <div class="opcion-info">
+                <div class="opcion-nombre" data-i18n="config.sonido">Sonido de notificaciones</div>
+                <div class="opcion-desc">Reproducir un sonido al recibir una notificación nueva.</div>
+            </div>
+            <label class="toggle">
+                <input type="checkbox" id="opt-sonido" onchange="guardarOpcion('sonido', this.checked)">
+                <span class="toggle-slider"></span>
+            </label>
+        </div>
+
     </div>
 
     <!-- Footer -->
     <div class="config-footer">
-        <button class="btn-cancelar" onclick="window.history.back()">Cancelar</button>
-        <button class="btn-guardar" onclick="guardarTodo()">Guardar cambios</button>
+        <button class="btn-cancelar" onclick="cancelar()" data-i18n="config.cancelar">Cancelar</button>
+        <button class="btn-guardar" onclick="guardarTodo()" data-i18n="config.guardar">Guardar cambios</button>
     </div>
 
 </div>
@@ -229,38 +312,81 @@
 <div class="toast" id="toast"></div>
 
 <script src="{{ asset('js/temas.js') }}"></script>
+<script src="{{ asset('js/traducciones.js') }}"></script>
 <script src="{{ asset('js/MenuSesion.js') }}"></script>
 <script>
-/* ── Marca el tema activo al cargar ── */
+/* ══════════════════════════════════════════════════════════════
+   Estado — config guardada vs temporal
+══════════════════════════════════════════════════════════════ */
+let configGuardada = {};
+let configTemporal = {};
+let temaGuardado   = '';
+let temaTemporal   = '';
+
+/* Valores por defecto */
+const DEFAULTS = {
+    animaciones:  false,
+    fuente:       'normal',
+    contraste:    false,
+    enlaces:      false,
+    idioma:       'es',
+    fecha:        'dd/mm/yyyy',
+    recordatorio: true,
+    cambios:      true,
+    faltas:       true,
+    sonido:       false
+};
+
 document.addEventListener('DOMContentLoaded', () => {
-    const actual = temaActual();
+    configGuardada = cargarOpciones();
+    configTemporal = { ...configGuardada };
+    temaGuardado   = temaActual();
+    temaTemporal   = temaGuardado;
+
+    // Marcar tema activo
     document.querySelectorAll('.tema-card').forEach(card => {
-        card.classList.toggle('activo', card.dataset.tema === actual);
+        card.classList.toggle('activo', card.dataset.tema === temaGuardado);
     });
 
-    const opts = cargarOpciones();
-    document.getElementById('opt-animaciones').checked  = opts.animaciones || false;
-    document.getElementById('opt-contraste').checked    = opts.contraste   || false;
-    document.getElementById('opt-recordatorio').checked = opts.recordatorio !== false;
-    document.getElementById('opt-cambios').checked      = opts.cambios     !== false;
-    document.getElementById('opt-fuente').value         = opts.fuente      || 'normal';
+    // Rellenar controles
+    rellenarControles(configGuardada);
 
-    aplicarOpciones(opts);
+    // Aplicar opciones guardadas
+    aplicarOpciones(configGuardada);
 });
 
-/* ── Tema ── */
+/* ── Rellena todos los controles con una config dada ── */
+function rellenarControles(opts) {
+    const get = (k) => opts[k] !== undefined ? opts[k] : DEFAULTS[k];
+
+    document.getElementById('opt-animaciones').checked  = get('animaciones');
+    document.getElementById('opt-contraste').checked    = get('contraste');
+    document.getElementById('opt-enlaces').checked      = get('enlaces');
+    document.getElementById('opt-recordatorio').checked = get('recordatorio');
+    document.getElementById('opt-cambios').checked      = get('cambios');
+    document.getElementById('opt-faltas').checked       = get('faltas');
+    document.getElementById('opt-sonido').checked       = get('sonido');
+    document.getElementById('opt-fuente').value         = get('fuente');
+    document.getElementById('opt-idioma').value         = get('idioma');
+    document.getElementById('opt-fecha').value          = get('fecha');
+}
+
+/* ── Seleccionar tema (vista previa, no guarda) ── */
 function seleccionarTema(nombre, el) {
     document.querySelectorAll('.tema-card').forEach(c => c.classList.remove('activo'));
     el.classList.add('activo');
+    temaTemporal = nombre;
     aplicarTema(nombre);
 }
 
-/* ── Opciones ── */
+/* ── Cambiar opción (vista previa inmediata, no guarda) ── */
 function guardarOpcion(clave, valor) {
-    const opts = cargarOpciones();
-    opts[clave] = valor;
-    localStorage.setItem('edunoly-config', JSON.stringify(opts));
-    aplicarOpciones(opts);
+    configTemporal[clave] = valor;
+    aplicarOpciones(configTemporal);
+    // Idioma se aplica inmediatamente para ver el cambio al instante
+    if (clave === 'idioma' && typeof aplicarIdioma === 'function') {
+        aplicarIdioma(valor);
+    }
 }
 
 function cargarOpciones() {
@@ -268,16 +394,74 @@ function cargarOpciones() {
     catch { return {}; }
 }
 
+/* ── Aplica todas las opciones visualmente ── */
 function aplicarOpciones(opts) {
-    document.documentElement.style.setProperty(
-        '--duracion-animacion', opts.animaciones ? '0ms' : '800ms'
-    );
-    const tamanos = { normal: '14px', grande: '16px', 'muy-grande': '18px' };
-    document.documentElement.style.fontSize = tamanos[opts.fuente || 'normal'];
+    const get = (k) => opts[k] !== undefined ? opts[k] : DEFAULTS[k];
+
+    /* ── Tamaño de fuente — clases en body ── */
+    document.body.classList.remove('fuente-grande', 'fuente-muy-grande');
+    if (get('fuente') === 'grande')     document.body.classList.add('fuente-grande');
+    if (get('fuente') === 'muy-grande') document.body.classList.add('fuente-muy-grande');
+
+    /* ── Animaciones reducidas ── */
+    let estiloAnim = document.getElementById('estilo-animaciones');
+    if (!estiloAnim) {
+        estiloAnim = document.createElement('style');
+        estiloAnim.id = 'estilo-animaciones';
+        document.head.appendChild(estiloAnim);
+    }
+    estiloAnim.textContent = get('animaciones')
+        ? `*, *::before, *::after { animation-duration: 0ms !important; transition-duration: 0ms !important; }`
+        : '';
+
+    /* ── Alto contraste ── */
+    let estiloContraste = document.getElementById('estilo-contraste');
+    if (!estiloContraste) {
+        estiloContraste = document.createElement('style');
+        estiloContraste.id = 'estilo-contraste';
+        document.head.appendChild(estiloContraste);
+    }
+    estiloContraste.textContent = get('contraste')
+        ? `body { filter: contrast(1.3); } .config-seccion, .tema-card { border-width: 2px !important; }`
+        : '';
+
+    /* ── Subrayar enlaces ── */
+    let estiloEnlaces = document.getElementById('estilo-enlaces');
+    if (!estiloEnlaces) {
+        estiloEnlaces = document.createElement('style');
+        estiloEnlaces.id = 'estilo-enlaces';
+        document.head.appendChild(estiloEnlaces);
+    }
+    estiloEnlaces.textContent = get('enlaces') ? `a { text-decoration: underline !important; }` : '';
+
+    /* ── Idioma ── */
+    if (typeof aplicarIdioma === 'function') aplicarIdioma(get('idioma'));
 }
 
-/* ── Guardar todo ── */
-function guardarTodo() { mostrarToast('✓ Configuración guardada'); }
+/* ── Guardar todo — escribe en localStorage ── */
+function guardarTodo() {
+    guardarTema(temaTemporal);
+    localStorage.setItem('edunoly-config', JSON.stringify(configTemporal));
+    temaGuardado   = temaTemporal;
+    configGuardada = { ...configTemporal };
+    aplicarOpciones(configGuardada);
+    mostrarToast('✓ Configuración guardada correctamente');
+}
+
+/* ── Cancelar — revierte a lo guardado ── */
+function cancelar() {
+    temaTemporal   = temaGuardado;
+    configTemporal = { ...configGuardada };
+
+    aplicarTema(temaGuardado);
+    document.querySelectorAll('.tema-card').forEach(card => {
+        card.classList.toggle('activo', card.dataset.tema === temaGuardado);
+    });
+
+    rellenarControles(configGuardada);
+    aplicarOpciones(configGuardada);
+    mostrarToast('↩ Cambios descartados');
+}
 
 /* ── Toast ── */
 function mostrarToast(msg) {
@@ -293,5 +477,6 @@ document.getElementById('btn-logout')?.addEventListener('click', async e => {
     window.location.href = '{{ route('login') }}';
 });
 </script>
+<script src="{{ asset('js/menuResponsive.js') }}"></script>
 </body>
 </html>

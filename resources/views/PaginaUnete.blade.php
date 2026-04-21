@@ -20,6 +20,7 @@
                     </li>
                     <li><a href="{{ route('index') }}">Inicio</a></li>
                     <li><a href="{{ route('contacto') }}">Contacto</a></li>
+                    <li><a href="{{ route('config') }}">Configuracion</a></li>
                     <li><a href="{{ route('unete') }}">Unete</a></li>
 
                     <li class="derecha"><a href="{{ route('login') }}">Iniciar Sesión</a></li>
@@ -37,119 +38,32 @@
     </header>
     <!-- --------------------------------------- -->
     <div class="contenedor">
-        <div id="Contacto">
-            <form action="email.php" method="post">
-                <div class="CajaContacto">
-                    <div class="formulario">
-                        <div class="caja1">
-                            <h1 class="titulo">¡Unete a nosotros!</h1>
-                            <div class="texto-informacion">
-                                Solicita el alta de tu entidad/colegio rellenando este simple formulario. Nuestro equipo
-                                se pondra en contacto contigo en unos dias con las claves del coordinador.
-                                Si ya eres usuario y necesitas resolver cualquier cuestión, dirígete a nuestra pagina de
-                                contacto.
-                            </div>
-                            <div class="texto-direccion">
-                                Dirección:
-                                C/ Impresores, 2. 28660.
-                                Boadilla del Monte, Madrid.
-                                T: 91 42 2 88 00
-                            </div>
-                        </div>
-                        <!-- FORMULARIO -->
-                        <div class="caja2">
-                            <h2 class="titulo-seccion">Registro de Institución</h2>
+        <!-- --------------------------------------- -->
+        <h2>Únete a Edunoly</h2>
+        <form action="{{ route('solicitud.enviar') }}" method="POST">
+            @csrf
+            <h2>Registro Colegio</h2>
+            <label for="centro_nombre">Nombre del centro*</label>
+                <input type="text" id="colegio_nombre" name="colegio_nombre" placeholder="Santo Domingo Savio" maxlength="50" required>
+            <label for="entidad">Entidad educativa*</label>
+                <input type="text" id="colegio_entidad" name="colegio_entidad" placeholder="Colegio Salesiano" maxlength="50" required>
+             <label for="direccion">Dirección del centro*</label>
+                <input type="text" id="colegio_direccion" name="colegio_direccion" placeholder="C. Santo Domingo Savio, 2, Cdad. Lineal, 28017 Madrid" maxlength="100" required>
+            <h2>Registro coordinador</h2>
+            <label for="nombre">Nombre Coordinador*</label>
+                <input type="text" id="coord_nombre" name="coord_nombre" placeholder="Ejemplo: Juan" maxlength="25" required>
+            <label for="apellido">Apellido Coordinador*</label>
+                <input type="text" id="coord_apellido" name="coord_apellido" placeholder="Ejemplo: Gutierrez" maxlength="25" required>
+            <label for="correo">Email Coordinador*</label>
+                <input type="email" id="coord_email" name="coord_email" placeholder="ejemplo@gmail.com" maxlength="60" required>
+            <label for="telefono">Telefono Coordinador *</label>
+               <input type="tel" id="coord_telefono" name="coord_telefono" placeholder="+34 698 251 235"pattern="^\+?[0-9\s]{9,15}$" required>
 
-                            <!-- COLEGIO -->
-                            <div class="seccion-colegio">
-                                <h3>Información del Centro</h3>
-
-                                <div class="campo">
-                                    <label for="centro_nombre">Nombre del Centro Educativo*</label>
-                                    <input type="text" id="centro_nombre" name="centro_nombre"
-                                        placeholder="Ej: I.E.S. Tecnológico" required>
-                                </div>
-
-                                <div class="fila-formulario">
-                                    <div class="campo">
-                                        <label for="entidad">Entidad/Titularidad*</label>
-                                        <input type="text" id="entidad" name="entidad" placeholder="Pública / Privada"
-                                            required>
-                                    </div>
-                                    <div class="campo">
-                                        <label for="tipoColegio">Nivel Educativo*</label>
-                                        <select id="tipoColegio" name="tipoColegio" required>
-                                            <option value="">Seleccionar...</option>
-                                            <option value="Primaria">Primaria</option>
-                                            <option value="Secundaria">Secundaria/ESO</option>
-                                            <option value="FP">Formación Profesional</option>
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <div class="fila-formulario">
-                                    <div class="campo">
-                                        <label for="tipoEducacion">Modalidad*</label>
-                                        <select id="tipo_educacion" name="tipo_educacion" required>
-                                            <option value="Presencial">Presencial</option>
-                                            <option value="Online">Online</option>
-                                            <option value="Hibrida">Híbrida</option>
-                                        </select>
-                                    </div>
-                                    <div class="campo">
-                                        <label for="centro_direccion">Dirección Física*</label>
-                                        <input type="text" id="centro_direccion" name="centro_direccion"
-                                            placeholder="Calle, Ciudad, CP" required>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!--  COORDINADOR -->
-                            <div class="seccion-coordinador">
-                                <h3>Datos del Coordinador Responsable</h3>
-
-                                <div class="fila-formulario">
-                                    <div class="campo">
-                                        <label for="coord_nombre">Nombre*</label>
-                                        <input type="text" id="coord_nombre" name="coord_nombre" placeholder="Juan"
-                                            required>
-                                    </div>
-                                    <div class="campo">
-                                        <label for="coord_apellido">Apellidos*</label>
-                                        <input type="text" id="coord_apellido" name="coord_apellido"
-                                            placeholder="García" required>
-                                    </div>
-                                </div>
-
-                                <div class="fila-formulario">
-                                    <div class="campo expandido">
-                                        <label for="coord_email">Email Profesional*</label>
-                                        <input type="email" id="coord_email" name="coord_email"
-                                            placeholder="coordina@centro.com" required>
-                                    </div>
-                                    <div class="campo">
-                                        <label for="coord_telefono">Teléfono*</label>
-                                        <input type="tel" id="coord_telefono" name="coord_telefono"
-                                            placeholder="+34 600 000 000" required>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <p class="nota-informativa">
-                                * Al enviar, nuestro equipo validará la información y te enviará las credenciales de
-                                acceso por email en un plazo de 24/48h.
-                            </p>
-
-                            <input class="boton" type="submit" value="Enviar Solicitud de Alta">
-                        </div>
-
-
-                    </div>
-                </div>
-            </form>
-        </div>
+            <input class="boton" type="submit" value="Enviar Solicitud de Alta">
+        </form>
     </div>
-
+    </div>
+    <!-- --------------------------------------- -->
     <div id="contInformacion">
         <div class="infoColumnas">
             <div class="infoCol">
