@@ -12,15 +12,19 @@
         <header>
             <nav id="Navegador">
                 <div class="barraNav">
-                    <ul class="menu">
+                    <ul class="menu" id="menuPrincipal">
                         <li class="logo">
                             <img src="{{ asset('img/logo.svg') }}" alt="Edunoly">
                         </li>
-                        <li><a href="{{ route('index') }}">Inicio</a></li>
-                        <li><a href="{{ route('contacto') }}">Contacto</a></li>
-                        <li><a href="{{ route('config') }}">Configuración</a></li>
-
-                        <li class="derecha"><a href="{{ route('login') }}">Iniciar Sesión</a></li>
+                        <li class="menu-toggle-li">
+                            <button class="menu-toggle" id="menuToggle" aria-label="Abrir menú">
+                                <span></span><span></span><span></span>
+                            </button>
+                        </li>
+                        <li><a href="{{ route('index') }}" data-i18n="nav.inicio">Inicio</a></li>
+                        <li><a href="{{ route('contacto') }}" data-i18n="nav.contacto">Contacto</a></li>
+                        <li><a href="{{ route('config') }}" data-i18n="nav.configuracion">Configuración</a></li>
+                        <li class="derecha"><a href="{{ route('login') }}" data-i18n="nav.iniciarSesion">Iniciar Sesión</a></li>
                     </ul>
                 </div>
             </nav>
@@ -77,12 +81,52 @@
             </div>
         </div>
             <div id="contInformacion">
-                <div class="info">
-                    <div class="info1">
-                        <p>njfakjs</p>
+                <div class="infoColumnas">
+
+                    <div class="infoCol">
+                        <h3 class="infoTitulo">Edunoly</h3>
+                        <ul class="infoLista">
+                            <li><a href="#">Sobre nosotros</a></li>
+                            <li><a href="#">Nuestro equipo</a></li>
+                            <li><a href="{{ route('contacto') }}">Contacto</a></li>
+                        </ul>
                     </div>
+
+                    <div class="infoCol">
+                        <h3 class="infoTitulo">Legal</h3>
+                        <ul class="infoLista">
+                            <li><a href="#">Política de privacidad</a></li>
+                            <li><a href="#">Política de cookies</a></li>
+                            <li><a href="#">Aviso legal</a></li>
+                            <li><a href="#">Términos de uso</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="infoCol">
+                        <h3 class="infoTitulo">Soporte</h3>
+                        <ul class="infoLista">
+                            <li><a href="#">Centro de ayuda</a></li>
+                            <li><a href="#">Preguntas frecuentes</a></li>
+                            <li><a href="#">Accesibilidad</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="infoCol">
+                        <h3 class="infoTitulo">Contacto</h3>
+                        <ul class="infoLista">
+                            <li>C/ Impresores, 2. 28660</li>
+                            <li>Boadilla del Monte, Madrid</li>
+                            <li><a href="tel:+34914228800">91 422 88 00</a></li>
+                        </ul>
+                    </div>
+
+                </div>
+                <div class="infoCopyright">
+                    <p>© 2026 Edunoly · Todos los derechos reservados</p>
                 </div>
             </div>
         <script src="{{ asset('js/menuSesion.js') }}"></script>
+        <script src="{{ asset('js/traducciones.js') }}"></script>
+        <script src="{{ asset('js/menuResponsive.js') }}"></script>
     </body>
 </html>

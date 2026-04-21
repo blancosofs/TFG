@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edunoly · Panel Coordinador</title>
-    <script src="temas.js"></script>
-    <link rel="stylesheet" href="temas.css">
-    <link rel="stylesheet" href="EstilosCoordinador.css">
+    <script src="{{ asset('js/temas.js') }}"></script>
+    <link rel="stylesheet" href="{{ asset('css/temas.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/EstilosCoordinador.css') }}">
 </head>
 <body>
 
@@ -15,22 +15,22 @@
     <nav>
         <div class="barraNav">
             <ul class="menu" id="menuPrincipal">
-                <li class="logo"><img src="logo.svg" alt="Edunoly"></li>
+                <li class="logo"><img src="{{ asset('img/logo.svg') }}" alt="Edunoly"></li>
                 <li class="menu-toggle-li">
                     <button class="menu-toggle" id="menuToggle" aria-label="Abrir menú">
                         <span></span><span></span><span></span>
                     </button>
                 </li>
-                <li class="activo"><a href="coordinador.html">Mi centro</a></li>
-                <li><a href="configuracion.html">Configuración</a></li>
+                <li class="activo"><a href="{{ route('coordinador') }}">Mi centro</a></li>
+                <li><a href="{{ route('config') }}">Configuración</a></li>
 
                 <li class="derecha menuSesion">
-                    <img src="perfil.png" class="fotoPerfil" alt="Perfil">
+                    <img src="{{ asset('img/perfil.png') }}" class="fotoPerfil" alt="Perfil">
                     <ul class="dropdown">
                         <li class="dropdown-nombre"><span id="nav-nombre">Coordinador</span></li>
                         <li class="dropdown-rol">Coordinador</li>
                         <li class="dropdown-sep"></li>
-                        <li><a href="configuracion.html">⚙️ Configuración</a></li>
+                        <li><a href="{{ route('config') }}">⚙️ Configuración</a></li>
                         <li><a href="#" id="btn-logout">Cerrar sesión</a></li>
                     </ul>
                 </li>
@@ -353,9 +353,9 @@
 
 <div class="toast" id="toast"></div>
 
-<script src="temas.js"></script>
-<script src="MenuSesion.js"></script>
-<script src="menuResponsive.js"></script>
-<script src="coordinador.js"></script>
+<script src="{{ asset('js/temas.js') }}"></script>
+<script src="{{ asset('js/MenuSesion.js') }}"></script>
+<script src="{{ asset('js/menuResponsive.js') }}"></script>
+<script src="{{ asset('js/coordinador.js') }}"></script>
 </body>
 </html>

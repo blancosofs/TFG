@@ -11,15 +11,19 @@
         <header>
             <nav id="Navegador">
                 <div class="barraNav">
-                    <ul class="menu">
+                    <ul class="menu" id="menuPrincipal">
                         <li class="logo">
                             <img src="{{ asset('img/logo.svg') }}" alt="Edunoly">
                         </li>
-                        <li><a href="{{ route('index') }}">Inicio</a></li>
-                        <li><a href="{{ route('contacto') }}">Contacto</a></li>
-                        <li><a href="{{ route('config') }}">Configuración</a></li>
-
-                        <li class="derecha"><a href="{{ route('login') }}">Iniciar Sesión</a></li>
+                        <li class="menu-toggle-li">
+                            <button class="menu-toggle" id="menuToggle" aria-label="Abrir menú">
+                                <span></span><span></span><span></span>
+                            </button>
+                        </li>
+                        <li><a href="{{ route('index') }}" data-i18n="nav.inicio">Inicio</a></li>
+                        <li><a href="{{ route('contacto') }}" data-i18n="nav.contacto">Contacto</a></li>
+                        <li><a href="{{ route('config') }}" data-i18n="nav.configuracion">Configuración</a></li>
+                        <li class="derecha"><a href="{{ route('login') }}" data-i18n="nav.iniciarSesion">Iniciar Sesión</a></li>
                     </ul>
                 </div>
             </nav>
@@ -300,5 +304,7 @@
             </div>
 
     <script src="{{ asset('js/PaginaInicio.js') }}"></script>
+    <script src="{{ asset('js/traducciones.js') }}"></script>
+    <script src="{{ asset('js/menuResponsive.js') }}"></script>
     </body>
 </html>
