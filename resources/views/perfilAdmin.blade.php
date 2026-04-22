@@ -18,6 +18,7 @@
             <ul class="menu">
                 <li class="logo"><img src="{{ asset('img/logo.svg') }}" alt="Edunoly"></li>
                 <li><a href="{{ route('admin') }}">Panel Admin</a></li>
+                <li><a href="{{ route('unete') }}">Regitro</a></li>
                 <li class="activo"><a href="{{ route('perfilAdmin') }}">Mi Perfil</a></li>
 
                 <li class="derecha menuSesion">

@@ -13,9 +13,9 @@ class DevSeeder extends Seeder
        public function run(): void
 {
     \App\Models\User::create([
-        'name' => 'Desarrollador',
-        'email' => 'dev@edunoly.com',
-        'password' => \Illuminate\Support\Facades\Hash::make('dev1234'),
+        'name' => 'Administrador',
+        'email' => 'administrador@edunoly.com',
+        'password' => \Illuminate\Support\Facades\Hash::make('admin1234'),
         'activo' => true,
     ]);
 }

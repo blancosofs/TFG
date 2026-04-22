@@ -655,7 +655,7 @@
 /* ══════════════════════════════════════════════════════════════
    CONFIG
 ══════════════════════════════════════════════════════════════ */
-const API = '';
+const API = '/api'; //para que deje de ser relativo al path del colegio y apunte a lo definido en routes/api.php
 
 /* ══════════════════════════════════════════════════════════════
    ESTADO LOCAL
