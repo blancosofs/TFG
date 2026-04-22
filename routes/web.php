@@ -24,8 +24,17 @@ Route::view('/perfil/profesor', 'perfilProfesor')->name('perfil.profesor');
 
 
 Route::view('/calendario', 'calendario')->name('calendario');
-Route::view('/admin-panel', 'admin')->name('admin.panel');
 
-Route::view('/desarrollo', 'dev')->middleware('auth')->name('dev.panel');
+Route::view('/admin-panel', 'admin')->middleware('auth')->name('admin');
+//Route::view('/admin-panel', 'admin')->name('admin.panel');
+
+
+// Ruta para el formulario de Contacto (Público)
+Route::post('/contacto-enviar', [App\Http\Controllers\ContactoController::class, 'enviarConsulta'])->name('contacto.enviar');
+
+// Ruta para el formulario de Únete (Solo tú como Admin)
+Route::middleware(['auth'])->group(function () {
+    Route::post('/registrar-colegio', [App\Http\Controllers\AdminController::class, 'registrarCentro'])->name('solicitud.enviar');
+});
 
 require __DIR__.'/auth.php';

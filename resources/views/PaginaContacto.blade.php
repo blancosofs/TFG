@@ -31,7 +31,8 @@
         </header>
         <div class="contenedor">
             <div id="Contacto">
-                <form action="servicio.php" method="post">
+                <form action="{{ route('contacto.enviar') }}" method="POST">
+                    @csrf
                 <div class="CajaContacto">
                     <div class="formulario">
                         <div class="caja1">
