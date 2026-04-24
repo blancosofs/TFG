@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 class Alumno extends Model
 {
         protected $table = 'alumnos';
-        protected $fillable = ['nombre', 'entidad', 'direccion', 'activo'];
+        protected $fillable = ['nombre', 'apellidos', 'colegio_id', 'curso_id', 'clases_id', 'activo'];
 
         protected $casts = [
         'activo' => 'boolean',

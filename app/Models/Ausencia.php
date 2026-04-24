@@ -12,6 +12,7 @@ class Ausencia extends Model
 
     protected $casts = [
         'activo' => 'boolean',
+        'fecha' => 'date'
         ];
 
 

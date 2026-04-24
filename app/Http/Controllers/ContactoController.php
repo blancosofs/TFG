@@ -18,6 +18,8 @@ class ContactoController extends Controller
         // Te mandas el mail a ti misma (administrador@edunoly.com)
         Mail::to('administrador@edunoly.com')->send(new NuevaConsultaMail($datos));
 
+        
         return back()->with('success', 'Gracias. Hemos recibido tu consulta.');
     }
+    
 }
