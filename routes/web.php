@@ -16,7 +16,6 @@ Route::view('/unete', 'PaginaUnete')->name('unete');
 //Route::view('/login', 'login')->name('login');
 Route::view('/configuracion', 'configuracion')->name('config');
 
-
 Route::view('/perfil', 'perfil')->name('perfil');
 Route::view('/perfil/admin', 'perfilAdmin')->name('perfil.admin');
 Route::view('/perfil/familia', 'perfilFamilia')->name('perfil.familia');
