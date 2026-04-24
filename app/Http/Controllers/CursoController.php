@@ -7,12 +7,6 @@ use App\Models\Curso;
 
 class CursoController extends Controller
 {
- 
-    public function index() {
-        // Devuelve todos los cursos (para printear en la pagina) <-- Pendiente
-        $cursos = Curso::all();
-
-    }
 
     public function store(Request $request) {
         // 1. Validamos los datos
