@@ -4,7 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
-#[Fillable(['nombre', 'apellidos', 'email', 'password', 'colegio_id', 'activo'])]
+
+#[Fillable(['telefono', 'colegio_id', 'coordinador_id', 'user_id'])]
 
 class Docente extends Model
 {
