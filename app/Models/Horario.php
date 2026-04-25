@@ -14,4 +14,10 @@ class Horario extends Model
         'hora_inicio' => 'datetime',
         'hora_fin'    => 'datetime',
     ];
+
+    //Relación 1:N 
+     public function ausencias()
+    {
+        return $this->hasMany(Ausencia::class);
+    }
 }
