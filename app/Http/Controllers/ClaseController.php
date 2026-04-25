@@ -13,7 +13,7 @@ class ClaseController extends Controller
     public function index()
     {
         $clases = Clase::all();
-        return view ('clases.index' ,compact ('clases'));
+        return view ('clases.index' ,compact ('clase'));
     }
 
     /**
@@ -32,7 +32,7 @@ class ClaseController extends Controller
         $request->validate([
         'nombre' => 'required|string|max:10',
         'codigo_acceso' => 'nullable|string|max:10',
-        'curso_id' => 'required|integer|exists:alumnos,id',
+        'curso_id' => 'required|integer|exists:cursos,id',
     ]);
 
     // Si todo está bien, lo guardamos
@@ -46,7 +46,7 @@ class ClaseController extends Controller
      */
     public function show(Clase $clase)
     {
-        return view('clases.show', compact('clases'));
+        return view('clases.show', compact('clase'));
     }
 
     /**
@@ -54,7 +54,7 @@ class ClaseController extends Controller
      */
     public function edit(Clase $clase)
     {
-        return view('clases.edit', compact('clases'));
+        return view('clases.edit', compact('clase'));
     }
 
     /**

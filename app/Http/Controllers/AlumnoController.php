@@ -34,6 +34,7 @@ class AlumnoController extends Controller
             'curso_id' => 'required|integer|exists:cursos,id',
             'clase_id' => 'required|integer|exists:clases,id',
             'activo' => 'required|boolean'
+        ]);    
 
         // Laravel usará el $fillable que definiste para filtrar
         Alumno::create($request->all()); 

@@ -13,7 +13,7 @@ class CursoController extends Controller
     public function index()
     {
         $cursos = Curso::all();
-        return view ('cursos.index' ,compact ('cursos'));
+        return view ('cursos.index' ,compact ('curso'));
     }
 
     /**
@@ -51,7 +51,7 @@ class CursoController extends Controller
      */
     public function show(Curso $curso)
     {
-        return view('cursos.show', compact('cursos'));
+        return view('cursos.show', compact('curso'));
     }
 
     /**
@@ -59,7 +59,7 @@ class CursoController extends Controller
      */
     public function edit(Curso $curso)
     {
-        return view('cursos.edit', compact('cursos'));
+        return view('cursos.edit', compact('curso'));
     }
 
     /**
@@ -77,6 +77,6 @@ class CursoController extends Controller
     public function destroy(Curso $curso)
     {
         $curso->delete();
-        return redirect()->route('cursos.index')->with('info', 'Clase eliminada');
+        return redirect()->route('cursos.index')->with('info', 'Curso eliminada');
     }
 }
