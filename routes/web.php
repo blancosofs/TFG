@@ -64,7 +64,7 @@ Route::middleware(['auth'])->group(function () {
     });
 
     // 2. PERFIL: COORDINADOR
-    Route::prefix('coordinacion')->group(function () {
+    Route::prefix('coordinacion')->as('coordinacion.')->group(function () {
         Route::resource('cursos', CursoController::class);
         Route::resource('clases', ClaseController::class);
         Route::resource('horarios', HorarioController::class);
@@ -75,7 +75,7 @@ Route::middleware(['auth'])->group(function () {
     });
 
     // 3. PERFIL: DOCENTE
-    Route::prefix('profesor')->group(function () {
+    Route::prefix('profesor')->as('profesor.')->group(function () {
         Route::resource('mis-clases', ClaseController::class)->only(['index', 'show']);
         Route::resource('alumnos', AlumnoController::class)->only(['show']);
         Route::resource('tutores', TutorController::class)->only(['show']);
