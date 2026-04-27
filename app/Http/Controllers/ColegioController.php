@@ -13,7 +13,7 @@ class ColegioController extends Controller
     public function index()
     {
         $colegios = Colegio::all();
-        return view ('colegios.index' ,compact ('colegios'));
+        return view ('colegios.index' ,compact ('colegio'));
     }
 
     /**
@@ -47,7 +47,7 @@ class ColegioController extends Controller
      */
     public function show(Colegio $colegio)
     {
-        return view('colegios.show', compact('colegios'));
+        return view('colegios.show', compact('colegio'));
     }
 
     /**
@@ -55,7 +55,7 @@ class ColegioController extends Controller
      */
     public function edit(Colegio $colegio)
     {
-        return view('colegios.edit', compact('colegios'));
+        return view('colegios.edit', compact('colegio'));
     }
 
     /**
@@ -73,6 +73,6 @@ class ColegioController extends Controller
     public function destroy(Colegio $colegio)
     {
         $colegio->delete();
-        return redirect()->route('colegios.index')->with('info', 'Clase eliminada');
+        return redirect()->route('colegios.index')->with('info', 'Colegio eliminada');
     }
 }

@@ -3,7 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Coordinador;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+
 
 class CoordinadorController extends Controller
 {
@@ -79,7 +83,7 @@ class CoordinadorController extends Controller
      */
     public function update(Request $request, Coordinador $coordinador)
     {
-        // Actualizamos datos del docente
+        // Actualizamos datos del coordinador
         $coordinador->update($request->only('colegio_id'));
 
         // Actualizamos datos del usuario vinculado
@@ -87,7 +91,7 @@ class CoordinadorController extends Controller
         if ($request->filled('password')) {
             $userData['password'] = Hash::make($request->password);
         }
-        $docente->user->update($userData);
+        $coordinador->user->update($userData);
 
         return redirect()->route('coordinadores.index')->with('success', 'Coordinador actualizado');
     }

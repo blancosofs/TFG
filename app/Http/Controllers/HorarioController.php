@@ -12,8 +12,8 @@ class HorarioController extends Controller
      */
     public function index()
     {
-        $colegios = Colegio::all();
-        return view ('colegios.index' ,compact ('colegios'));
+        $horarios = Horario::all();
+        return view ('horarios.index' ,compact ('horario'));
     }
 
     /**
@@ -21,7 +21,7 @@ class HorarioController extends Controller
      */
     public function create()
     {
-        return view ('colegios.create');
+        return view ('horarios.create');
     }
 
     /**
@@ -30,49 +30,50 @@ class HorarioController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-        'nombre' => 'required|string|max:100',
-        'entidad' => 'required|string|max:100',
-        'direccion' => 'required|string|max:100',
-        'activo' => 'required|boolean'
+            'dia_semana' => 'required|in:lunes,martes,miercoles,jueves,viernes',
+            'hora_inicio' => 'required|date_format:H:i',
+            'hora_fin' => 'required|date_format:H:i|after:hora_inicio',
+            'docente_id' => 'required|integer|exists:docentes,id',
+            'clase_id' => 'required|integer|exists:clases,id'
     ]);
 
     // Si todo está bien, lo guardamos
-        Colegio::create($request->all());
+        Horario::create($request->all());
 
-        return redirect()->back()->with('success', 'Colegio creada correctamente.');
+        return redirect()->back()->with('success', 'Horario creado correctamente.');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Colegio $colegio)
+    public function show(Horario $horario)
     {
-        return view('colegios.show', compact('colegios'));
+        return view('horarios.show', compact('horario'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Colegio $colegio)
+    public function edit(Horario $horario)
     {
-        return view('colegios.edit', compact('colegios'));
+        return view('horarios.edit', compact('horario'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Colegio $colegio)
+    public function update(Request $request, Horario $horario)
     {
-        $colegio->update($request->all());
-        return redirect()->route('colegios.index')->with('info', 'Datos del colegio actualizados');
+        $horario->update($request->all());
+        return redirect()->route('horarios.index')->with('info', 'Datos del horario actualizados');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Colegio $colegio)
+    public function destroy(Horario $horario)
     {
-        $colegio->delete();
-        return redirect()->route('colegios.index')->with('info', 'Clase eliminada');
+        $horario->delete();
+        return redirect()->route('horarios.index')->with('info', 'Horario eliminada');
     }
 }

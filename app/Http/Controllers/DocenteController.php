@@ -23,7 +23,7 @@ class DocenteController extends Controller
         return view('docentes.create');
     }
 
-    // 3. STORE: ¡Aquí está la magia de la contraseña!
+    // 3. STORE
     public function store(Request $request)
     {
         // Validamos datos de ambas tablas

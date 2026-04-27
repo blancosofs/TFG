@@ -33,4 +33,21 @@ class User extends Authenticatable
             'activo' => 'boolean'
         ];
     }
+
+    public function docente()
+    {
+        return $this->hasOne(Docente::class);
+    }
+
+
+    public function coordinador()
+    {
+        return $this->hasOne(Coordinador::class);
+    }
+
+    public function tutor()
+    {
+        return $this->hasOne(Tutor::class);
+    }
+
 }

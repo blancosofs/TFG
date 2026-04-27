@@ -11,7 +11,7 @@ class Ausencia extends Model
     protected $fillable = ['fecha', 'tipo', 'justificada', 'justificacion', 'alumno_id', 'docente_id', 'horario_id'];  
 
     protected $casts = [
-        'activo' => 'boolean',
+        'justificada' => 'boolean',
         'fecha' => 'date'
         ];
 
