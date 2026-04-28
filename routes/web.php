@@ -75,7 +75,8 @@ Route::middleware(['auth'])->group(function () {
     });
 
     // 3. PERFIL: DOCENTE
-    Route::prefix('profesor')->as('profesor.')->group(function () {
+    Route::prefix('profesor')->as('profesor.')
+    ->group(function () {
         Route::resource('mis-clases', ClaseController::class)->only(['index', 'show']);
         Route::resource('alumnos', AlumnoController::class)->only(['show']);
         Route::resource('tutores', TutorController::class)->only(['show']);
