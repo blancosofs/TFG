@@ -32,8 +32,10 @@
                         <li><a href="{{ route('config') }}">⚙️ Configuración</a></li>
                         <li><a href="#">Mi perfil</a></li>
                         <li>
-                            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;"> @csrf </form>
-                            <a href="#" id="btn-logout">Cerrar sesión</a>
+                            <li>                      
+                                <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">@csrf</form>
+                                <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Cerrar sesión</a>
+                            </li>
                         </li>
                     </ul>
                 </li>
