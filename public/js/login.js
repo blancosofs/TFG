@@ -93,6 +93,8 @@ async function doLogin() {
         if (data.error) {
             mostrarError(data.error);
         } else {
+            localStorage.setItem('rolUsuario',    data.usuario.rol);
+            localStorage.setItem('nombreUsuario', `${data.usuario.nombre} ${data.usuario.apellidos}`);
             // Redirige según el rol devuelto por el backend
             switch (data.usuario.rol) {
                 case 'docente':

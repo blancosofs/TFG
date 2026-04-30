@@ -580,8 +580,64 @@ input:focus {
   .card-foot { padding-left: 1.3rem; padding-right: 1.3rem; gap: 1rem; }
 }
 
-@media (max-width: 360px) {
-  .profile-tabs { grid-template-columns: 1fr; }
-  .tab { display: flex; align-items: center; gap: .7rem; padding: .55rem .8rem; }
-  .tab-icon { margin: 0; flex-shrink: 0; }
+/* ─── 4 tabs (añadido Admin) ─── */
+.profile-tabs {
+  grid-template-columns: repeat(4, 1fr) !important;
+}
+
+/* Tab Admin — estilo diferenciado */
+.tab-admin {
+  border-color: rgba(9, 36, 34, .25);
+  background: rgba(9, 36, 34, .04);
+}
+
+.tab-admin:hover {
+  border-color: #092422;
+  background: rgba(9, 36, 34, .08);
+}
+
+.tab-admin.active {
+  border-color: #092422;
+  background: rgba(9, 36, 34, .08);
+  box-shadow: 0 0 0 3px rgba(9, 36, 34, .12);
+}
+
+.tab-admin .tab-icon {
+  background: #dde8e6;
+}
+
+.tab-admin.active .tab-icon,
+.tab-admin:hover .tab-icon {
+  background: #092422;
+}
+
+.tab-admin.active span,
+.tab-admin:hover span {
+  color: #092422;
+}
+
+/* Aviso admin (naranja-advertencia) */
+.notice-admin {
+  background: #fff8ed;
+  border-color: #f0c070;
+  color: #7a4f10;
+}
+
+.notice-admin svg {
+  color: #d4880a;
+}
+
+/* Card en modo admin — cabecera más oscura */
+.card-admin-mode .card-head {
+  background: linear-gradient(135deg, #092422 0%, #050e0d 100%);
+}
+
+/* Error de login */
+.login-error {
+  background: #fef2f2;
+  border: 1px solid #fca5a5;
+  border-radius: 8px;
+  padding: .5rem .8rem;
+  font-size: .78rem;
+  color: #991b1b;
 }

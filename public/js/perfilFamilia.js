@@ -25,6 +25,8 @@ async function api(method, ruta, body) {
 // })();
 
 // Datos de prueba — quitar cuando el servidor esté activo
+document.addEventListener('DOMContentLoaded', () => {
+
 cargarPerfil({
     id: 1,
     nombre: 'María',
@@ -36,7 +38,6 @@ cargarPerfil({
     ultimo_acceso: new Date().toISOString()
 });
 
-// Hijos de prueba — quitar cuando el servidor esté activo
 renderHijos([
     {
         id: 1,
@@ -69,6 +70,8 @@ renderHijos([
     }
 ]);
 
+}); // fin DOMContentLoaded
+
 /* ── Cargar perfil ── */
 async function cargarPerfil(usuario) {
     const nombreCompleto = `${usuario.nombre} ${usuario.apellidos}`;
@@ -99,10 +102,13 @@ async function cargarPerfil(usuario) {
 }
 
 /* ── Render tarjetas de hijos ── */
-function renderHijos(hijos) {
+let hijos = []; // variable global para acceder desde contactarDocente
+
+function renderHijos(hijosData) {
+    hijos = hijosData; // guardar referencia global
     const lista = document.getElementById('hijos-lista');
 
-    if (!hijos || hijos.error || !hijos.length) {
+    if (!hijosData || hijosData.error || !hijosData.length) {
         lista.innerHTML = `<div class="sin-hijos">
             <span>👦</span>
             No hay alumnos registrados a tu cargo.
@@ -111,16 +117,13 @@ function renderHijos(hijos) {
         return;
     }
 
-    document.getElementById('stat-hijos').textContent = hijos.length;
+    document.getElementById('stat-hijos').textContent = hijosData.length;
 
-    lista.innerHTML = hijos.map(h => `
+    lista.innerHTML = hijosData.map(h => `
         <div class="hijo-card">
             <div class="hijo-header">
                 <div class="hijo-foto-wrap">
-                    <img src="${h.foto || 'alumno-default.png'}"
-                         alt="${h.nombre}"
-                         class="hijo-foto"
-                         onerror="this.src='alumno-default.png'">
+                    <div class="hijo-foto-avatar">${h.nombre.charAt(0)}${h.apellidos.charAt(0)}</div>
                 </div>
                 <div class="hijo-identidad">
                     <h4 class="hijo-nombre">${h.nombre} ${h.apellidos}</h4>
@@ -167,9 +170,95 @@ function renderHijos(hijos) {
 }
 
 /* ── Acciones de hijos ── */
-function verFaltas(idAlumno)        { toast('📋 Próximamente: historial de faltas'); }
-function justificarFalta(idAlumno)  { toast('✏️ Próximamente: justificación de faltas'); }
-function contactarDocente(idAlumno) { toast('✉️ Próximamente: mensajería con el docente'); }
+function verFaltas(idAlumno)       { 
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setTimeout(() => toast('📋 Próximamente: historial de faltas'), 350);
+}
+function justificarFalta(idAlumno) { 
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setTimeout(() => toast('✏️ Próximamente: justificación de faltas'), 350);
+}
+
+/* ── Contactar docente — abre el modal ── */
+function contactarDocente(idAlumno) {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    setTimeout(() => {
+        const hijo = hijos.find(h => h.id === idAlumno);
+        if (!hijo) return;
+
+    // Si el hijo tiene varios docentes, cogemos el primero por defecto
+    // En producción podrías mostrar un selector si tiene más de uno
+    const docente = hijo.docentes && hijo.docentes.length ? hijo.docentes[0] : null;
+
+    // Rellenar datos del modal
+    document.getElementById('modal-contactar-subtitulo').textContent =
+        `Sobre: ${hijo.nombre} ${hijo.apellidos}`;
+
+    document.getElementById('modal-docente-nombre').textContent =
+        docente ? `${docente.nombre} ${docente.apellidos}` : 'Docente del centro';
+
+    document.getElementById('modal-docente-asig').textContent =
+        docente?.asignatura ? `${docente.asignatura}` : 'Docente';
+
+    // Guardar referencia al alumno e id del docente para el envío
+    document.getElementById('modal-contactar').dataset.alumnoId  = idAlumno;
+    document.getElementById('modal-contactar').dataset.docenteId = docente?.id || '';
+
+    // Limpiar campos
+    document.getElementById('contactar-asunto').value  = '';
+    document.getElementById('contactar-mensaje').value = '';
+    document.getElementById('alert-contactar').innerHTML = '';
+
+    // Abrir modal
+    document.getElementById('modal-contactar').style.opacity      = '1';
+    document.getElementById('modal-contactar').style.pointerEvents = 'all';
+    document.body.style.overflow = 'hidden';
+
+    }, 350); // esperar a que el scroll llegue arriba
+}
+
+function cerrarContactar() {
+    document.getElementById('modal-contactar').style.opacity      = '0';
+    document.getElementById('modal-contactar').style.pointerEvents = 'none';
+    document.body.style.overflow = '';
+}
+
+function setSugerencia(texto) {
+    document.getElementById('contactar-asunto').value = texto;
+    document.getElementById('contactar-asunto').focus();
+}
+
+async function enviarMensaje() {
+    const asunto  = document.getElementById('contactar-asunto').value.trim();
+    const mensaje = document.getElementById('contactar-mensaje').value.trim();
+    const alertEl = document.getElementById('alert-contactar');
+
+    alertEl.innerHTML = '';
+
+    if (!asunto) {
+        alertEl.innerHTML = `<div style="background:rgba(231,76,60,.1);border:1px solid rgba(231,76,60,.3);color:#e74c3c;border-radius:8px;padding:9px 12px;font-size:13px;margin-bottom:12px">⚠️ El asunto es obligatorio.</div>`;
+        return;
+    }
+    if (!mensaje) {
+        alertEl.innerHTML = `<div style="background:rgba(231,76,60,.1);border:1px solid rgba(231,76,60,.3);color:#e74c3c;border-radius:8px;padding:9px 12px;font-size:13px;margin-bottom:12px">⚠️ El mensaje no puede estar vacío.</div>`;
+        return;
+    }
+
+    const docenteId = document.getElementById('modal-contactar').dataset.docenteId;
+    const alumnoId  = document.getElementById('modal-contactar').dataset.alumnoId;
+
+    // En producción:
+    // const data = await api('POST', '/api/mensajes', {
+    //     asunto, mensaje,
+    //     receptor_id: docenteId,
+    //     alumno_id:   alumnoId
+    // });
+    // if (data.error) { alertEl.innerHTML = `<div ...>${data.error}</div>`; return; }
+
+    cerrarContactar();
+    toast('✉️ Mensaje enviado correctamente al docente');
+}
 
 /* ── Toggle editar ── */
 function toggleEditar(seccion) {

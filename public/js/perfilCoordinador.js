@@ -306,6 +306,7 @@ function abrirModalUsuario(modalId, modo) {
     });
 
     if (modalId === 'modal-alumno') {
+        resetFotoPreview('foto-preview-alumno', '👤', 'a-foto');
         // Rellenar select de cursos
         document.getElementById('a-curso').innerHTML =
             '<option value="">Seleccionar…</option>' +
@@ -320,11 +321,13 @@ function abrirModalUsuario(modalId, modo) {
     }
 
     if (modalId === 'modal-docente') {
+        resetFotoPreview('foto-preview-docente', '👨‍🏫', 'd-foto');
         ['d-nombre','d-apellidos','d-email','d-telefono','d-password','d-fnac'].forEach(id => set(id,''));
         document.getElementById('modal-docente-titulo').textContent = '➕ Nuevo docente';
     }
 
     if (modalId === 'modal-tutor') {
+        resetFotoPreview('foto-preview-tutor', '👨‍👩‍👧', 't-foto');
         document.getElementById('t-alumno').innerHTML =
             '<option value="">Sin alumno asignado aún</option>' +
             alumnos.map(a => `<option value="${a.id}">${a.nombre} ${a.apellidos}</option>`).join('');
@@ -346,7 +349,24 @@ function filtrarClasesPorCurso() {
               .map(c => `<option value="${c.id}">${c.nombre}</option>`).join('');
 }
 
-/* ── Guardar alumno ── */
+/* ── Previsualizar foto en modal ── */
+function previsualizarFotoModal(input, previewId) {
+    if (!input.files || !input.files[0]) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+        const preview = document.getElementById(previewId);
+        preview.innerHTML = `<img src="${e.target.result}" alt="Foto">`;
+    };
+    reader.readAsDataURL(input.files[0]);
+}
+
+/* ── Limpiar foto preview ── */
+function resetFotoPreview(previewId, emoji, inputId) {
+    const preview = document.getElementById(previewId);
+    if (preview) preview.innerHTML = emoji;
+    const input = document.getElementById(inputId);
+    if (input) input.value = '';
+}
 async function guardarAlumno() {
     const nombre    = v('a-nombre');
     const apellidos = v('a-apellidos');

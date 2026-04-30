@@ -12,20 +12,34 @@ document.addEventListener("DOMContentLoaded", function () {
         menu.classList.remove("show");
     });
 
-    const elemento1 = document.querySelectorAll(".titulo");
+   // ───────── PERFIL DINÁMICO ─────────
 
-    elemento1.forEach((el, index) => {
-        setTimeout(() => {
-            el.classList.add("visible");
-        }, 200 + index * 200);   // delay base 200 ms
-    });
+    const rol    = localStorage.getItem("rolUsuario");
+    const nombre = localStorage.getItem("nombreUsuario");
 
-    const elemento2 = document.querySelectorAll(".subtitulo");
+    const destinosPerfil = {
+        docente:     "perfilDocente.html",
+        coordinador: "perfilCoordinador.html",
+        familiar:    "perfilFamilia.html",
+        admin:       "perfilAdmin.html",
+    };
 
-    elemento2.forEach((el, index) => {
-        setTimeout(() => {
-            el.classList.add("visible");
-        }, 400 + index * 200);   // después del título
-    });
+    const etiquetasRol = {
+        docente:     "Docente",
+        coordinador: "Coordinador",
+        familiar:    "Tutor legal",
+        admin:       "Administrador",
+    };
+
+    const linkPerfil = document.getElementById("linkPerfil");
+    if (linkPerfil) linkPerfil.href = destinosPerfil[rol] ?? "login.html";
+
+    const navNombre = document.getElementById("nav-nombre");
+    if (navNombre)
+        navNombre.textContent = nombre || navNombre.textContent || "—";
+
+    const navRol = document.getElementById("nav-rol");
+    if (navRol)
+        navRol.textContent = (rol && etiquetasRol[rol]) || navRol.textContent || "—";
 
 });
