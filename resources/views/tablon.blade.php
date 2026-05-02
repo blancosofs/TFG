@@ -1,38 +1,54 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edunoly · Tablón de Anuncios</title>
-    <script src="temas.js"></script>
-    <link rel="stylesheet" href="temas.css">
-    <link rel="stylesheet" href="EstilosTablon.css">
-</head>
-<body>
+{{-- resources/views/tablon.blade.php --}}
+@extends('layouts.app')
 
-<!-- ── NAVEGACIÓN ── -->
+@section('title', 'Edunoly · Tablón de Anuncios')
+
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('css/temas.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/EstilosTablon.css') }}">
+@endpush
+
+@push('scripts_head')
+    <script src="{{ asset('js/temas.js') }}"></script>
+@endpush
+
+@section('content')
+
+{{-- ── NAVEGACIÓN ── --}}
 <header>
     <nav>
         <div class="barraNav">
             <ul class="menu" id="menuPrincipal">
-                <li class="logo"><img src="logo.svg" alt="Edunoly"></li>
+                <li class="logo"><img src="{{ asset('img/logo.svg') }}" alt="Edunoly"></li>
                 <li class="menu-toggle-li">
                     <button class="menu-toggle" id="menuToggle" aria-label="Abrir menú">
                         <span></span><span></span><span></span>
                     </button>
                 </li>
                 <li><a href="#" id="nav-inicio">Inicio</a></li>
-                <li class="activo"><a href="tablon.html">Tablón</a></li>
+                <li class="activo"><a href="{{ route('tablon') }}">Tablón</a></li>
                 <li><a href="#" id="nav-perfil-link">Mi Perfil</a></li>
                 <li class="derecha menuSesion">
-                    <img src="perfil.png" class="fotoPerfil" alt="Perfil">
+                    <img src="{{ asset('img/perfil.png') }}" class="fotoPerfil" alt="Perfil">
                     <ul class="dropdown">
-                        <li class="dropdown-nombre"><span id="nav-nombre">Usuario</span></li>
-                        <li class="dropdown-rol"><span id="nav-rol-label">—</span></li>
+                        <li class="dropdown-nombre">
+                            <span id="nav-nombre">{{ auth()->user()->name ?? 'Usuario' }}</span>
+                        </li>
+                        <li class="dropdown-rol">
+                            <span id="nav-rol-label">{{ auth()->user()->rol ?? '—' }}</span>
+                        </li>
                         <li class="dropdown-sep"></li>
                         <li><a href="#" id="nav-mi-perfil">👤 Mi perfil</a></li>
-                        <li><a href="configuracion.html">⚙️ Configuración</a></li>
-                        <li><a href="#" id="btn-logout">Cerrar sesión</a></li>
+                        <li><a href="{{ route('configuracion') }}">⚙️ Configuración</a></li>
+                        <li>
+                            <a href="#" id="btn-logout"
+                               onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                Cerrar sesión
+                            </a>
+                            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display:none">
+                                @csrf
+                            </form>
+                        </li>
                     </ul>
                 </li>
             </ul>
@@ -40,7 +56,7 @@
     </nav>
 </header>
 
-<!-- ── HERO ── -->
+{{-- ── HERO ── --}}
 <div class="tablon-hero">
     <div class="tablon-hero-inner">
         <div>
@@ -56,7 +72,7 @@
     </div>
 </div>
 
-<!-- ── FILTROS ── -->
+{{-- ── FILTROS ── --}}
 <div class="filtros-wrap">
     <div class="filtros">
         <div class="chips-wrap">
@@ -75,10 +91,10 @@
     </div>
 </div>
 
-<!-- ── LAYOUT ── -->
+{{-- ── LAYOUT ── --}}
 <div class="tablon-layout">
 
-    <!-- Anuncios -->
+    {{-- Anuncios --}}
     <main class="anuncios-col">
         <div id="anuncios-lista"></div>
         <div id="anuncios-vacio" class="vacio" style="display:none">
@@ -87,40 +103,72 @@
         </div>
     </main>
 
-    <!-- Sidebar -->
+    {{-- Sidebar --}}
     <aside class="tablon-aside">
 
         <div class="aside-card">
             <h3 class="aside-titulo">📅 Próximos eventos</h3>
             <div id="proximos-lista">
-                <div class="evento-item">
-                    <div class="evento-fecha"><span class="evento-dia">15</span><span class="evento-mes">May</span></div>
-                    <div class="evento-info"><div class="evento-nombre">Examen Matemáticas 1ºA</div><div class="evento-hora">9:00 — 10:00</div></div>
-                </div>
-                <div class="evento-item">
-                    <div class="evento-fecha"><span class="evento-dia">20</span><span class="evento-mes">May</span></div>
-                    <div class="evento-info"><div class="evento-nombre">Reunión de padres</div><div class="evento-hora">17:00 — 19:00</div></div>
-                </div>
-                <div class="evento-item">
-                    <div class="evento-fecha"><span class="evento-dia">28</span><span class="evento-mes">May</span></div>
-                    <div class="evento-info"><div class="evento-nombre">Fin de trimestre</div><div class="evento-hora">Todo el día</div></div>
-                </div>
+                @forelse ($proximosEventos ?? [] as $evento)
+                    <div class="evento-item">
+                        <div class="evento-fecha">
+                            <span class="evento-dia">{{ \Carbon\Carbon::parse($evento->fecha)->format('d') }}</span>
+                            <span class="evento-mes">{{ \Carbon\Carbon::parse($evento->fecha)->translatedFormat('M') }}</span>
+                        </div>
+                        <div class="evento-info">
+                            <div class="evento-nombre">{{ $evento->nombre }}</div>
+                            <div class="evento-hora">{{ $evento->hora_inicio }} — {{ $evento->hora_fin }}</div>
+                        </div>
+                    </div>
+                @empty
+                    {{-- Datos de ejemplo si no hay eventos desde el controlador --}}
+                    <div class="evento-item">
+                        <div class="evento-fecha"><span class="evento-dia">15</span><span class="evento-mes">May</span></div>
+                        <div class="evento-info">
+                            <div class="evento-nombre">Examen Matemáticas 1ºA</div>
+                            <div class="evento-hora">9:00 — 10:00</div>
+                        </div>
+                    </div>
+                    <div class="evento-item">
+                        <div class="evento-fecha"><span class="evento-dia">20</span><span class="evento-mes">May</span></div>
+                        <div class="evento-info">
+                            <div class="evento-nombre">Reunión de padres</div>
+                            <div class="evento-hora">17:00 — 19:00</div>
+                        </div>
+                    </div>
+                    <div class="evento-item">
+                        <div class="evento-fecha"><span class="evento-dia">28</span><span class="evento-mes">May</span></div>
+                        <div class="evento-info">
+                            <div class="evento-nombre">Fin de trimestre</div>
+                            <div class="evento-hora">Todo el día</div>
+                        </div>
+                    </div>
+                @endforelse
             </div>
         </div>
 
         <div class="aside-card">
             <h3 class="aside-titulo">📊 Resumen</h3>
             <div class="aside-stats">
-                <div class="aside-stat"><span class="aside-num" id="stat-total">0</span><span class="aside-lbl">Anuncios</span></div>
-                <div class="aside-stat"><span class="aside-num rojo" id="stat-urgentes">0</span><span class="aside-lbl">Urgentes</span></div>
-                <div class="aside-stat"><span class="aside-num" id="stat-hoy">0</span><span class="aside-lbl">Nuevos hoy</span></div>
+                <div class="aside-stat">
+                    <span class="aside-num" id="stat-total">{{ $stats['total'] ?? 0 }}</span>
+                    <span class="aside-lbl">Anuncios</span>
+                </div>
+                <div class="aside-stat">
+                    <span class="aside-num rojo" id="stat-urgentes">{{ $stats['urgentes'] ?? 0 }}</span>
+                    <span class="aside-lbl">Urgentes</span>
+                </div>
+                <div class="aside-stat">
+                    <span class="aside-num" id="stat-hoy">{{ $stats['hoy'] ?? 0 }}</span>
+                    <span class="aside-lbl">Nuevos hoy</span>
+                </div>
             </div>
         </div>
 
     </aside>
 </div>
 
-<!-- ══ MODAL: Publicar anuncio ══ -->
+{{-- ══ MODAL: Publicar anuncio ══ --}}
 <div class="modal-overlay" id="modal-publicar">
     <div class="modal">
         <div class="modal-head">
@@ -160,6 +208,9 @@
                 <label class="flabel">Clase (opcional)</label>
                 <select class="finput" id="pub-clase">
                     <option value="">Todas las clases</option>
+                    @foreach ($clases ?? [] as $clase)
+                        <option value="{{ $clase->id }}">{{ $clase->nombre }}</option>
+                    @endforeach
                 </select>
             </div>
             <div class="fgroup">
@@ -174,7 +225,7 @@
     </div>
 </div>
 
-<!-- ══ MODAL: Ver anuncio completo ══ -->
+{{-- ══ MODAL: Ver anuncio completo ══ --}}
 <div class="modal-overlay" id="modal-ver">
     <div class="modal modal-grande">
         <div class="modal-head">
@@ -186,14 +237,17 @@
         <div id="ver-contenido" class="ver-contenido"></div>
         <div id="ver-footer" class="ver-footer"></div>
 
-        <!-- ── COMENTARIOS ── -->
+        {{-- ── COMENTARIOS ── --}}
         <div class="comentarios-seccion">
-            <h4 class="comentarios-titulo">💬 Comentarios <span id="comentarios-count" class="comentarios-count">0</span></h4>
+            <h4 class="comentarios-titulo">
+                💬 Comentarios
+                <span id="comentarios-count" class="comentarios-count">0</span>
+            </h4>
 
-            <!-- Lista de comentarios -->
+            {{-- Lista de comentarios --}}
             <div id="comentarios-lista"></div>
 
-            <!-- Formulario nuevo comentario -->
+            {{-- Formulario nuevo comentario --}}
             <div class="nuevo-comentario">
                 <div class="nuevo-comentario-avatar" id="nuevo-avatar">—</div>
                 <div class="nuevo-comentario-form">
@@ -209,7 +263,7 @@
     </div>
 </div>
 
-<!-- ══ MODAL: Confirmar eliminar ══ -->
+{{-- ══ MODAL: Confirmar eliminar ══ --}}
 <div class="modal-overlay" id="modal-eliminar">
     <div class="modal" style="max-width:380px;text-align:center">
         <div style="font-size:36px;margin-bottom:12px">🗑️</div>
@@ -224,9 +278,14 @@
 
 <div class="toast" id="toast"></div>
 
-<script src="temas.js"></script>
-<script src="MenuSesion.js"></script>
-<script src="menuResponsive.js"></script>
-<script src="tablon.js"></script>
-</body>
-</html>
+@endsection
+
+@push('scripts')
+    <script src="{{ asset('js/MenuSesion.js') }}"></script>
+    <script src="{{ asset('js/menuResponsive.js') }}"></script>
+    <script src="{{ asset('js/tablon.js') }}"></script>
+    {{-- Token CSRF disponible para peticiones AJAX --}}
+    <script>
+        window.csrfToken = '{{ csrf_token() }}';
+    </script>
+@endpush

@@ -24,14 +24,22 @@
                 <li class="activo"><a href="{{ route('perfilFamilia') }}">Mi Perfil</a></li>
 
                 <li class="derecha menuSesion">
-                    <img src="perfil.png" class="fotoPerfil" alt="Perfil">
+                    <img src="{{ asset('img/perfil.png') }}" class="fotoPerfil" alt="Perfil">
                     <ul class="dropdown">
                         <li class="dropdown-nombre"><span id="nav-nombre"></span></li>
                         <li class="dropdown-rol"><span id="nav-rol">Tutor legal</span></li>
                         <li class="dropdown-sep"></li>
                         <li><a href="{{ route('perfilFamilia') }}">👤 Mi perfil</a></li>
                         <li><a href="{{ route('config') }}">⚙️ Configuración</a></li>
-                        <li><a href="#" id="btn-logout">Cerrar sesión</a></li>
+                        <li>
+                            <a href="#" id="btn-logout"
+                               onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                Cerrar sesión
+                            </a>
+                            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display:none">
+                                @csrf
+                            </form>
+                        </li>
                     </ul>
                 </li>
             </ul>
@@ -57,7 +65,7 @@
         <!-- Foto + datos del tutor -->
         <div class="card-perfil">
             <div class="foto-wrap">
-                <img src="perfil.png" alt="Foto de perfil" class="foto-grande" id="foto-preview">
+                <img src="{{ asset('img/perfil.png') }}" alt="Foto de perfil" class="foto-grande" id="foto-preview">
                 <label class="foto-btn" title="Cambiar foto">
                     📷
                     <input type="file" id="input-foto" accept="image/*" style="display:none" onchange="previsualizarFoto(this)">
@@ -261,8 +269,61 @@
 
 <div class="toast" id="toast"></div>
 
-<script src="{{ asset('js/temas.js') }}"></script>
+<!-- ══ MODAL: Contactar con el docente ══ -->
+<div class="modal-overlay" id="modal-contactar">
+    <div class="modal-contactar-inner">
+
+        <div class="modal-contactar-head">
+            <div>
+                <div class="modal-contactar-titulo">✉️ Contactar con docente</div>
+                <div class="modal-contactar-subtitulo" id="modal-contactar-subtitulo">—</div>
+            </div>
+            <button class="modal-contactar-cerrar" onclick="cerrarContactar()">✕</button>
+        </div>
+
+        <!-- Destinatario -->
+        <div class="modal-destinatario">
+            <span class="modal-destinatario-ico">👨‍🏫</span>
+            <div>
+                <div class="modal-docente-nombre" id="modal-docente-nombre">—</div>
+                <div class="modal-docente-asig" id="modal-docente-asig">—</div>
+            </div>
+        </div>
+
+        <div id="alert-contactar"></div>
+
+        <!-- Asunto -->
+        <div class="fgroup">
+            <label class="flabel">Asunto *</label>
+            <input id="contactar-asunto" class="finput" type="text" placeholder="Escribe el asunto…">
+            <div class="sugerencias-wrap">
+                <button class="sugerencia-btn" onclick="setSugerencia('Consulta sobre falta de asistencia')">📋 Falta de asistencia</button>
+                <button class="sugerencia-btn" onclick="setSugerencia('Consulta académica')">📚 Consulta académica</button>
+                <button class="sugerencia-btn" onclick="setSugerencia('Justificación de ausencia')">✏️ Justificación</button>
+                <button class="sugerencia-btn" onclick="setSugerencia('Solicitud de tutoría')">🤝 Tutoría</button>
+            </div>
+        </div>
+
+        <!-- Mensaje -->
+        <div class="fgroup">
+            <label class="flabel">Mensaje *</label>
+            <textarea id="contactar-mensaje" class="finput" rows="5"
+                      placeholder="Escribe tu mensaje aquí…"></textarea>
+            <div class="finput-hint">El docente recibirá una notificación en la plataforma.</div>
+        </div>
+
+        <div class="modal-actions">
+            <button class="btn-ghost" onclick="cerrarContactar()">Cancelar</button>
+            <button class="btn-primary" onclick="enviarMensaje()">✉️ Enviar mensaje</button>
+        </div>
+
+    </div>
+</div>
+
 <script src="{{ asset('js/MenuSesion.js') }}"></script>
 <script src="{{ asset('js/perfilFamilia.js') }}"></script>
+<script>
+    window.csrfToken = '{{ csrf_token() }}';
+</script>
 </body>
 </html>

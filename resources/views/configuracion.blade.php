@@ -26,19 +26,7 @@
                 <li><a href="{{ route('index') }}">Inicio</a></li>
                 <li><a href="{{ route('contacto') }}">Contacto</a></li>
                 <li class="activo"><a href="{{ route('config') }}">Configuración</a></li>
-                <li class="derecha menuSesion">
-                    <img src="{{ asset('img/perfil.png') }}" class="fotoPerfil" alt="Perfil">
-                    <ul class="dropdown">
-                        <li><a href="{{ route('config') }}">⚙️ Configuración</a></li>
-                        <li><a href="#">Mi perfil</a></li>
-                        <li>
-                            <li>                      
-                                <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">@csrf</form>
-                                <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Cerrar sesión</a>
-                            </li>
-                        </li>
-                    </ul>
-                </li>
+                <li class="derecha menuSesion"></li>
             </ul>
         </div>
     </nav>
@@ -253,60 +241,7 @@
 
     </div>
 
-    <!-- SECCIÓN: NOTIFICACIONES -->
-    <div class="config-seccion">
-        <div class="seccion-header">
-            <div class="seccion-titulo" data-i18n="config.notificaciones">🔔 Notificaciones</div>
-            <div class="seccion-sub" data-i18n="config.notificacionesSub">Decide qué notificaciones quieres recibir.</div>
-        </div>
-
-        <div class="opcion-fila">
-            <div class="opcion-info">
-                <div class="opcion-nombre" data-i18n="config.recordatorio">Recordatorio de clases</div>
-                <div class="opcion-desc">Aviso 15 minutos antes de que empiece cada clase.</div>
-            </div>
-            <label class="toggle">
-                <input type="checkbox" id="opt-recordatorio" onchange="guardarOpcion('recordatorio', this.checked)">
-                <span class="toggle-slider"></span>
-            </label>
-        </div>
-
-        <div class="opcion-fila">
-            <div class="opcion-info">
-                <div class="opcion-nombre" data-i18n="config.cambios">Cambios en el horario</div>
-                <div class="opcion-desc">Notificar cuando el coordinador modifique alguna clase.</div>
-            </div>
-            <label class="toggle">
-                <input type="checkbox" id="opt-cambios" onchange="guardarOpcion('cambios', this.checked)">
-                <span class="toggle-slider"></span>
-            </label>
-        </div>
-
-        <div class="opcion-fila">
-            <div class="opcion-info">
-                <div class="opcion-nombre" data-i18n="config.faltas">Nuevas faltas de asistencia</div>
-                <div class="opcion-desc">Recibir aviso cuando se registre una falta de un alumno a tu cargo.</div>
-            </div>
-            <label class="toggle">
-                <input type="checkbox" id="opt-faltas" onchange="guardarOpcion('faltas', this.checked)">
-                <span class="toggle-slider"></span>
-            </label>
-        </div>
-
-        <div class="opcion-fila">
-            <div class="opcion-info">
-                <div class="opcion-nombre" data-i18n="config.sonido">Sonido de notificaciones</div>
-                <div class="opcion-desc">Reproducir un sonido al recibir una notificación nueva.</div>
-            </div>
-            <label class="toggle">
-                <input type="checkbox" id="opt-sonido" onchange="guardarOpcion('sonido', this.checked)">
-                <span class="toggle-slider"></span>
-            </label>
-        </div>
-
-    </div>
-
-    <!-- Footer -->
+        <!-- Footer -->
     <div class="config-footer">
         <button class="btn-cancelar" onclick="cancelar()" data-i18n="config.cancelar">Cancelar</button>
         <button class="btn-guardar" onclick="guardarTodo()" data-i18n="config.guardar">Guardar cambios</button>
@@ -316,172 +251,10 @@
 
 <div class="toast" id="toast"></div>
 
-<script src="{{ asset('js/temas.js') }}"></script>
-<script src="{{ asset('js/traducciones.js') }}"></script>
-<script src="{{ asset('js/MenuSesion.js') }}"></script>
-<script>
-/* ══════════════════════════════════════════════════════════════
-   Estado — config guardada vs temporal
-══════════════════════════════════════════════════════════════ */
-let configGuardada = {};
-let configTemporal = {};
-let temaGuardado   = '';
-let temaTemporal   = '';
-
-/* Valores por defecto */
-const DEFAULTS = {
-    animaciones:  false,
-    fuente:       'normal',
-    contraste:    false,
-    enlaces:      false,
-    idioma:       'es',
-    fecha:        'dd/mm/yyyy',
-    recordatorio: true,
-    cambios:      true,
-    faltas:       true,
-    sonido:       false
-};
-
-document.addEventListener('DOMContentLoaded', () => {
-    configGuardada = cargarOpciones();
-    configTemporal = { ...configGuardada };
-    temaGuardado   = temaActual();
-    temaTemporal   = temaGuardado;
-
-    // Marcar tema activo
-    document.querySelectorAll('.tema-card').forEach(card => {
-        card.classList.toggle('activo', card.dataset.tema === temaGuardado);
-    });
-
-    // Rellenar controles
-    rellenarControles(configGuardada);
-
-    // Aplicar opciones guardadas
-    aplicarOpciones(configGuardada);
-});
-
-/* ── Rellena todos los controles con una config dada ── */
-function rellenarControles(opts) {
-    const get = (k) => opts[k] !== undefined ? opts[k] : DEFAULTS[k];
-
-    document.getElementById('opt-animaciones').checked  = get('animaciones');
-    document.getElementById('opt-contraste').checked    = get('contraste');
-    document.getElementById('opt-enlaces').checked      = get('enlaces');
-    document.getElementById('opt-recordatorio').checked = get('recordatorio');
-    document.getElementById('opt-cambios').checked      = get('cambios');
-    document.getElementById('opt-faltas').checked       = get('faltas');
-    document.getElementById('opt-sonido').checked       = get('sonido');
-    document.getElementById('opt-fuente').value         = get('fuente');
-    document.getElementById('opt-idioma').value         = get('idioma');
-    document.getElementById('opt-fecha').value          = get('fecha');
-}
-
-/* ── Seleccionar tema (vista previa, no guarda) ── */
-function seleccionarTema(nombre, el) {
-    document.querySelectorAll('.tema-card').forEach(c => c.classList.remove('activo'));
-    el.classList.add('activo');
-    temaTemporal = nombre;
-    aplicarTema(nombre);
-}
-
-/* ── Cambiar opción (vista previa inmediata, no guarda) ── */
-function guardarOpcion(clave, valor) {
-    configTemporal[clave] = valor;
-    aplicarOpciones(configTemporal);
-    // Idioma se aplica inmediatamente para ver el cambio al instante
-    if (clave === 'idioma' && typeof aplicarIdioma === 'function') {
-        aplicarIdioma(valor);
-    }
-}
-
-function cargarOpciones() {
-    try { return JSON.parse(localStorage.getItem('edunoly-config') || '{}'); }
-    catch { return {}; }
-}
-
-/* ── Aplica todas las opciones visualmente ── */
-function aplicarOpciones(opts) {
-    const get = (k) => opts[k] !== undefined ? opts[k] : DEFAULTS[k];
-
-    /* ── Tamaño de fuente — clases en body ── */
-    document.body.classList.remove('fuente-grande', 'fuente-muy-grande');
-    if (get('fuente') === 'grande')     document.body.classList.add('fuente-grande');
-    if (get('fuente') === 'muy-grande') document.body.classList.add('fuente-muy-grande');
-
-    /* ── Animaciones reducidas ── */
-    let estiloAnim = document.getElementById('estilo-animaciones');
-    if (!estiloAnim) {
-        estiloAnim = document.createElement('style');
-        estiloAnim.id = 'estilo-animaciones';
-        document.head.appendChild(estiloAnim);
-    }
-    estiloAnim.textContent = get('animaciones')
-        ? `*, *::before, *::after { animation-duration: 0ms !important; transition-duration: 0ms !important; }`
-        : '';
-
-    /* ── Alto contraste ── */
-    let estiloContraste = document.getElementById('estilo-contraste');
-    if (!estiloContraste) {
-        estiloContraste = document.createElement('style');
-        estiloContraste.id = 'estilo-contraste';
-        document.head.appendChild(estiloContraste);
-    }
-    estiloContraste.textContent = get('contraste')
-        ? `body { filter: contrast(1.3); } .config-seccion, .tema-card { border-width: 2px !important; }`
-        : '';
-
-    /* ── Subrayar enlaces ── */
-    let estiloEnlaces = document.getElementById('estilo-enlaces');
-    if (!estiloEnlaces) {
-        estiloEnlaces = document.createElement('style');
-        estiloEnlaces.id = 'estilo-enlaces';
-        document.head.appendChild(estiloEnlaces);
-    }
-    estiloEnlaces.textContent = get('enlaces') ? `a { text-decoration: underline !important; }` : '';
-
-    /* ── Idioma ── */
-    if (typeof aplicarIdioma === 'function') aplicarIdioma(get('idioma'));
-}
-
-/* ── Guardar todo — escribe en localStorage ── */
-function guardarTodo() {
-    guardarTema(temaTemporal);
-    localStorage.setItem('edunoly-config', JSON.stringify(configTemporal));
-    temaGuardado   = temaTemporal;
-    configGuardada = { ...configTemporal };
-    aplicarOpciones(configGuardada);
-    mostrarToast('✓ Configuración guardada correctamente');
-}
-
-/* ── Cancelar — revierte a lo guardado ── */
-function cancelar() {
-    temaTemporal   = temaGuardado;
-    configTemporal = { ...configGuardada };
-
-    aplicarTema(temaGuardado);
-    document.querySelectorAll('.tema-card').forEach(card => {
-        card.classList.toggle('activo', card.dataset.tema === temaGuardado);
-    });
-
-    rellenarControles(configGuardada);
-    aplicarOpciones(configGuardada);
-    mostrarToast('↩ Cambios descartados');
-}
-
-/* ── Toast ── */
-function mostrarToast(msg) {
-    const t = document.getElementById('toast');
-    t.textContent = msg; t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 2800);
-}
-
-/* ── Logout ── */
-document.getElementById('btn-logout')?.addEventListener('click', async e => {
-    e.preventDefault();
-    await fetch('/api/logout', { method: 'POST', credentials: 'include' });
-    window.location.href = '{{ route('login') }}';
-});
-</script>
-<script src="{{ asset('js/menuResponsive.js') }}"></script>
+<script src="temas.js"></script>
+<script src="traducciones.js"></script>
+<script src="MenuSesion.js"></script>
+<script src="configuracion.js"></script>
+<script src="menuResponsive.js"></script>
 </body>
 </html>

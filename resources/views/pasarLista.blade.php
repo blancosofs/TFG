@@ -1,38 +1,52 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edunoly · Pasar Lista</title>
-    <script src="temas.js"></script>
-    <link rel="stylesheet" href="temas.css">
-    <link rel="stylesheet" href="EstilosPasarLista.css">
-</head>
-<body>
+{{-- resources/views/pasarLista.blade.php --}}
+@extends('layouts.app')
 
-<!-- ── NAVEGACIÓN ── -->
+@section('title', 'Edunoly · Pasar Lista')
+
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('css/temas.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/EstilosPasarLista.css') }}">
+@endpush
+
+@push('scripts_head')
+    <script src="{{ asset('js/temas.js') }}"></script>
+@endpush
+
+@section('content')
+
+{{-- ── NAVEGACIÓN ── --}}
 <header>
     <nav>
         <div class="barraNav">
             <ul class="menu" id="menuPrincipal">
-                <li class="logo"><img src="logo.svg" alt="Edunoly"></li>
+                <li class="logo"><img src="{{ asset('img/logo.svg') }}" alt="Edunoly"></li>
                 <li class="menu-toggle-li">
                     <button class="menu-toggle" id="menuToggle" aria-label="Abrir menú">
                         <span></span><span></span><span></span>
                     </button>
                 </li>
-                <li><a href="perfilDocente.html">Mi Perfil</a></li>
-                <li><a href="calendario.html">Mi Horario</a></li>
-                <li class="activo"><a href="pasarLista.html">Ausencias</a></li>
+                <li><a href="{{ route('perfil.docente') }}">Mi Perfil</a></li>
+                <li><a href="{{ route('calendario') }}">Mi Horario</a></li>
+                <li class="activo"><a href="{{ route('pasar.lista') }}">Ausencias</a></li>
                 <li class="derecha menuSesion">
-                    <img src="perfil.png" class="fotoPerfil" alt="Perfil">
+                    <img src="{{ asset('img/perfil.png') }}" class="fotoPerfil" alt="Perfil">
                     <ul class="dropdown">
-                        <li class="dropdown-nombre"><span id="nav-nombre">Docente</span></li>
+                        <li class="dropdown-nombre">
+                            <span id="nav-nombre">{{ auth()->user()->name ?? 'Docente' }}</span>
+                        </li>
                         <li class="dropdown-rol">Docente</li>
                         <li class="dropdown-sep"></li>
-                        <li><a href="perfil.html">👤 Mi perfil</a></li>
-                        <li><a href="configuracion.html">⚙️ Configuración</a></li>
-                        <li><a href="#" id="btn-logout">Cerrar sesión</a></li>
+                        <li><a href="{{ route('perfil') }}">👤 Mi perfil</a></li>
+                        <li><a href="{{ route('configuracion') }}">⚙️ Configuración</a></li>
+                        <li>
+                            <a href="#" id="btn-logout"
+                               onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                Cerrar sesión
+                            </a>
+                            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display:none">
+                                @csrf
+                            </form>
+                        </li>
                     </ul>
                 </li>
             </ul>
@@ -40,7 +54,7 @@
     </nav>
 </header>
 
-<!-- ── HERO ── -->
+{{-- ── HERO ── --}}
 <div class="lista-hero">
     <div class="lista-hero-inner">
         <div>
@@ -65,7 +79,7 @@
     </div>
 </div>
 
-<!-- ── FILTROS ── -->
+{{-- ── FILTROS ── --}}
 <div class="filtros-wrap">
     <div class="filtros">
 
@@ -78,6 +92,9 @@
             <label class="filtro-label">Clase</label>
             <select class="filtro-input" id="filtro-clase" onchange="cargarAlumnos()">
                 <option value="">Seleccionar clase…</option>
+                @foreach ($clases ?? [] as $clase)
+                    <option value="{{ $clase->id }}">{{ $clase->nombre }}</option>
+                @endforeach
             </select>
         </div>
 
@@ -85,6 +102,9 @@
             <label class="filtro-label">Asignatura</label>
             <select class="filtro-input" id="filtro-asignatura">
                 <option value="">Seleccionar asignatura…</option>
+                @foreach ($asignaturas ?? [] as $asignatura)
+                    <option value="{{ $asignatura->id }}">{{ $asignatura->nombre }}</option>
+                @endforeach
             </select>
         </div>
 
@@ -95,16 +115,16 @@
     </div>
 </div>
 
-<!-- ── LISTA DE ALUMNOS ── -->
+{{-- ── LISTA DE ALUMNOS ── --}}
 <div class="lista-layout">
 
-    <!-- Aviso si no hay clase seleccionada -->
+    {{-- Aviso si no hay clase seleccionada --}}
     <div id="aviso-seleccionar" class="aviso-info">
         <span class="aviso-ico">📋</span>
         <p>Selecciona una clase para comenzar a pasar lista.</p>
     </div>
 
-    <!-- Tabla de alumnos -->
+    {{-- Tabla de alumnos --}}
     <div id="lista-alumnos" style="display:none">
 
         <div class="lista-header">
@@ -118,10 +138,10 @@
             </div>
         </div>
 
-        <!-- Tarjetas de alumnos -->
+        {{-- Tarjetas de alumnos --}}
         <div class="alumnos-grid" id="alumnos-grid"></div>
 
-        <!-- Botón guardar -->
+        {{-- Botón guardar --}}
         <div class="guardar-wrap">
             <div id="resumen-texto" class="resumen-texto"></div>
             <button class="btn-guardar-lista" id="btn-guardar" onclick="guardarLista()">
@@ -133,7 +153,7 @@
 
 </div>
 
-<!-- ══ MODAL: Añadir nota a un alumno ══ -->
+{{-- ══ MODAL: Añadir nota a un alumno ══ --}}
 <div class="modal-overlay" id="modal-nota">
     <div class="modal">
         <div class="modal-head">
@@ -157,7 +177,7 @@
     </div>
 </div>
 
-<!-- ══ MODAL: Confirmar guardar ══ -->
+{{-- ══ MODAL: Confirmar guardar ══ --}}
 <div class="modal-overlay" id="modal-confirmar">
     <div class="modal" style="max-width:420px;text-align:center">
         <div style="font-size:36px;margin-bottom:12px">📋</div>
@@ -172,9 +192,14 @@
 
 <div class="toast" id="toast"></div>
 
-<script src="temas.js"></script>
-<script src="MenuSesion.js"></script>
-<script src="menuResponsive.js"></script>
-<script src="pasarLista.js"></script>
-</body>
-</html>
+@endsection
+
+@push('scripts')
+    <script src="{{ asset('js/MenuSesion.js') }}"></script>
+    <script src="{{ asset('js/menuResponsive.js') }}"></script>
+    <script src="{{ asset('js/pasarLista.js') }}"></script>
+    {{-- Token CSRF disponible para peticiones AJAX --}}
+    <script>
+        window.csrfToken = '{{ csrf_token() }}';
+    </script>
+@endpush
