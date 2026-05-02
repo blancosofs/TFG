@@ -204,3 +204,19 @@
     border-color: color-mix(in srgb, var(--acento) 35%, transparent);
     color: var(--acento);
 }
+
+/* Avatar de iniciales del hijo (sustituye a la foto) */
+.hijo-foto-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--acento) 20%, transparent);
+    border: 3px solid var(--acento);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--acento);
+    flex-shrink: 0;
+}
