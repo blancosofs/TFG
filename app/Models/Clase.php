@@ -28,9 +28,11 @@ class Clase extends Model
         return $this->belongsToMany(Docente::class, 'docentes_clases', 'clase_id', 'docente_id');
     }
 
-    //  Relación N:M - Aprovechamos para poner que la clase TIENE MUCHOS alumnos
+     //esta repetido. lo comento pque me da error con la demo
+    /*  Relación N:M - Aprovechamos para poner que la clase TIENE MUCHOS alumnos
     public function alumnos()
     {
         return $this->hasMany(Alumno::class);
-    }
+    }*/
+   
 }
