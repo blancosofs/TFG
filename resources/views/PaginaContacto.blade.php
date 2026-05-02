@@ -31,6 +31,11 @@
         </header>
         <div class="contenedor">
             <div id="Contacto">
+                @if (session('success'))
+    <div style="background-color: #d4edda; color: #155724; padding: 15px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #c3e6cb;">
+        {{ session('success') }}
+    </div>
+                @endif
                 <form action="{{ route('contacto.enviar') }}" method="POST">
                     @csrf
                 <div class="CajaContacto">

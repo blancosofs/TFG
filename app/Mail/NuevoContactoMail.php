@@ -7,23 +7,23 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Queue\SerializesModels;
 
-class NuevaConsultaMail extends Mailable
+class NuevoContactoMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    // 1. Declaramos la propiedad
+    //variable de datos propia
     public $datos;
 
     public function __construct($datos)
     {
-        // 2. Le asignamos los datos del formulario
+        // asignamos a la variable de datos propia el valor que nos llega por el constructor
         $this->datos = $datos;
     }
 
     public function content(): Content
     {
         return new Content(
-            view: 'emails.consulta', // <--- COMPRUEBA QUE PONE ESTO EXACTAMENTE
+            view: 'emails.consulta', 
         );
     }
 }

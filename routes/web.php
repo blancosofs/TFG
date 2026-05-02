@@ -1,8 +1,8 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\SolicitudController; //Para el formulario de unete
-use App\Http\Controllers\ContactoController;
+//use App\Http\Controllers\ProfileController;
+//use App\Http\Controllers\SolicitudController; //Para el formulario de unete
+use App\Http\Controllers\Formularios\ContactoController; //pones aqui la ruta completa y done
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AlumnoController;
 use App\Http\Controllers\AusenciaController;
