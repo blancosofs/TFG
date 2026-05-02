@@ -39,58 +39,70 @@ Route::post('/contacto-enviar', [ContactoController::class, 'enviarConsulta'])->
 */
 Route::middleware(['auth'])->group(function () {
 
-    // --- TUS VISTAS DE PERFIL Y CONFIGURACIÓN ---
-    Route::view('/configuracion', 'configuracion')->name('config');
-    Route::view('/perfil', 'perfil')->name('perfil');
-    Route::view('/perfil/admin', 'perfilAdmin')->name('perfil.admin');
-    Route::view('/perfil/familia', 'perfilFamilia')->name('perfil.familia');
-    Route::view('/perfil/profesor', 'perfilProfesor')->name('perfil.profesor');
-    Route::view('/calendario', 'calendario')->name('calendario');
-    Route::view('/admin-panel', 'admin')->name('admin');
+    // Vistas comunes para cualquiera que esté logueado
+    Route::view('/configuracion.html', 'configuracion')->name('config');
 
-    // --- TU RUTA DE ADMINISTRADOR ---
-    Route::post('/registrar-colegio', [AdminController::class, 'registrarCentro'])->name('solicitud.enviar');
-
-    /*
-    |--------------------------------------------------------------------------
-    | 2.a RUTAS DEL SISTEMA CRUD 
-    |--------------------------------------------------------------------------
-    */
-
-    // 1. PERFIL: DESARROLLADOR / ADMIN GLOBAL
-    Route::prefix('admin')->group(function () {
-        Route::resource('colegios', ColegioController::class);
-        Route::resource('coordinadores', CoordinadorController::class);
+    // ZONA DOCENTES
+    Route::middleware(['role:docente'])->group(function () {
+        // Vistas
+        Route::view('/calendario.html', 'calendario')->name('calendario');
+        Route::view('/perfilDocente.html', 'perfilProfesor')->name('perfil');
+        Route::view('/pasarLista.html', 'pasarLista');
+        
+        // CRUD de Docentes
+        Route::prefix('profesor')->as('profesor.')->group(function () {
+            Route::resource('mis-clases', ClaseController::class)->only(['index', 'show']);
+            Route::resource('alumnos', AlumnoController::class)->only(['show']);
+            Route::resource('tutores', TutorController::class)->only(['show']);
+            Route::resource('horarios', HorarioController::class)->only(['index']);
+            Route::resource('ausencias', AusenciaController::class)->only(['create', 'store', 'index']);
+        });
     });
 
-    // 2. PERFIL: COORDINADOR
-    Route::prefix('coordinacion')->as('coordinacion.')->group(function () {
-        Route::resource('cursos', CursoController::class);
-        Route::resource('clases', ClaseController::class);
-        Route::resource('horarios', HorarioController::class);
-        Route::resource('alumnos', AlumnoController::class);
-        Route::resource('docentes', DocenteController::class);
-        Route::resource('tutores', TutorController::class);
-        Route::resource('ausencias', AusenciaController::class);
+    // 🔒 ZONA COORDINADORES
+    Route::middleware(['role:coordinador'])->group(function () {
+        // Vistas
+        Route::view('/dashboard.html', 'coordinador')->name('coordinador');
+        Route::view('/perfilCoordinador.html', 'perfilCoordinador')->name('perfilCoordinador');
+
+        // CRUD de Coordinadores
+        Route::prefix('coordinacion')->as('coordinacion.')->group(function () {
+            Route::resource('cursos', CursoController::class);
+            Route::resource('clases', ClaseController::class);
+            Route::resource('horarios', HorarioController::class);
+            Route::resource('alumnos', AlumnoController::class);
+            Route::resource('docentes', DocenteController::class);
+            Route::resource('tutores', TutorController::class);
+            Route::resource('ausencias', AusenciaController::class);
+        });
     });
 
-    // 3. PERFIL: DOCENTE
-    Route::prefix('profesor')->as('profesor.')
-    ->group(function () {
-        Route::resource('mis-clases', ClaseController::class)->only(['index', 'show']);
-        Route::resource('alumnos', AlumnoController::class)->only(['show']);
-        Route::resource('tutores', TutorController::class)->only(['show']);
-        Route::resource('horarios', HorarioController::class)->only(['index']);
-        Route::resource('ausencias', AusenciaController::class)->only(['create', 'store', 'index']);
+    // ZONA FAMILIAS (TUTORES)
+    Route::middleware(['role:tutor'])->group(function () {
+        // Vistas
+        Route::view('/familiar.html', 'perfilFamilia');
+        Route::view('/perfilFamilia.html', 'perfilFamilia')->name('perfilFamilia');
+
+        // CRUD de Familias
+        Route::prefix('familia')->group(function () {
+            Route::resource('mis-hijos', AlumnoController::class)->only(['index', 'show']);
+            Route::resource('profesores', DocenteController::class)->only(['index', 'show']);
+            Route::resource('ausencias', AusenciaController::class)->only(['index', 'create', 'store', 'update', 'edit']);
+        });
     });
 
-    // 4. PERFIL: TUTOR LEGAL (Familia)
-    Route::prefix('familia')->group(function () {
-        Route::resource('mis-hijos', AlumnoController::class)->only(['index', 'show']);
-        Route::resource('profesores', DocenteController::class)->only(['index', 'show']);
-        Route::resource('ausencias', AusenciaController::class)->only(['index', 'create', 'store', 'update', 'edit']);
-    });
+    // ZONA ADMIN GLOBAL
+    Route::middleware(['role:admin'])->group(function () {
+        // Vistas
+        Route::view('/admin.html', 'admin')->name('admin');
+        Route::view('/perfilAdmin.html', 'perfilAdmin')->name('perfilAdmin');
 
+        // CRUD de Admin
+        Route::prefix('admin')->group(function () {
+            Route::resource('colegios', ColegioController::class);
+            Route::resource('coordinadores', CoordinadorController::class);
+        });
+    });
 });
 
 // Rutas de autenticación por defecto (Laravel Breeze)
