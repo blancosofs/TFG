@@ -321,8 +321,8 @@ async function api(method, ruta, body) {
 ══════════════════════════════════════════════════════════════ */
 // (async () => {
 //     const data = await api('GET', '/api/me');
-//     if (!data || !data.id) { window.location.href = 'login.html'; return; }
-//     if (data.rol !== 'docente') { window.location.href = 'login.html'; return; }
+//     if (!data || !data.id) { window.location.href = '/login'; return; }
+//     if (data.rol !== 'docente') { window.location.href = '/login'; return; }
 //     cargarPerfil(data);
 // })();
 

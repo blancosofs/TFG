@@ -58,13 +58,13 @@ async function api(method, ruta, body) {
 
     // Sin sesión → login
     if (!data || !data.id) {
-        window.location.href = 'login.html';
+        window.location.href = '/login';
         return;
     }
 
     // Rol incorrecto → login (no es docente)
     if (data.rol !== 'docente') {
-        window.location.href = 'login.html';
+        window.location.href = '/login';
         return;
     }
 
@@ -94,7 +94,7 @@ function iniciarApp() {
 document.getElementById('btn-logout').addEventListener('click', async e => {
     e.preventDefault();
     await api('POST', '/api/logout');
-    window.location.href = 'login.html';
+    window.location.href = '/login';
 });
 
 /* ══════════════════════════════════════════════════════════════

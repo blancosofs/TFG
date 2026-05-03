@@ -27,8 +27,8 @@ let alumnoModal   = null;     // id del alumno que se está editando en el modal
 ════════════════════════════════════════════ */
 (async () => {
     // const data = await api('GET', '/api/me');
-    // if (!data || !data.id) { window.location.href = 'login.html'; return; }
-    // if (data.rol !== 'docente') { window.location.href = 'login.html'; return; }
+    // if (!data || !data.id) { window.location.href = '/login'; return; }
+    // if (data.rol !== 'docente') { window.location.href = '/login'; return; }
     // sesion = data;
 
     // Datos de prueba — quitar cuando el servidor esté activo
@@ -433,5 +433,5 @@ document.querySelectorAll('.modal-overlay').forEach(o => {
 document.getElementById('btn-logout')?.addEventListener('click', async e => {
     e.preventDefault();
     await api('POST', '/api/logout');
-    window.location.href = 'login.html';
+    window.location.href = '/login';
 });

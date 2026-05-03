@@ -18,10 +18,10 @@ document.addEventListener("DOMContentLoaded", function () {
     const nombre = localStorage.getItem("nombreUsuario");
 
     const destinosPerfil = {
-        docente:     "perfilDocente.html",
-        coordinador: "perfilCoordinador.html",
-        familiar:    "perfilFamilia.html",
-        admin:       "perfilAdmin.html",
+        docente:     "/perfilDocente", // O la ruta que hayas puesto en web.php
+        coordinador: "/perfilCoordinador",
+        familiar:    "/perfilFamilia",
+        admin:       "/perfilAdmin",
     };
 
     const etiquetasRol = {
@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
     const linkPerfil = document.getElementById("linkPerfil");
-    if (linkPerfil) linkPerfil.href = destinosPerfil[rol] ?? "login.html";
+    if (linkPerfil) linkPerfil.href = destinosPerfil[rol] ?? "/login";
 
     const navNombre = document.getElementById("nav-nombre");
     if (navNombre)

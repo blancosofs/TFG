@@ -35,13 +35,13 @@ async function api(method, ruta, body) {
    ARRANQUE
 ════════════════════════════════════════════ */
 (async () => {
-    // const data = await api('GET', '/api/me');
-    // if (!data || !data.id) { window.location.href = 'login.html'; return; }
-    // if (data.rol !== 'coordinador') { window.location.href = 'login.html'; return; }
-    // sesion = data;
+    const data = await api('GET', '/api/me');
+    if (!data || !data.id) { window.location.href = '/login'; return; }
+    if (data.rol !== 'coordinador') { window.location.href = '/login'; return; }
+    sesion = data;
 
     // Datos de prueba — quitar cuando el servidor esté activo
-    sesion = {
+    /*sesion = {
         id: 1,
         nombre: 'Ana',
         apellidos: 'Ruiz Sánchez',
@@ -51,7 +51,7 @@ async function api(method, ruta, body) {
         colegio: 'IES Ejemplo Madrid',
         colegio_id: 1,
         ultimo_acceso: new Date().toISOString()
-    };
+    };*/
 
     cargarPerfil(sesion);
     await cargarDatos();
@@ -183,10 +183,12 @@ function cambiarSeccionDesde(seccion) {
    CARGA DE DATOS DEL CENTRO
 ════════════════════════════════════════════ */
 async function cargarDatos() {
-    // En producción: await Promise.all([cargarCursos(), cargarAlumnos(), cargarDocentes(), cargarTutores()]);
+    // En producción: 
+    
+    await Promise.all([cargarCursos(), cargarAlumnos(), cargarDocentes(), cargarTutores()]);
 
     // Cursos y clases de prueba
-    cursos = [
+    /*cursos = [
         { id: 1, nombre: '1º ESO' }, { id: 2, nombre: '2º ESO' },
         { id: 3, nombre: '3º ESO' }, { id: 4, nombre: '4º ESO' },
     ];
@@ -218,7 +220,29 @@ async function cargarDatos() {
     renderTabla('alumnos');
     renderTabla('docentes');
     renderTabla('tutores');
+    actualizarStats();*/
+
+
+    // Pedimos los datos a Laravel
+    const resCursos   = await api('GET', '/api/cursos');
+    const resClases   = await api('GET', '/api/clases');
+    const resAlumnos  = await api('GET', '/api/alumnos');
+    const resDocentes = await api('GET', '/api/docentes');
+    const resTutores  = await api('GET', '/api/tutores');
+
+    // Los asignamos (si Laravel no devuelve un array, devolvemos array vacío)
+    cursos   = Array.isArray(resCursos) ? resCursos : [];
+    clases   = Array.isArray(resClases) ? resClases : [];
+    alumnos  = Array.isArray(resAlumnos) ? resAlumnos : [];
+    docentes = Array.isArray(resDocentes) ? resDocentes : [];
+    tutores  = Array.isArray(resTutores) ? resTutores : [];
+
+    // Pintamos las tablas
+    renderTabla('alumnos');
+    renderTabla('docentes');
+    renderTabla('tutores');
     actualizarStats();
+
 }
 
 /* ════════════════════════════════════════════
@@ -367,7 +391,8 @@ function resetFotoPreview(previewId, emoji, inputId) {
     const input = document.getElementById(inputId);
     if (input) input.value = '';
 }
-async function guardarAlumno() {
+
+/*async function guardarAlumno() {
     const nombre    = v('a-nombre');
     const apellidos = v('a-apellidos');
     const cursoId   = v('a-curso');
@@ -394,6 +419,44 @@ async function guardarAlumno() {
     renderTabla('alumnos'); actualizarStats();
     cerrarModalUsuario('modal-alumno');
     toast(modoModal === 'nuevo' ? '✓ Alumno registrado' : '✓ Alumno actualizado');
+}*/
+
+async function guardarAlumno() {
+    const nombre    = v('a-nombre');
+    const apellidos = v('a-apellidos');
+    const cursoId   = v('a-curso');
+    const claseId   = v('a-clase');
+    // (Mantenemos las validaciones iniciales de tu compañera)
+
+    if (!nombre || !apellidos || !cursoId || !claseId) {
+        alertModalUsuario('alert-alumno', '❌ Nombre, apellidos, curso y clase son obligatorios.'); return;
+    }
+
+    if (modoModal === 'nuevo') {
+        
+        // ¡CONEXIÓN REAL AL BACKEND! Enviamos el JSON a tu ruta
+        const respuesta = await api('POST', '/api/alumnos', { 
+            nombre: nombre, 
+            apellidos: apellidos, 
+            curso_id: cursoId, 
+            clase_id: claseId 
+        });
+
+        // Si Laravel nos devuelve un error de validación, lo mostramos y paramos
+        if (respuesta.error) {
+            alertModalUsuario('alert-alumno', '❌ ' + respuesta.error);
+            return;
+        }
+
+    } else {
+        // ... (Aquí iría el PUT para editar, lo dejamos para luego)
+    }
+
+    // Volvemos a pedir todos los datos a la BD para que la tabla se actualice sola
+    await cargarDatos(); 
+    
+    cerrarModalUsuario('modal-alumno');
+    toast('✅ Alumno registrado en la Base de Datos');
 }
 
 function editarAlumno(id) {
@@ -537,5 +600,5 @@ function toast(msg) {
 document.getElementById('btn-logout')?.addEventListener('click', async e => {
     e.preventDefault();
     await api('POST', '/api/logout');
-    window.location.href = 'login.html';
+    window.location.href = '/login';
 });

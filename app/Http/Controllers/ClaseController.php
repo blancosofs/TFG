@@ -4,16 +4,31 @@ namespace App\Http\Controllers;
 
 use App\Models\Clase;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ClaseController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $clases = Clase::all();
-        return view ('clases.index' ,compact ('clase'));
+        // 1. ¿El Frontend nos está pidiendo las clases de un curso específico?
+        // (Ejemplo de petición del JS: fetch('/api/clases?curso_id=5'))
+        if ($request->has('curso_id')) {
+            $clases = Clase::where('curso_id', $request->curso_id)->get();
+            return response()->json($clases);
+        }
+
+        // 2. Si no pide un curso específico, buscamos todas las clases del colegio.
+        // Como la tabla 'clases' no tiene 'colegio_id', filtramos a través de la tabla 'cursos'
+        $colegioId = Auth::user()->colegio_id;
+        
+        $clases = Clase::whereHas('curso', function ($query) use ($colegioId) {
+            $query->where('colegio_id', $colegioId);
+        })->get();
+
+        return response()->json($clases);
     }
 
     /**

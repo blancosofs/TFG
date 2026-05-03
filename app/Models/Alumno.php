@@ -8,10 +8,11 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 class Alumno extends Model
 {
         protected $table = 'alumnos';
-        protected $fillable = ['nombre', 'apellidos', 'colegio_id', 'curso_id', 'clases_id', 'activo'];
+        protected $fillable = ['nombre', 'apellidos', 'fecha_nacimiento', 'colegio_id', 'curso_id', 'clase_id', 'activo'];
 
         protected $casts = [
-        'activo' => 'boolean',
+            'activo' => 'boolean',
+            'fecha_nacimiento' => 'date:Y-m-d' // <-- Añadido
         ];
 
     public function colegio()
@@ -25,6 +26,12 @@ class Alumno extends Model
         return $this->belongsTo(Clase::class);
     }
 
+    // Relación 1:N - Un alumno PERTENECE A un curso
+    public function curso()
+    {
+        return $this->belongsTo(Curso::class);
+    }
+    
     //Relación 1:N
     public function ausencias()
     {

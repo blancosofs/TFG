@@ -24,27 +24,35 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
-        // 1. Intenta autenticar. Si falla, Laravel te devuelve solo al login con error.
+        // 1. Autentica al usuario
         $request->authenticate();
-
-        // 2. Si llega aquí, es que los datos son correctos. Generamos sesión.
         $request->session()->regenerate();
-
+        
         $user = Auth::user();
 
-        // 3. Lógica de redirección por EMAIL o ROL
-        if ($user->email === 'admin@demo.com') {
-            return redirect()->intended(route('admin')); // Va a /admin-panel
+        // 2. Forzamos la redirección a su panel principal
+
+        if (is_null($user->colegio_id)) {
+            return redirect()->route('admin'); 
         }
 
-        if ($user->colegio_id === null) {
-            // Si es un usuario sin colegio (como tu super admin original)
-            return redirect()->intended(route('admin'));
+        // Si es Coordinador
+        if ($user->coordinador) {
+            return redirect()->route('coordinador'); 
         }
 
-        // Por defecto para los demás (Docentes, Familias...)
-        return redirect()->intended(route('perfil'));
-        //configurate esto mas adelante
+        // Si es Docente
+        if ($user->docente) {
+            return redirect()->route('calendario'); 
+        }
+
+        // Si es Tutor/Familiar
+        if ($user->tutor) {
+            return redirect()->route('perfilFamilia'); 
+        }
+
+        // Por si acaso hubiera un usuario sin rol, lo mandamos al inicio
+        return redirect('/');
     }
 
     /**

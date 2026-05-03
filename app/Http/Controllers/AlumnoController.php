@@ -3,16 +3,24 @@ namespace App\Http\Controllers;
 
 use App\Models\Alumno;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AlumnoController extends Controller
 {
     // Listar todos los alumnos
     public function index()
     {
-        $alumnos = Alumno::all();
-        return view('alumnos.index', compact('alumnos'));
+        // 1. Buscamos el colegio del coordinador logueado
+        $colegioId = Auth::user()->colegio_id;
 
-        //Va a MySQL, coge todos los alumnos y se los pasa a una vista.
+        // 2. Buscamos TODOS los alumnos de ese colegio, 
+        // e incluimos ("with") la información de su clase y curso para poder pintarla
+        $alumnos = Alumno::where('colegio_id', $colegioId)
+                        ->with(['clase', 'curso']) 
+                        ->get();
+
+        // 3. Se lo escupimos al JavaScript de tu compañera en formato JSON
+        return response()->json($alumnos);
     }
 
     // Mostrar formulario para crear uno nuevo
@@ -25,24 +33,42 @@ class AlumnoController extends Controller
 
     // Guardar el alumno en la base de datos
     public function store(Request $request)
-    {
-        // Validamos solo los campos de texto y IDs
-        $request->validate([
-            'nombre'     => 'required|string|max:25',
-            'apellidos'    => 'required|string|max:60',
-            'colegio_id' => 'required|integer|exists:colegios,id',
-            'curso_id' => 'required|integer|exists:cursos,id',
-            'clase_id' => 'required|integer|exists:clases,id',
-            'activo' => 'required|boolean'
-        ]);    
+{
+    // 1. Validamos los datos (añadimos tutor_id)
+    $request->validate([
+        'nombre'           => 'required|string|max:25',
+        'apellidos'        => 'required|string|max:60',
+        'fecha_nacimiento' => 'required|date',
+        'curso_id'         => 'required|integer|exists:cursos,id',
+        'clase_id'         => 'required|integer|exists:clases,id',
+        'tutor_id'         => 'nullable|integer|exists:tutores,id', // <--- Permitimos que llegue el tutor
+        'parentesco'       => 'nullable|string'
+    ]);
 
-        // Laravel usará el $fillable que definiste para filtrar
-        Alumno::create($request->all()); 
+   // OJO AQUÍ: Excluimos tanto 'tutor_id' como 'parentesco' para que 
+    // Laravel no intente guardarlos en la tabla 'alumnos' y nos dé error SQL
+    $data = $request->except(['tutor_id', 'parentesco']);
 
-        return redirect("/")->route('alumnos.index')->with('info', 'Alumno registrado con éxito');
+    $data['colegio_id'] = Auth::user()->colegio_id; // El colegio del coordinador
+    $data['activo']     = true; // Por defecto activo
 
-        //Recibe los datos que el usuario escribió en create(), los valida y los mete en la base de datos.
+    // 4. Creamos el alumno
+    $alumno = Alumno::create($data);
+
+    // Si nos enviaron un tutor, los vinculamos
+    if ($request->filled('tutor_id')) {
+        
+        $parentescoReal = $request->parentesco ?? 'Tutor legal';
+        $alumno->tutores()->attach($request->tutor_id, [
+            'parentesco' => $parentescoReal
+        ]);
     }
+
+        return response()->json([
+            'ok' => true,
+            'mensaje' => 'Alumno creado con éxito'
+        ]);
+    }   
 
     // Mostrar un alumno específico
     public function show(Alumno $alumno)
@@ -60,18 +86,47 @@ class AlumnoController extends Controller
     }
 
     // Actualizar los datos
-    public function update(Request $request, Alumno $alumno)
+    public function update(Request $request, int $id)
     {
-        $alumno->update($request->all());
-        return redirect()->route('alumnos.index')->with('info', 'Datos del alumno actualizados');
-        //Recibe los nuevos datos del formulario de edit() y sobrescribe los antiguos en MySQL.
+    // 1. Buscamos al alumno
+    $alumno = Alumno::findOrFail($id);
+
+    // 2. Validamos (Asegúrate de que los nombres aquí coincidan con el payload de JS)
+    $request->validate([
+        'nombre'           => 'required|string|max:25',
+        'apellidos'        => 'required|string|max:60',
+        'fecha_nacimiento' => 'required|date',
+        'curso_id'         => 'required|integer',
+        'clase_id'         => 'required|integer',
+    ]);
+
+    // 3. ACTUALIZACIÓN MANUAL (A prueba de fallos)
+    $alumno->nombre           = $request->nombre;
+    $alumno->apellidos        = $request->apellidos;
+    $alumno->fecha_nacimiento = $request->fecha_nacimiento;
+    $alumno->curso_id         = $request->curso_id;
+    $alumno->clase_id         = $request->clase_id;
+    
+    // Guardamos a la fuerza
+    $alumno->save(); 
+
+    // 4. Sincronizamos el tutor si existe
+    if ($request->has('tutor_id')) {
+        $alumno->tutores()->sync([$request->tutor_id => ['parentesco' => $request->parentesco ?? 'Tutor legal']]);
+    }
+
+    return response()->json([
+        'ok' => true, 
+        'mensaje' => '¡Guardado real en BD!',
+        'datos_recibidos' => $request->all() // Esto es para que veas en la consola qué le llegó a Laravel
+    ]);
     }
 
     // Eliminar al alumno
     public function destroy(Alumno $alumno)
     {
         $alumno->delete();
-        return redirect()->route('alumnos.index')->with('info', 'Alumno eliminado');
+        return response()->json(['ok' => true, 'mensaje' => 'Alumno eliminado con éxito']);
         //Busca al alumno por su ID y lo elimina de la tabla de MySQL.
     }
 }

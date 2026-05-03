@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 //use App\Http\Controllers\ProfileController;
 //use App\Http\Controllers\SolicitudController; //Para el formulario de unete
 use App\Http\Controllers\Formularios\ContactoController; //pones aqui la ruta completa y done
@@ -40,14 +42,14 @@ Route::post('/contacto-enviar', [ContactoController::class, 'enviarConsulta'])->
 Route::middleware(['auth'])->group(function () {
 
     // Vistas comunes para cualquiera que esté logueado
-    Route::view('/configuracion.html', 'configuracion')->name('config');
+    Route::view('/configuracion', 'configuracion')->name('config');
 
     // ZONA DOCENTES
     Route::middleware(['role:docente'])->group(function () {
         // Vistas
-        Route::view('/calendario.html', 'calendario')->name('calendario');
-        Route::view('/perfilDocente.html', 'perfilProfesor')->name('perfil');
-        Route::view('/pasarLista.html', 'pasarLista');
+        Route::view('/calendario', 'calendario')->name('calendario');
+        Route::view('/perfilDocente', 'perfilProfesor')->name('perfil');
+        Route::view('/pasarLista', 'pasarLista');
         
         // CRUD de Docentes
         Route::prefix('profesor')->as('profesor.')->group(function () {
@@ -56,14 +58,15 @@ Route::middleware(['auth'])->group(function () {
             Route::resource('tutores', TutorController::class)->only(['show']);
             Route::resource('horarios', HorarioController::class)->only(['index']);
             Route::resource('ausencias', AusenciaController::class)->only(['create', 'store', 'index']);
+            
         });
     });
 
-    // 🔒 ZONA COORDINADORES
+    // ZONA COORDINADORES
     Route::middleware(['role:coordinador'])->group(function () {
         // Vistas
-        Route::view('/dashboard.html', 'coordinador')->name('coordinador');
-        Route::view('/perfilCoordinador.html', 'perfilCoordinador')->name('perfilCoordinador');
+        Route::view('/dashboard', 'coordinador')->name('coordinador');
+        Route::view('/perfilCoordinador', 'perfilCoordinador')->name('perfilCoordinador');
 
         // CRUD de Coordinadores
         Route::prefix('coordinacion')->as('coordinacion.')->group(function () {
@@ -74,14 +77,16 @@ Route::middleware(['auth'])->group(function () {
             Route::resource('docentes', DocenteController::class);
             Route::resource('tutores', TutorController::class);
             Route::resource('ausencias', AusenciaController::class);
+            
         });
+
     });
 
     // ZONA FAMILIAS (TUTORES)
     Route::middleware(['role:tutor'])->group(function () {
         // Vistas
-        Route::view('/familiar.html', 'perfilFamilia');
-        Route::view('/perfilFamilia.html', 'perfilFamilia')->name('perfilFamilia');
+        Route::view('/familiar', 'perfilFamilia');
+        Route::view('/perfilFamilia', 'perfilFamilia')->name('perfilFamilia');
 
         // CRUD de Familias
         Route::prefix('familia')->group(function () {
@@ -94,8 +99,8 @@ Route::middleware(['auth'])->group(function () {
     // ZONA ADMIN GLOBAL
     Route::middleware(['role:admin'])->group(function () {
         // Vistas
-        Route::view('/admin.html', 'admin')->name('admin');
-        Route::view('/perfilAdmin.html', 'perfilAdmin')->name('perfilAdmin');
+        Route::view('/admin', 'admin')->name('admin');
+        Route::view('/perfilAdmin', 'perfilAdmin')->name('perfilAdmin');
 
         // CRUD de Admin
         Route::prefix('admin')->group(function () {
@@ -103,6 +108,53 @@ Route::middleware(['auth'])->group(function () {
             Route::resource('coordinadores', CoordinadorController::class);
         });
     });
+
+});
+
+// =========================================================
+// RUTAS API PARA EL FRONTEND (Manejadas por sesión Web)
+// =========================================================
+Route::prefix('api')->middleware(['auth'])->group(function () {
+    
+    // 1. Ruta para comprobar quién está logueado
+    Route::get('/me', function (Illuminate\Http\Request $request) {
+        $user = Auth::user();
+        
+        // Calculamos el rol exacto
+        $rol = 'sin_rol';
+        if (is_null($user->colegio_id)) $rol = 'admin';
+        elseif ($user->coordinador) $rol = 'coordinador';
+        elseif ($user->docente) $rol = 'docente';
+        elseif ($user->tutor) $rol = 'tutor';
+
+        return response()->json([
+            'id'         => $user->id,
+            'nombre'     => $user->name,
+            'apellidos'  => $user->apellidos,
+            'email'      => $user->email,
+            'colegio_id' => $user->colegio_id,
+            'rol'        => $rol
+        ]);
+    });
+
+    // 2. Rutas para el Frontend del Coordinador
+    Route::get('/alumnos', [AlumnoController::class, 'index']);
+    Route::post('/alumnos', [AlumnoController::class, 'store']);
+    Route::put('/alumnos/{id}', [AlumnoController::class, 'update']);
+    Route::delete('/alumnos/{id}', [AlumnoController::class, 'destroy']);
+
+    Route::get('/docentes', [DocenteController::class, 'index']);
+    Route::post('/docentes', [DocenteController::class, 'store']);
+    Route::put('/docentes/{id}', [DocenteController::class, 'update']);
+    Route::delete('/docentes/{id}', [DocenteController::class, 'destroy']);
+
+    Route::get('/tutores', [TutorController::class, 'index']);
+    Route::post('/tutores', [TutorController::class, 'store']);
+    Route::put('/tutores/{id}', [TutorController::class, 'update']);
+    Route::delete('/tutores/{id}', [TutorController::class, 'destroy']);
+
+    Route::get('/cursos', [CursoController::class, 'index']);
+    Route::get('/clases', [ClaseController::class, 'index']);
 });
 
 // Rutas de autenticación por defecto (Laravel Breeze)

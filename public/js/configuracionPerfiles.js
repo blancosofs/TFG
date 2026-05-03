@@ -157,5 +157,5 @@ function mostrarToast(msg) {
 document.getElementById('btn-logout')?.addEventListener('click', async e => {
     e.preventDefault();
     await fetch('/api/logout', { method: 'POST', credentials: 'include' });
-    window.location.href = 'login.html';
+    window.location.href = '/login';
 });

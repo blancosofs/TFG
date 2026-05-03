@@ -190,7 +190,7 @@
 </div>
 
 <!-- ══════════════════════════════════════════════
-     MODALES
+    MODALES
 ══════════════════════════════════════════════ -->
 
 <!-- Modal Alumno -->
@@ -230,6 +230,17 @@
                 <label class="flabel">Tutor legal</label>
                 <select class="finput" id="a-tutor">
                     <option value="">Sin tutor asignado</option>
+                </select>
+            </div>
+            <div class="fgroup">
+                <label class="flabel">Parentesco del tutor</label>
+                <select class="finput" id="a-parentesco">
+                    <option value="padre">Padre</option>
+                    <option value="madre">Madre</option>
+                    <option value="abuelo">Abuelo/a</option>
+                    <option value="tio">Tío/a</option>
+                    <option value="tutor_legal">Tutor legal</option>
+                    <option value="otro">Otro</option>
                 </select>
             </div>
         </div>

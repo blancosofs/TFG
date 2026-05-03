@@ -428,5 +428,6 @@
 <script src="{{ asset('js/MenuSesion.js') }}"></script>
 <script src="{{ asset('js/menuResponsive.js') }}"></script>
 <script src="{{ asset('js/perfilCoordinador.js') }}"></script>
+
 </body>
 </html>

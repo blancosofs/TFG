@@ -6,15 +6,21 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class DocenteController extends Controller
 {
     // 1. INDEX: Listar docentes con su información de usuario
     public function index()
     {
-        // Usamos 'with' para traer los datos del usuario de golpe (si tienes la relación hecha)
-        $docentes = Docente::with('user')->get(); 
-        return view('docentes.index', compact('docentes'));  //<--- Crea un array a partir de variables que ya existen.
+        // 1. Buscamos solo los docentes del colegio del coordinador
+        $colegioId = Auth::user()->colegio_id;
+        
+        $docentes = Docente::where('colegio_id', $colegioId)
+                            ->with('user') // Traemos también sus datos de nombre/email
+                            ->get();
+        // 2. Devolvemos el JSON
+        return response()->json($docentes);
     }
 
     // 2. CREATE: Formulario para nuevo docente
@@ -23,38 +29,46 @@ class DocenteController extends Controller
         return view('docentes.create');
     }
 
+    
     // 3. STORE
     public function store(Request $request)
     {
-        // Validamos datos de ambas tablas
+        // 1. Validamos los datos que llegan desde el JS de tu compañero
         $request->validate([
-            'name'     => 'required|string',
-            'email'    => 'required|email|unique:users',
-            'password' => 'required|min:8',
-            'telefono' => 'required'
+            'nombre'    => 'required|string',
+            'apellidos' => 'required|string',
+            'email'     => 'required|email|unique:users,email',
+            'password'  => 'required|min:8',
+            'telefono'  => 'required'
         ]);
 
-        // Usamos una Transacción por seguridad: o se crean los dos, o ninguno.
+        // 2. Transacción: O se crean los dos, o ninguno
         DB::transaction(function () use ($request) {
-            // A. Creamos el Usuario (donde va la contraseña)
+            
+            // A. Creamos el Usuario
             $user = User::create([
-                'name'      => $request->name,
-                'email'     => $request->email,
-                'password'  => Hash::make($request->password), // <--- Encriptación
-                'colegio_id'=> $request->colegio_id,
-                'activo'    => true,
+                'name'       => $request->nombre,
+                'apellidos'  => $request->apellidos,
+                'email'      => $request->email,
+                'password'   => Hash::make($request->password), // Encriptamos la clave
+                'colegio_id' => Auth::user()->colegio_id, //Lo asigna al colegio de este Coordinador
+                'activo'     => true,
             ]);
 
-            // B. Creamos el Docente usando el ID del usuario recién creado
+            // B. Creamos el perfil de Docente
             Docente::create([
                 'telefono'       => $request->telefono,
-                'colegio_id'     => $request->colegio_id,
-                'coordinador_id' => $request->coordinador_id,
-                'user_id'        => $user->id, // <--- El puente entre ambos
+                'colegio_id'     => Auth::user()->colegio_id, //Ponemos el mismo colegio que el coordinador que lo crea
+                'coordinador_id' => Auth::user()->coordinador->id, // Lo vinculamos al coordinador actual
+                'user_id'        => $user->id,
             ]);
         });
 
-        return redirect()->route('docentes.index')->with('success', 'Docente creado con éxito');
+        // 3. Le respondemos al Frontend con un JSON
+        return response()->json([
+            'ok' => true,
+            'mensaje' => 'Docente creado con éxito en la Base de Datos'
+        ]);
     }
 
     // 4. SHOW: Ver perfil del docente y su usuario

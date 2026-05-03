@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Curso;
 
 class CursoController extends Controller
@@ -12,8 +13,11 @@ class CursoController extends Controller
      */
     public function index()
     {
-        $cursos = Curso::all();
-        return view ('cursos.index' ,compact ('curso'));
+
+        $colegioId = Auth::user()->colegio_id;
+        $cursos = Curso::where('colegio_id', $colegioId)->get();
+
+        return response()->json($cursos);
     }
 
     /**

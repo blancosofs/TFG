@@ -10,6 +10,12 @@ class Tutor extends Model
     protected $table = 'tutores';
     protected $fillable = ['telefono', 'user_id'];
     
+    // Relación 1:1 - Un tutor TIENE UN usuario (donde está su email y contraseña)
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
     // Relación N:M - Un tutor ESTÁ A CARGO DE muchos alumnos (hijos)
     public function alumnos()
     {

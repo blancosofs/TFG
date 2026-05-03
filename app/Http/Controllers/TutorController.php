@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 
 class TutorController extends Controller
@@ -16,10 +17,21 @@ class TutorController extends Controller
      */
     public function index()
     {
-        $tutores = Tutor::with('user')->get(); 
-        return view('tutores.index', compact('tutores'));  //<--- Crea un array a partir de variables que ya existen.
+        // 1. Identificamos el colegio del coordinador
+        $colegioId = Auth::user()->colegio_id;
+
+        // 2. Buscamos a los tutores usando "whereHas" para filtrar por la tabla users
+        $tutores = Tutor::whereHas('user', function ($query) use ($colegioId) {
+                            $query->where('colegio_id', $colegioId);
+                        })
+                        ->with(['user', 'alumnos']) // ¡Traemos los datos del usuario y de sus hijos!
+                        ->get();
+
+        // 3. Devolvemos el JSON al Frontend
+        return response()->json($tutores);
     }
 
+    
     /**
      * Show the form for creating a new resource.
      */
@@ -33,33 +45,47 @@ class TutorController extends Controller
      */
     public function store(Request $request)
     {
-        // Validamos datos de ambas tablas
+        // 1. Validamos los datos, incluyendo el alumno y el parentesco
         $request->validate([
-            'name'     => 'required|string',
-            'email'    => 'required|email|unique:users',
-            'password' => 'required|min:8',
-            'telefono' => 'required'
+            'nombre'     => 'required|string',
+            'apellidos'  => 'required|string',
+            'email'      => 'required|email|unique:users',
+            'password'   => 'required|min:8',
+            'telefono'   => 'required',
+            'alumno_id'  => 'nullable|integer|exists:alumnos,id', // <--- El niño seleccionado
+            'parentesco' => 'nullable|string'                     // <--- Qué es del niño
         ]);
 
-        // Usamos una Transacción por seguridad: o se crean los dos, o ninguno.
+        // Usamos DB::transaction para que, si algo falla, no se guarde a medias
         DB::transaction(function () use ($request) {
-            // A. Creamos el Usuario (donde va la contraseña)
+            
+            // A. Creamos el Usuario
             $user = User::create([
-                'name'      => $request->name,
+                'name'      => $request->nombre,
+                'apellidos' => $request->apellidos,
                 'email'     => $request->email,
-                'password'  => Hash::make($request->password), // <--- Encriptación
-                'colegio_id'=> $request->colegio_id,
+                'password'  => Hash::make($request->password), 
+                'colegio_id'=> Auth::user()->colegio_id,
                 'activo'    => true,
             ]);
 
-            // B. Creamos el Tutor usando el ID del usuario recién creado
-            Tutor::create([
-                'telefono'       => $request->telefono,
-                'user_id'        => $user->id, // <--- El puente entre ambos
+            // B. Creamos el Tutor
+            $tutor = Tutor::create([
+                'telefono'  => $request->telefono,
+                'user_id'   => $user->id, 
             ]);
+
+            // C. Si nos enviaron un alumno, los vinculamos en la tabla intermedia
+            if ($request->filled('alumno_id')) {
+                $parentescoReal = $request->parentesco ?? 'Tutor legal';
+                $tutor->alumnos()->attach($request->alumno_id, ['parentesco' => $parentescoReal]);
+            }
         });
 
-        return redirect()->route('tutores.index')->with('success', 'Tutor creado con éxito');
+        return response()->json([
+            'ok' => true, 
+            'mensaje' => 'Tutor creado y vinculado con éxito'
+        ]);
     }
 
     /**

@@ -13,7 +13,7 @@ class CheckRole
     {
         // 1. Si no está logueado, a la calle
         if (!Auth::check()) {
-            return redirect('/login.html'); // Usamos el .html que puso tu compañero
+            return redirect('/login');
         }
 
         $user = Auth::user();

@@ -40,8 +40,8 @@ const CATEGORIAS = {
 ════════════════════════════════════════════ */
 (async () => {
     // const data = await api('GET', '/api/me');
-    // if (!data?.id) { window.location.href = 'login.html'; return; }
-    // if (data.rol !== 'docente' && data.rol !== 'tutor') { window.location.href = 'login.html'; return; }
+    // if (!data?.id) { window.location.href = '/login'; return; }
+    // if (data.rol !== 'docente' && data.rol !== 'tutor') { window.location.href = '/login'; return; }
     // sesion = data;
 
     // Datos de prueba — cambiar según quien prueba
@@ -68,17 +68,17 @@ function configurarVistaPorRol() {
     document.getElementById('nav-nombre').textContent    = nombre;
     document.getElementById('nav-rol-label').textContent = sesion.rol === 'docente' ? 'Docente' : 'Tutor legal';
 
-    // Links de navegación según rol
+// Links de navegación según rol
     if (sesion.rol === 'docente') {
-        document.getElementById('nav-inicio').href      = 'calendario.html';
-        document.getElementById('nav-perfil-link').href = 'perfil.html';
-        document.getElementById('nav-mi-perfil').href   = 'perfil.html';
+        document.getElementById('nav-inicio').href      = '/calendario';
+        document.getElementById('nav-perfil-link').href = '/perfilDocente'; // Usa el nombre de la ruta web.php
+        document.getElementById('nav-mi-perfil').href   = '/perfilDocente';
         // Solo el docente puede publicar
         document.getElementById('hero-acciones').style.display = 'block';
     } else {
-        document.getElementById('nav-inicio').href      = 'perfilFamilia.html';
-        document.getElementById('nav-perfil-link').href = 'perfilFamilia.html';
-        document.getElementById('nav-mi-perfil').href   = 'perfilFamilia.html';
+        document.getElementById('nav-inicio').href      = '/perfilFamilia';
+        document.getElementById('nav-perfil-link').href = '/perfilFamilia';
+        document.getElementById('nav-mi-perfil').href   = '/perfilFamilia';
         document.getElementById('hero-acciones').style.display = 'none';
     }
 }
@@ -477,7 +477,7 @@ async function api(method, ruta, body) {
 document.getElementById('btn-logout')?.addEventListener('click', async e => {
     e.preventDefault();
     await api('POST', '/api/logout');
-    window.location.href = 'login.html';
+    window.location.href = '/login';
 });
 
 /* ══════════════════════════════════════════════════════════════

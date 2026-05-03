@@ -19,8 +19,8 @@ async function api(method, ruta, body) {
 /* ── Arranque — comprueba sesión ── */
 // (async () => {
 //     const data = await api('GET', '/api/me');
-//     if (!data || !data.id) { window.location.href = 'login.html'; return; }
-//     if (data.rol !== 'tutor') { window.location.href = 'login.html'; return; }
+//     if (!data || !data.id) { window.location.href = '/login'; return; }
+//     if (data.rol !== 'tutor') { window.location.href = '/login'; return; }
 //     cargarPerfil(data);
 // })();
 
@@ -355,7 +355,7 @@ function previsualizarFoto(input) {
 document.getElementById('btn-logout')?.addEventListener('click', async e => {
     e.preventDefault();
     await api('POST', '/api/logout');
-    window.location.href = 'login.html';
+    window.location.href = '/login';
 });
 
 /* ── Utilidades ── */
