@@ -112,8 +112,15 @@ class AlumnoController extends Controller
 
     // 4. Sincronizamos el tutor si existe
     if ($request->has('tutor_id')) {
-        $alumno->tutores()->sync([$request->tutor_id => ['parentesco' => $request->parentesco ?? 'Tutor legal']]);
+    if (!empty($request->tutor_id)) {
+        $alumno->tutores()->sync([
+            $request->tutor_id => ['parentesco' => $request->parentesco]
+        ]);
+    } else {
+        // Si el usuario seleccionó "Sin tutor asignado", vaciamos la relación
+        $alumno->tutores()->detach();
     }
+}
 
     return response()->json([
         'ok' => true, 

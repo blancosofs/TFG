@@ -423,7 +423,7 @@ function editarAlumno(id) {
     const a = alumnos.find(x => x.id === id);
     if (!a) return;
     
-    
+
     abrirModal('modal-alumno', 'editar');
     idEditando = id;
 
@@ -440,6 +440,15 @@ function editarAlumno(id) {
 
     // Ahora que ya están pintadas las clases, seleccionamos la suya
     document.getElementById('a-clase').value = a.clase_id;
+
+    if (a.tutores && a.tutores.length > 0) {
+        const relacion = a.tutores[0]; // Cogemos el primer tutor
+        document.getElementById('a-tutor').value = relacion.id;
+        document.getElementById('a-parentesco').value = relacion.pivot.parentesco || 'padre';
+    } else {
+        // Si no tiene tutor, lo dejamos en "Sin tutor asignado"
+        document.getElementById('a-tutor').value = "";
+    }
 }
 
 /* ════════════════════════════════════════════
