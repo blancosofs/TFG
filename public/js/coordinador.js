@@ -370,7 +370,7 @@ async function guardarAlumno() {
     const cursoId    = v('a-curso');
     const claseId    = v('a-clase');
     const tutorId    = v('a-tutor'); 
-    const parentesco = v('a-parentesco'); // <--- 1. Recogemos el parentesco
+    const parentesco = v('a-parentesco');
 
     if (!nombre || !apellidos || !fnac || !cursoId || !claseId) {
         alertModal('alert-alumno', '❌ Nombre, apellidos, fecha, curso y clase son obligatorios.'); 
@@ -384,11 +384,10 @@ async function guardarAlumno() {
             curso_id: cursoId, 
             clase_id: claseId,
             tutor_id: tutorId || null,
-            parentesco: parentesco, // <--- 2. Lo añadimos al envío
+            parentesco: parentesco,
             activo: true 
         };
 
-        // 4. Decidimos a dónde va (¿Crear o Actualizar?)
         let url = '/api/alumnos';
         let metodo = 'POST'; // Por defecto es "Nuevo"
 
@@ -409,7 +408,7 @@ async function guardarAlumno() {
     await cargarTodo(); // Refrescamos las tablas
     cerrarModal('modal-alumno'); // Cerramos ventana
     
-    // Mensaje de éxito dinámico
+    
     if (modoModal === 'editar') {
         toast('✅ Alumno actualizado correctamente');
     } else {
@@ -585,16 +584,25 @@ function confirmarEliminar(tipo, id, nombre) {
         `Vas a eliminar a "${nombre}". Esta acción no se puede deshacer.`;
 
     document.getElementById('btn-confirm-ok').onclick = async () => {
-        // await api('DELETE', `/api/coord/${tipo}s/${id}`);
+        const respuesta = await api('DELETE', `/api/${tipo}s/${id}`);
+
+        if (respuesta.ok || respuesta.mensaje) {    
 
         if (tipo === 'alumno')  alumnos  = alumnos.filter(x => x.id !== id);
         if (tipo === 'docente') docentes = docentes.filter(x => x.id !== id);
         if (tipo === 'tutor')   tutores  = tutores.filter(x => x.id !== id);
 
         renderTabla(tipo === 'alumno' ? 'alumnos' : tipo === 'docente' ? 'docentes' : 'tutores');
-        actualizarStats();
+        
+        if (typeof actualizarStats === 'function') actualizarStats();
+        
         cerrarModal('modal-confirmar');
         toast(`🗑️ ${nombre} eliminado`);
+
+        } else {
+            alert('No se pudo eliminar: ' + (respuesta.message || respuesta.error || 'Error desconocido'));
+            cerrarModal('modal-confirmar');
+        }
     };
 
     document.getElementById('modal-confirmar').classList.add('open');

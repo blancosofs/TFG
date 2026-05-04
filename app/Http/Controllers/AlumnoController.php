@@ -19,17 +19,10 @@ class AlumnoController extends Controller
                         ->with(['clase', 'curso']) 
                         ->get();
 
-        // 3. Se lo escupimos al JavaScript de tu compañera en formato JSON
+        // 3. Se lo escupimos al JavaScript de tu compañero en formato JSON
         return response()->json($alumnos);
     }
 
-    // Mostrar formulario para crear uno nuevo
-    public function create()
-    {
-        return view('alumnos.create');
-        
-        //Muestra el archivo HTML del formulario de registro.
-    }
 
     // Guardar el alumno en la base de datos
     public function store(Request $request)
@@ -70,20 +63,14 @@ class AlumnoController extends Controller
         ]);
     }   
 
-    // Mostrar un alumno específico
-    public function show(Alumno $alumno)
+    // Mostrar un alumno específico ---- Ver si se usa
+
+    /*public function show(Alumno $alumno)
     {
         return view('alumnos.show', compact('alumno'));
         //Muestra la información de un solo alumno específico.
-    }
+    }*/
 
-    // Formulario para editar
-    public function edit(Alumno $alumno)
-    {
-        return view('alumnos.edit', compact('alumno'));
-        /*Le pasa los datos del alumno que quieres cambiar, el usuario ya 
-        ve escrito el nombre actual del alumno en los cuadros de texto para poder corregirlos.*/
-    }
 
     // Actualizar los datos
     public function update(Request $request, int $id)
@@ -130,18 +117,21 @@ class AlumnoController extends Controller
     }
 
     // Eliminar al alumno
-    public function destroy(Alumno $alumno)
+    public function destroy(int $id)
     {
-        $alumno->delete();
-        return response()->json(['ok' => true, 'mensaje' => 'Alumno eliminado con éxito']);
-        //Busca al alumno por su ID y lo elimina de la tabla de MySQL.
+    // Buscamos al alumno (asegurándonos de que sea de nuestro colegio)
+    $alumno = Alumno::where('colegio_id', Auth::user()->colegio_id)->findOrFail($id);
+
+    // Borramos cualquier rastro suyo en la tabla tutor_alumno
+    // Esto NO borra al tutor, solo borra el "hilo" que los une.
+    $alumno->tutores()->detach();
+
+    // Borramos (esto también elimina automáticamente la relación en la tabla pivote si usaste onCascade)
+    $alumno->delete();
+
+    return response()->json(['ok' => true, 'mensaje' => 'Alumno eliminado correctamente']);
     }
 }
-
-/* Ruta web
-use App\Http\Controllers\AlumnoController;
-Route::resource('alumnos', AlumnoController::class);
-*/
 
 ?>
 

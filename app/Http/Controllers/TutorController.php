@@ -128,6 +128,7 @@ class TutorController extends Controller
     public function destroy(Tutor $tutor)
     {
         $user = $tutor->user;
+        $tutor->alumnos()->detach();
         $tutor->delete(); // Borra el registro en 'tutores'
         $user->delete();    // Borra el registro en 'users'
         

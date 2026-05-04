@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 //use App\Http\Controllers\ProfileController;
 //use App\Http\Controllers\SolicitudController; //Para el formulario de unete
 use App\Http\Controllers\Formularios\ContactoController; //pones aqui la ruta completa y done
@@ -117,7 +118,9 @@ Route::middleware(['auth'])->group(function () {
 Route::prefix('api')->middleware(['auth'])->group(function () {
     
     // 1. Ruta para comprobar quién está logueado
-    Route::get('/me', function (Illuminate\Http\Request $request) {
+    Route::get('/me', function (Request $request) {
+        
+    //$user = $request->user(); //Esto es lo que hace realmente pero se puede poner como en la sig. linea!
         $user = Auth::user();
         
         // Calculamos el rol exacto
