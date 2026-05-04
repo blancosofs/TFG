@@ -34,7 +34,7 @@ class AlumnoController extends Controller
         'fecha_nacimiento' => 'required|date',
         'curso_id'         => 'required|integer|exists:cursos,id',
         'clase_id'         => 'required|integer|exists:clases,id',
-        'tutor_id'         => 'nullable|integer|exists:tutores,id', // <--- Permitimos que llegue el tutor
+        'tutor_id'         => 'nullable|integer|exists:tutores,id',
         'parentesco'       => 'nullable|string'
     ]);
 
@@ -88,11 +88,11 @@ class AlumnoController extends Controller
     ]);
 
     // 3. ACTUALIZACIÓN MANUAL (A prueba de fallos)
-    $alumno->nombre           = $request->nombre;
-    $alumno->apellidos        = $request->apellidos;
+    $alumno->nombre = $request->nombre;
+    $alumno->apellidos  = $request->apellidos;
     $alumno->fecha_nacimiento = $request->fecha_nacimiento;
-    $alumno->curso_id         = $request->curso_id;
-    $alumno->clase_id         = $request->clase_id;
+    $alumno->curso_id = $request->curso_id;
+    $alumno->clase_id = $request->clase_id;
     
     // Guardamos a la fuerza
     $alumno->save(); 
@@ -126,7 +126,6 @@ class AlumnoController extends Controller
     // Esto NO borra al tutor, solo borra el "hilo" que los une.
     $alumno->tutores()->detach();
 
-    // Borramos (esto también elimina automáticamente la relación en la tabla pivote si usaste onCascade)
     $alumno->delete();
 
     return response()->json(['ok' => true, 'mensaje' => 'Alumno eliminado correctamente']);

@@ -281,6 +281,11 @@
                 <input class="finput" id="d-telefono" type="tel" placeholder="600 000 000">
             </div>
             <div class="fgroup">
+                <label class="flabel" for="d-asignaturas">Asignaturas <span style="font-weight: normal; font-size: 0.9em; color: #666;">(Opcional)</span></label>
+                <input class="finput" id="d-asignaturas" name="asignaturas" type="text" placeholder="Ej: Matemáticas, Lengua, Física">
+                <small style="color: #888; font-size: 0.85em; margin-top: 4px; display: block;">Separa las asignaturas usando comas.</small>
+            </div>
+            <div class="fgroup">
                 <label class="flabel">Contraseña inicial *</label>
                 <input class="finput" id="d-password" type="password" placeholder="Mín. 8 caracteres">
             </div>

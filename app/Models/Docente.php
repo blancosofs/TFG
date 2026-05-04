@@ -9,7 +9,7 @@ class Docente extends Model
 {
     protected $table = 'docentes';
 
-    protected $fillable = ['telefono', 'colegio_id', 'coordinador_id', 'user_id'];
+    protected $fillable = ['telefono', 'asignaturas', 'colegio_id', 'coordinador_id', 'user_id'];
 
     // Relación 1:1 - Un docente TIENE UN usuario
     public function user()

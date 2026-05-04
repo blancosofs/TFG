@@ -23,14 +23,8 @@ class DocenteController extends Controller
         return response()->json($docentes);
     }
 
-    // 2. CREATE: Formulario para nuevo docente
-    public function create()
-    {
-        return view('docentes.create');
-    }
-
     
-    // 3. STORE
+    // 2. STORE
     public function store(Request $request)
     {
         // 1. Validamos los datos que llegan desde el JS de tu compañero
@@ -39,9 +33,11 @@ class DocenteController extends Controller
             'apellidos' => 'required|string',
             'email'     => 'required|email|unique:users,email',
             'password'  => 'required|min:8',
-            'telefono'  => 'required'
+            'telefono'  => 'required',
+            'asignaturas' => 'nullable|string'
         ]);
 
+        try {
         // 2. Transacción: O se crean los dos, o ninguno
         DB::transaction(function () use ($request) {
             
@@ -51,7 +47,6 @@ class DocenteController extends Controller
                 'apellidos'  => $request->apellidos,
                 'email'      => $request->email,
                 'password'   => Hash::make($request->password), // Encriptamos la clave
-                'colegio_id' => Auth::user()->colegio_id, //Lo asigna al colegio de este Coordinador
                 'activo'     => true,
             ]);
 
@@ -59,7 +54,8 @@ class DocenteController extends Controller
             Docente::create([
                 'telefono'       => $request->telefono,
                 'colegio_id'     => Auth::user()->colegio_id, //Ponemos el mismo colegio que el coordinador que lo crea
-                'coordinador_id' => Auth::user()->coordinador->id, // Lo vinculamos al coordinador actual
+                'coordinador_id' => Auth::user()->coordinador->id ?? null, //Si el coordinador no tiene coordinador_id (por ser admin), ponemos null
+                'asignaturas'    => $request->asignaturas,
                 'user_id'        => $user->id,
             ]);
         });
@@ -67,46 +63,79 @@ class DocenteController extends Controller
         // 3. Le respondemos al Frontend con un JSON
         return response()->json([
             'ok' => true,
-            'mensaje' => 'Docente creado con éxito en la Base de Datos'
+            'mensaje' => 'Docente creado y vinculado con éxito.'
         ]);
-    }
 
-    // 4. SHOW: Ver perfil del docente y su usuario
-    public function show(Docente $docente)
-    {
-        return view('docentes.show', compact('docente'));
-    }
-
-    // 5. EDIT: Formulario con datos actuales
-    public function edit(Docente $docente)
-    {
-        return view('docentes.edit', compact('docente'));
-    }
-
-    // 6. UPDATE: Actualizar datos (y contraseña si se desea)
-    public function update(Request $request, Docente $docente)
-    {
-        // Actualizamos datos del docente
-        $docente->update($request->only('telefono', 'coordinador_id'));
-
-        // Actualizamos datos del usuario vinculado
-        $userData = $request->only('name', 'email');
-        if ($request->filled('password')) {
-            $userData['password'] = Hash::make($request->password);
+        } catch (\Exception $e) {
+            // Si hay cualquier error (ej. se cae la base de datos), devolvemos el error en JSON
+            return response()->json([
+                'ok' => false,
+                'mensaje' => 'Error al crear el docente: ' . $e->getMessage()
+            ], 500);
         }
-        $docente->user->update($userData);
+    }
 
-        return redirect()->route('docentes.index')->with('success', 'Docente actualizado');
+
+    // 3. UPDATE: Actualizar datos (y contraseña si se desea)
+    public function update(Request $request, int $id)
+    {
+        // Buscamos el docente
+        $docente = Docente::findOrFail($id);
+
+        $user = $docente->user; // Accedemos al usuario vinculado
+
+    $request->validate([
+        'nombre'  => 'required|string|max:25',
+        'apellidos' => 'required|string|max:60',
+        'email' => 'required|email|unique:users,email,' . $user->id,
+        'telefono' => 'nullable|string',
+        'asignaturas' => 'nullable|string',
+    ]);
+
+    try {
+            DB::transaction(function () use ($request, $user, $docente) {
+                // A. Actualizamos la tabla Users
+                $user->update([
+                    'name'  => $request->nombre,
+                    'apellidos' => $request->apellidos,
+                    'email' => $request->email,
+                ]);
+
+                // B. Actualizamos la tabla Docentes
+                $docente->update([
+                    'telefono'    => $request->telefono,
+                    'asignaturas' => $request->asignaturas,
+                ]);
+
+                if ($request->filled('password')) {
+                    $user->password = Hash::make($request->password);
+                }
+                $user->save();
+            });
+
+            return response()->json(['ok' => true, 'mensaje' => 'Docente actualizado correctamente']);
+
+        } catch (\Exception $e) {
+            return response()->json(['ok' => false, 'mensaje' => $e->getMessage()], 500);
+        }
     }
 
     // 7. DESTROY: Borrar docente (y su usuario)
-    public function destroy(Docente $docente)
+    public function destroy(int $id)
     {
+        $docente = Docente::findOrFail($id);
         $user = $docente->user;
-        $docente->delete(); // Borra el registro en 'docentes'
-        $user->delete();    // Borra el registro en 'users'
-        
-        return redirect()->route('docentes.index');
+
+    try {
+        DB::transaction(function () use ($docente, $user) {
+            $docente->user->delete();
+        });
+
+        return response()->json(['ok' => true, 'mensaje' => 'Docente eliminado por completo']);
+
+        } catch (\Exception $e) {
+            return response()->json(['ok' => false, 'mensaje' => 'No se pudo eliminar: ' . $e->getMessage()], 500);
+        }
     }
 }
 

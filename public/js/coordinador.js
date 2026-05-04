@@ -460,6 +460,7 @@ async function guardarDocente() {
     const telefono  = v('d-telefono');
     const password  = v('d-password');
     const fnac      = v('d-fnac');
+    const asignaturas = v('d-asignaturas'); // Por ahora dejamos asignaturas vacío, se asignarán después
 
     if (!nombre || !apellidos || !email) {
         alertModal('alert-docente', 'err', '⚠️ Nombre, apellidos y email son obligatorios.');
