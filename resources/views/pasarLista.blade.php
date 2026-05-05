@@ -25,9 +25,9 @@
                         <span></span><span></span><span></span>
                     </button>
                 </li>
-                <li><a href="{{ route('perfil.docente') }}">Mi Perfil</a></li>
+                <li><a href="{{ route('perfil') }}">Mi Perfil</a></li>
                 <li><a href="{{ route('calendario') }}">Mi Horario</a></li>
-                <li class="activo"><a href="{{ route('pasar.lista') }}">Ausencias</a></li>
+                <li class="activo"><a href="{{ route('pasarLista') }}">Ausencias</a></li>
                 <li class="derecha menuSesion">
                     <img src="{{ asset('img/perfil.png') }}" class="fotoPerfil" alt="Perfil">
                     <ul class="dropdown">
@@ -37,7 +37,7 @@
                         <li class="dropdown-rol">Docente</li>
                         <li class="dropdown-sep"></li>
                         <li><a href="{{ route('perfil') }}">👤 Mi perfil</a></li>
-                        <li><a href="{{ route('configuracion') }}">⚙️ Configuración</a></li>
+                        <li><a href="{{ route('config') }}">⚙️ Configuración</a></li>
                         <li>
                             <a href="#" id="btn-logout"
                                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">

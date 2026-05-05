@@ -50,7 +50,7 @@ Route::middleware(['auth'])->group(function () {
         // Vistas
         Route::view('/calendario', 'calendario')->name('calendario');
         Route::view('/perfilDocente', 'perfilProfesor')->name('perfil');
-        Route::view('/pasarLista', 'pasarLista');
+        Route::view('/pasarLista', 'pasarLista')->name('pasarLista');
         
         // CRUD de Docentes
         Route::prefix('profesor')->as('profesor.')->group(function () {
@@ -158,6 +158,10 @@ Route::prefix('api')->middleware(['auth'])->group(function () {
 
     Route::get('/cursos', [CursoController::class, 'index']);
     Route::get('/clases', [ClaseController::class, 'index']);
+    Route::get('/mis-clases', [ClaseController::class, 'misClases']);
+    Route::get('/clases/{id}/alumnos', [ClaseController::class, 'alumnos']);
+    Route::post('/asistencia', [AusenciaController::class, 'storeAsistencia']);
+    Route::get('/ausencias/alumno/{alumnoId}', [AusenciaController::class, 'porAlumno']);
 });
 
 // Rutas de autenticación por defecto (Laravel Breeze)

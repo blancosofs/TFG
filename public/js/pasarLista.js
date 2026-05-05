@@ -26,20 +26,13 @@ let alumnoModal   = null;     // id del alumno que se está editando en el modal
    ARRANQUE
 ════════════════════════════════════════════ */
 (async () => {
-    // const data = await api('GET', '/api/me');
-    // if (!data || !data.id) { window.location.href = '/login'; return; }
-    // if (data.rol !== 'docente') { window.location.href = '/login'; return; }
-    // sesion = data;
-
-    // Datos de prueba — quitar cuando el servidor esté activo
-    sesion = {
-        id: 1, nombre: 'Pedro', apellidos: 'Fernández Gil',
-        email: 'pfernandez@colegio.es', rol: 'docente', colegio_id: 1
-    };
+    const data = await api('GET', '/api/me');
+    if (!data || !data.id) { window.location.href = '/login'; return; }
+    if (data.rol !== 'docente') { window.location.href = '/login'; return; }
+    sesion = data;
 
     document.getElementById('nav-nombre').textContent = `${sesion.nombre} ${sesion.apellidos}`;
 
-    // Fecha de hoy por defecto
     const hoy = new Date().toISOString().slice(0, 10);
     document.getElementById('filtro-fecha').value = hoy;
 
@@ -50,15 +43,8 @@ let alumnoModal   = null;     // id del alumno que se está editando en el modal
    CARGAR CLASES DEL DOCENTE
 ════════════════════════════════════════════ */
 async function cargarClasesDocente() {
-    // const data = await api('GET', '/api/clases');
-    // clases = data || [];
-
-    // Datos de prueba
-    clases = [
-        { id: 1, nombre: '1ºA', curso: '1º ESO', asignaturas: ['Matemáticas', 'Física'] },
-        { id: 2, nombre: '1ºB', curso: '1º ESO', asignaturas: ['Matemáticas'] },
-        { id: 3, nombre: '2ºA', curso: '2º ESO', asignaturas: ['Física', 'Programación'] },
-    ];
+    const data = await api('GET', '/api/mis-clases');
+    clases = Array.isArray(data) ? data : [];
 
     const selClase = document.getElementById('filtro-clase');
     selClase.innerHTML = '<option value="">Seleccionar clase…</option>' +
@@ -97,35 +83,8 @@ async function cargarAlumnos() {
         return;
     }
 
-    // const data = await api('GET', `/api/clases/${claseId}/alumnos`);
-    // alumnos = data || [];
-
-    // Datos de prueba según la clase
-    const datosPrueba = {
-        1: [
-            { id: 1,  nombre: 'Carlos',    apellidos: 'García López' },
-            { id: 2,  nombre: 'Lucía',     apellidos: 'Martínez Ruiz' },
-            { id: 3,  nombre: 'Alejandro', apellidos: 'Sánchez Pérez' },
-            { id: 4,  nombre: 'María',     apellidos: 'López Torres' },
-            { id: 5,  nombre: 'Pablo',     apellidos: 'Fernández Gil' },
-            { id: 6,  nombre: 'Ana',       apellidos: 'Rodríguez Mora' },
-            { id: 7,  nombre: 'David',     apellidos: 'González Vega' },
-            { id: 8,  nombre: 'Laura',     apellidos: 'Díaz Serrano' },
-        ],
-        2: [
-            { id: 9,  nombre: 'Sofía',     apellidos: 'Ruiz Castillo' },
-            { id: 10, nombre: 'Marcos',    apellidos: 'Jiménez Ramos' },
-            { id: 11, nombre: 'Elena',     apellidos: 'Moreno Cruz' },
-            { id: 12, nombre: 'Hugo',      apellidos: 'Navarro Blanco' },
-        ],
-        3: [
-            { id: 13, nombre: 'Valentina', apellidos: 'Pérez Iglesias' },
-            { id: 14, nombre: 'Daniel',    apellidos: 'Herrera Nieto' },
-            { id: 15, nombre: 'Carmen',    apellidos: 'Romero Fuentes' },
-        ],
-    };
-
-    alumnos = datosPrueba[claseId] || [];
+    const data = await api('GET', `/api/clases/${claseId}/alumnos`);
+    alumnos = Array.isArray(data) ? data : [];
 
     // Inicializar asistencia — todos presentes por defecto
     asistencia = {};
@@ -331,30 +290,26 @@ async function confirmarGuardado() {
     const asignaturaEl = document.getElementById('filtro-asignatura');
     const asignatura = asignaturaEl.value || null;
 
-    // Construir payload — solo enviamos los que NO son presentes
-    // (los presentes no generan registro en la tabla ausencias)
+    // Solo enviamos los que NO son presentes (ausencias y retrasos)
     const registros = alumnos
         .filter(a => asistencia[a.id]?.estado !== 'presente')
         .map(a => ({
-            alumno_idAlumno:   a.id,
-            estado:            asistencia[a.id].estado,   // 'ausente' | 'retraso'
-            nota:              asistencia[a.id].nota || null,
-            fecha,
-            clase_idClase:     parseInt(claseId),
-            asignatura:        asignatura || null,
+            alumno_id: a.id,
+            estado:    asistencia[a.id].estado,
+            nota:      asistencia[a.id].nota || null,
         }));
 
-    // En producción:
-    // const data = await api('POST', '/api/asistencia', { fecha, clase_id: claseId, asignatura, registros });
-    // if (data.error) { toast('❌ ' + data.error); return; }
+    const respuesta = await api('POST', '/api/asistencia', { fecha, clase_id: claseId, asignatura, registros });
 
-    // Simulación de guardado exitoso
-    console.log('📋 Lista guardada:', { fecha, claseId, asignatura, registros });
+    if (!respuesta.ok) {
+        toast('❌ ' + (respuesta.mensaje || 'Error al guardar la lista'));
+        cerrarModalConfirm();
+        return;
+    }
 
     cerrarModalConfirm();
     toast('✅ Lista guardada correctamente');
 
-    // Deshabilitar el botón de guardar para evitar doble envío
     const btn = document.getElementById('btn-guardar');
     btn.textContent = '✓ Lista guardada';
     btn.disabled = true;

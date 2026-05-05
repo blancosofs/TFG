@@ -2,12 +2,50 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Alumno;
 use App\Models\Clase;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class ClaseController extends Controller
 {
+    /**
+     * Devuelve las clases asignadas al docente autenticado.
+     */
+    public function misClases()
+    {
+        $docente = Auth::user()->docente;
+        if (!$docente) {
+            return response()->json([]);
+        }
+
+        $asignaturas = $docente->asignaturas
+            ? array_values(array_filter(array_map('trim', explode(',', $docente->asignaturas))))
+            : [];
+
+        $clases = $docente->clases()->with('curso')->get()->map(fn($clase) => [
+            'id'          => $clase->id,
+            'nombre'      => $clase->nombre,
+            'curso'       => $clase->curso ? $clase->curso->nombre : '—',
+            'asignaturas' => $asignaturas,
+        ]);
+
+        return response()->json($clases);
+    }
+
+    /**
+     * Devuelve los alumnos de una clase (para pasar lista).
+     */
+    public function alumnos($id)
+    {
+        $alumnos = Alumno::where('clase_id', $id)
+            ->where('activo', true)
+            ->orderBy('apellidos')
+            ->get(['id', 'nombre', 'apellidos']);
+
+        return response()->json($alumnos);
+    }
+
     /**
      * Display a listing of the resource.
      */
