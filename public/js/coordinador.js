@@ -111,18 +111,19 @@ async function cargarCursos() {
 
 async function cargarAlumnos() {
     const data = await api('GET', '/api/alumnos');
-    
+
     if (data.error || !Array.isArray(data)) {
         alumnos = [];
     } else {
-        // Traducimos el JSON de Laravel al formato que espera renderTabla()
         alumnos = data.map(a => ({
             id: a.id,
             nombre: a.nombre,
             apellidos: a.apellidos,
             fnac: a.fecha_nacimiento ? a.fecha_nacimiento : '',
-            curso: a.curso ? a.curso.nombre : '—', // Entramos a la relación curso
-            clase: a.clase ? a.clase.nombre : '—'  // Entramos a la relación clase
+            curso: a.curso ? a.curso.nombre : '—',
+            clase: a.clase ? a.clase.nombre : '—',
+            curso_id: a.curso_id,
+            clase_id: a.clase_id
         }));
     }
     renderTabla('alumnos');
@@ -144,12 +145,13 @@ async function cargarDocentes() {
     } else {
         docentes = data.map(d => ({
             id: d.id,
-            // Los datos personales están dentro del objeto 'user'
             nombre: d.user ? d.user.name : 'Sin nombre',
             apellidos: d.user ? d.user.apellidos : '',
             email: d.user ? d.user.email : '',
             telefono: d.telefono || '—',
-            asignaturas: [] // Déjalo vacío si aún no tienes asignaturas en BD
+            asignaturas: d.asignaturas
+                ? d.asignaturas.split(',').map(s => s.trim()).filter(Boolean)
+                : []
         }));
     }
     renderTabla('docentes');
@@ -175,8 +177,9 @@ async function cargarTutores() {
             apellidos: t.user ? t.user.apellidos : '',
             email: t.user ? t.user.email : '',
             telefono: t.telefono || '—',
-            // Convertimos el array de hijos en un array de strings (nombres completos)
-            alumnos: t.alumnos ? t.alumnos.map(hijo => `${hijo.nombre} ${hijo.apellidos}`) : []
+            alumnos: t.alumnos ? t.alumnos.map(hijo => `${hijo.nombre} ${hijo.apellidos}`) : [],
+            alumno_ids: t.alumnos ? t.alumnos.map(hijo => hijo.id) : [],
+            alumno_parentescos: t.alumnos ? t.alumnos.map(hijo => hijo.pivot ? hijo.pivot.parentesco : 'padre') : []
         }));
     }
     renderTabla('tutores');
@@ -475,19 +478,19 @@ async function guardarDocente() {
         return;
     }
 
-    if (modoModal === 'nuevo') {
-        // const data = await api('POST', '/api/coord/docentes', { nombre, apellidos, email, telefono, password, fnac });
-        // if (data.error) { alertModal('alert-docente', 'err', data.error); return; }
-        docentes.push({ id: Date.now(), nombre, apellidos, email, telefono, fnac, asignaturas: [] });
-    } else {
-        // const data = await api('PUT', `/api/coord/docentes/${idEditando}`, { nombre, apellidos, email, telefono, fnac });
-        // if (data.error) { alertModal('alert-docente', 'err', data.error); return; }
-        const idx = docentes.findIndex(d => d.id === idEditando);
-        if (idx !== -1) docentes[idx] = { ...docentes[idx], nombre, apellidos, email, telefono, fnac };
+    const payload = { nombre, apellidos, email, telefono, fnac, asignaturas };
+    if (password) payload.password = password;
+
+    const url    = modoModal === 'nuevo' ? '/api/docentes' : `/api/docentes/${idEditando}`;
+    const metodo = modoModal === 'nuevo' ? 'POST' : 'PUT';
+    const respuesta = await api(metodo, url, payload);
+
+    if (!respuesta.ok) {
+        alertModal('alert-docente', 'err', '❌ ' + (respuesta.mensaje || respuesta.message || 'Error desconocido'));
+        return;
     }
 
-    renderTabla('docentes');
-    actualizarStats();
+    await cargarTodo();
     cerrarModal('modal-docente');
     toast(modoModal === 'nuevo' ? '✓ Docente registrado' : '✓ Docente actualizado');
 }
@@ -495,16 +498,15 @@ async function guardarDocente() {
 function editarDocente(id) {
     const d = docentes.find(x => x.id === id);
     if (!d) return;
-    modoModal = 'editar'; idEditando = id;
     abrirModal('modal-docente', 'editar');
-    setTimeout(() => {
-        set('d-nombre',    d.nombre);
-        set('d-apellidos', d.apellidos);
-        set('d-email',     d.email);
-        set('d-telefono',  d.telefono || '');
-        set('d-fnac',      d.fnac || '');
-        document.getElementById('modal-docente-titulo').textContent = '✏️ Editar docente';
-    }, 50);
+    idEditando = id;
+    set('d-nombre',      d.nombre);
+    set('d-apellidos',   d.apellidos);
+    set('d-email',       d.email);
+    set('d-telefono',    d.telefono === '—' ? '' : d.telefono || '');
+    set('d-fnac',        d.fnac || '');
+    set('d-asignaturas', (d.asignaturas || []).join(', '));
+    document.getElementById('modal-docente-titulo').textContent = '✏️ Editar docente';
 }
 
 /* ════════════════════════════════════════════
@@ -555,7 +557,15 @@ async function guardarTutor() {
         }
 
     } else {
-        // Lógica de editar 
+        const editPayload = { nombre, apellidos, email, telefono, alumno_id: alumnoId || null, parentesco };
+        if (password) editPayload.password = password;
+
+        const respuestaEdit = await api('PUT', `/api/tutores/${idEditando}`, editPayload);
+
+        if (!respuestaEdit.ok) {
+            alertModal('alert-tutor', '❌ ' + (respuestaEdit.mensaje || respuestaEdit.message || 'Error desconocido'));
+            return;
+        }
     }
 
     await cargarTodo();
@@ -566,15 +576,17 @@ async function guardarTutor() {
 function editarTutor(id) {
     const t = tutores.find(x => x.id === id);
     if (!t) return;
-    modoModal = 'editar'; idEditando = id;
     abrirModal('modal-tutor', 'editar');
-    setTimeout(() => {
-        set('t-nombre',    t.nombre);
-        set('t-apellidos', t.apellidos);
-        set('t-email',     t.email);
-        set('t-telefono',  t.telefono || '');
-        document.getElementById('modal-tutor-titulo').textContent = '✏️ Editar tutor';
-    }, 50);
+    idEditando = id;
+    set('t-nombre',    t.nombre);
+    set('t-apellidos', t.apellidos);
+    set('t-email',     t.email);
+    set('t-telefono',  t.telefono === '—' ? '' : t.telefono || '');
+    if (t.alumno_ids && t.alumno_ids.length > 0) {
+        set('t-alumno',     t.alumno_ids[0]);
+        set('t-parentesco', t.alumno_parentescos[0] || 'padre');
+    }
+    document.getElementById('modal-tutor-titulo').textContent = '✏️ Editar tutor';
 }
 
 /* ════════════════════════════════════════════

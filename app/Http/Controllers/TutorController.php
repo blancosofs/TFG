@@ -107,31 +107,69 @@ class TutorController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Tutor $tutor)
+    public function update(Request $request, $id)
     {
-        // Actualizamos datos del tutor
-        $tutor->update($request->only('colegio_id'));
+        $tutor = Tutor::findOrFail($id);
 
-        // Actualizamos datos del usuario vinculado
-        $userData = $request->only('name', 'email');
-        if ($request->filled('password')) {
-            $userData['password'] = Hash::make($request->password);
+        $request->validate([
+            'nombre'     => 'required|string|max:25',
+            'apellidos'  => 'required|string|max:60',
+            'email'      => 'required|email|unique:users,email,' . $tutor->user_id,
+            'telefono'   => 'required|string',
+            'alumno_id'  => 'nullable|integer|exists:alumnos,id',
+            'parentesco' => 'nullable|string',
+        ]);
+
+        try {
+            DB::transaction(function () use ($request, $tutor) {
+                $tutor->user->update([
+                    'name'      => $request->nombre,
+                    'apellidos' => $request->apellidos,
+                    'email'     => $request->email,
+                ]);
+
+                $tutor->update(['telefono' => $request->telefono]);
+
+                if ($request->filled('password')) {
+                    $tutor->user->password = Hash::make($request->password);
+                    $tutor->user->save();
+                }
+
+                if ($request->has('alumno_id')) {
+                    if ($request->filled('alumno_id')) {
+                        $tutor->alumnos()->sync([
+                            $request->alumno_id => ['parentesco' => $request->parentesco ?? 'tutor_legal']
+                        ]);
+                    } else {
+                        $tutor->alumnos()->detach();
+                    }
+                }
+            });
+
+            return response()->json(['ok' => true, 'mensaje' => 'Tutor actualizado correctamente']);
+
+        } catch (\Exception $e) {
+            return response()->json(['ok' => false, 'mensaje' => $e->getMessage()], 500);
         }
-        $tutor->user->update($userData);
-
-        return redirect()->route('tutores.index')->with('success', 'Tutor actualizado');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Tutor $tutor)
+    public function destroy($id)
     {
-        $user = $tutor->user;
-        $tutor->alumnos()->detach();
-        $tutor->delete(); // Borra el registro en 'tutores'
-        $user->delete();    // Borra el registro en 'users'
-        
-        return redirect()->route('tutores.index')->with('success', 'Tutor eliminado');
+        $tutor = Tutor::findOrFail($id);
+
+        try {
+            DB::transaction(function () use ($tutor) {
+                $tutor->alumnos()->detach();
+                $tutor->user->delete();
+            });
+
+            return response()->json(['ok' => true, 'mensaje' => 'Tutor eliminado correctamente']);
+
+        } catch (\Exception $e) {
+            return response()->json(['ok' => false, 'mensaje' => $e->getMessage()], 500);
+        }
     }
 }

@@ -73,7 +73,7 @@ class AlumnoController extends Controller
 
 
     // Actualizar los datos
-    public function update(Request $request, int $id)
+    public function update(Request $request, $id)
     {
     // 1. Buscamos al alumno
     $alumno = Alumno::findOrFail($id);
@@ -117,7 +117,7 @@ class AlumnoController extends Controller
     }
 
     // Eliminar al alumno
-    public function destroy(int $id)
+    public function destroy($id)
     {
     // Buscamos al alumno (asegurándonos de que sea de nuestro colegio)
     $alumno = Alumno::where('colegio_id', Auth::user()->colegio_id)->findOrFail($id);

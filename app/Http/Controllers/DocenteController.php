@@ -77,7 +77,7 @@ class DocenteController extends Controller
 
 
     // 3. UPDATE: Actualizar datos (y contraseña si se desea)
-    public function update(Request $request, int $id)
+    public function update(Request $request, $id)
     {
         // Buscamos el docente
         $docente = Docente::findOrFail($id);
@@ -121,7 +121,7 @@ class DocenteController extends Controller
     }
 
     // 7. DESTROY: Borrar docente (y su usuario)
-    public function destroy(int $id)
+    public function destroy($id)
     {
         $docente = Docente::findOrFail($id);
         $user = $docente->user;
