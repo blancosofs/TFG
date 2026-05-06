@@ -1,8 +1,9 @@
 <?php
 
-// app/Http/Controllers/AdminController.php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\toDatabase;
+
+use App\Http\Controllers\Controller;
 
 use Illuminate\Http\Request;
 use App\Models\Colegio;
@@ -16,7 +17,7 @@ use Illuminate\Support\Str;
 
 class AdminController extends Controller
 {
-    public function registrarCentro(Request $request)
+    public function registro(Request $request)
     {
         // 1. Validar
         $request->validate(['coord_email' => 'required|email|unique:users,email']);

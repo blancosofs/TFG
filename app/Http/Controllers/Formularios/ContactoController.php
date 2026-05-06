@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Formularios; //tienes que poner esto completo si estas en carpetas
 
 use App\Http\Controllers\Controller; //aqui le pones la base o layout
+
 use App\Mail\NuevoContactoMail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
