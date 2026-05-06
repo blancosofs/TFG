@@ -111,7 +111,15 @@ Route::middleware(['auth'])->group(function () {
 // RUTAS API PARA EL FRONTEND (Manejadas por sesión Web)
 // =========================================================
 Route::prefix('api')->middleware(['auth'])->group(function () {
-    
+
+    // Cerrar sesión desde JS
+    Route::post('/logout', function () {
+        Auth::logout();
+        request()->session()->invalidate();
+        request()->session()->regenerateToken();
+        return response()->json(['ok' => true]);
+    });
+
     // 1. Ruta para comprobar quién está logueado
     Route::get('/me', function (Request $request) {
         

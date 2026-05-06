@@ -21,6 +21,7 @@
                 <li><a href="{{ route('index') }}">Inicio</a></li>
                 <li><a href="{{ route('contacto') }}">Contacto</a></li>
                 <li class="activo"><a href="{{ route('calendario') }}">Mi Horario</a></li>
+                <li><a href="{{ route('perfil') }}">Mi Perfil</a></li>
 
                 <li class="derecha menuSesion">
                     <img src="{{ asset('img/perfil.png') }}" class="fotoPerfil" alt="Perfil">
@@ -28,8 +29,9 @@
                         <li class="dropdown-nombre"><span id="nav-nombre">Docente</span></li>
                         <li class="dropdown-rol"><span id="nav-rol">Docente</span></li>
                         <li class="dropdown-sep"></li>
+                        <li><a href="{{ route('perfil') }}">👤 Mi perfil</a></li>
                         <li><a href="{{ route('config') }}">⚙️ Configuración</a></li>
-                        <li><a href="#" id="btn-logout">Cerrar sesión</a></li>
+                        <li><a href="#" id="btn-logout" >Cerrar sesión</a></li>
                     </ul>
                 </li>
             </ul>
