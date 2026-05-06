@@ -35,29 +35,17 @@ class HorarioController extends Controller
             'hora_fin' => 'required|date_format:H:i|after:hora_inicio',
             'docente_id' => 'required|integer|exists:docentes,id',
             'clase_id' => 'required|integer|exists:clases,id'
-    ]);
+        ]);
 
     // Si todo está bien, lo guardamos
         Horario::create($request->all());
 
-        return redirect()->back()->with('success', 'Horario creado correctamente.');
+       return response()->json([
+            'ok' => true,
+            'mensaje' => 'Horario creado con éxito'
+        ]);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Horario $horario)
-    {
-        return view('horarios.show', compact('horario'));
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Horario $horario)
-    {
-        return view('horarios.edit', compact('horario'));
-    }
 
     /**
      * Update the specified resource in storage.

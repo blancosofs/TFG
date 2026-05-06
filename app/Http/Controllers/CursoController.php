@@ -13,7 +13,6 @@ class CursoController extends Controller
      */
     public function index()
     {
-
         $colegioId = Auth::user()->colegio_id;
         $cursos = Curso::where('colegio_id', $colegioId)->get();
 
@@ -21,58 +20,42 @@ class CursoController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        return view ('cursos.create');
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
     
     public function store(Request $request) {
-        // 1. Validamos los datos
-        $request->validate([
+        
+        $datosValidados = $request->validate([
             'nombre' => 'required|string|max:30',
             'colegio_id' => 'required|exists:colegios,id'
         ]);
 
-        // 2. Creamos el curso en la base de datos
-        Curso::create([
-            'nombre' => $request->nombre,
-            'colegio_id' => $request->colegio_id,
-        ]);
+        $curso = Curso::create($datosValidados);
 
-        // 3. Redirigimos a la página donde se ven los cursos
-        return redirect()->route('coordinador.configuracion')->with('status', 'Curso creado');
-    }
-
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Curso $curso)
-    {
-        return view('cursos.show', compact('curso'));
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Curso $curso)
-    {
-        return view('cursos.edit', compact('curso'));
+        return response()->json([
+            'ok' => true, 
+            'mensaje' => 'Curso creado con éxito',
+            'curso' => $curso
+        ], 201);
     }
 
     /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, Curso $curso)
-    {
-        $curso->update($request->all());
-        return redirect()->route('cursos.index')->with('info', 'Datos del curso actualizados');
+    {       
+        $datosValidados = $request->validate([
+            'nombre' => 'sometimes|required|string|max:30',
+            'colegio_id' => 'sometimes|required|exists:colegios,id'
+        ]);
+
+        $curso->update($datosValidados);
+
+        return response()->json([
+            'ok' => true, 
+            'mensaje' => 'Datos del curso actualizados',
+            'curso' => $curso
+        ]);
     }
 
     /**
@@ -81,6 +64,6 @@ class CursoController extends Controller
     public function destroy(Curso $curso)
     {
         $curso->delete();
-        return redirect()->route('cursos.index')->with('info', 'Curso eliminada');
+        return response()->json(['ok' => true, 'mensaje' => 'Curso eliminado'] );
     }
 }

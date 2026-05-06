@@ -20,9 +20,11 @@ let tabActiva  = 'alumnos';
 /* ════════════════════════════════════════════
    API
 ════════════════════════════════════════════ */
+const CSRF = document.querySelector('meta[name="csrf-token"]')?.content ?? '';
+
 async function api(method, ruta, body) {
     try {
-        const opts = { method, credentials: 'include', headers: { 'Content-Type': 'application/json' } };
+        const opts = { method, credentials: 'include', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF } };
         if (body) opts.body = JSON.stringify(body);
         const r = await fetch(API + ruta, opts);
         return await r.json();
@@ -183,9 +185,6 @@ function cambiarSeccionDesde(seccion) {
    CARGA DE DATOS DEL CENTRO
 ════════════════════════════════════════════ */
 async function cargarDatos() {
-    // En producción: 
-    
-    await Promise.all([cargarCursos(), cargarAlumnos(), cargarDocentes(), cargarTutores()]);
 
     // Cursos y clases de prueba
     /*cursos = [

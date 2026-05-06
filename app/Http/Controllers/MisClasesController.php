@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Docente;
+namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Clase;
@@ -16,7 +16,7 @@ class MisClasesController extends Controller
         // 2. Traemos sus clases. Usamos withCount para saber cuántos alumnos tiene cada una
         $misClases = $docente->clases()->withCount('alumnos')->get();
 
-        return view('profesor.mis_clases.index', compact('misClases'));
+        return 
     }
 
     public function show($id)

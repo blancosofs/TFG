@@ -4,10 +4,11 @@
 ══════════════════════════════════════════════════════════════ */
 
 const API = '';
+const CSRF = document.querySelector('meta[name="csrf-token"]')?.content ?? '';
 
 async function api(method, ruta, body) {
     try {
-        const opts = { method, credentials: 'include', headers: { 'Content-Type': 'application/json' } };
+        const opts = { method, credentials: 'include', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF } };
         if (body) opts.body = JSON.stringify(body);
         const r = await fetch(API + ruta, opts);
         return await r.json();
@@ -17,17 +18,17 @@ async function api(method, ruta, body) {
 }
 
 /* ── Arranque — comprueba sesión ── */
-// (async () => {
-//     const data = await api('GET', '/api/me');
-//     if (!data || !data.id) { window.location.href = '/login'; return; }
-//     if (data.rol !== 'tutor') { window.location.href = '/login'; return; }
-//     cargarPerfil(data);
-// })();
+(async () => {
+    const data = await api('GET', '/api/me');
+     if (!data || !data.id) { window.location.href = '/login'; return; }
+     if (data.rol !== 'tutor') { window.location.href = '/login'; return; }
+     cargarPerfil(data);
+})();
 
 // Datos de prueba — quitar cuando el servidor esté activo
 document.addEventListener('DOMContentLoaded', () => {
 
-cargarPerfil({
+/*cargarPerfil({
     id: 1,
     nombre: 'María',
     apellidos: 'López Sánchez',
@@ -70,7 +71,7 @@ renderHijos([
     }
 ]);
 
-}); // fin DOMContentLoaded
+}); // fin DOMContentLoaded*/
 
 /* ── Cargar perfil ── */
 async function cargarPerfil(usuario) {
@@ -367,3 +368,5 @@ function toast(msg) {
     t.textContent = msg; t.classList.add('show');
     setTimeout(() => t.classList.remove('show'), 3000);
 }
+
+});

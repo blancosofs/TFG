@@ -11,6 +11,10 @@ class Docente extends Model
 
     protected $fillable = ['telefono', 'asignaturas', 'colegio_id', 'coordinador_id', 'user_id'];
 
+    protected $casts = [
+        'asignaturas' => 'array',
+    ];
+
     // Relación 1:1 - Un docente TIENE UN usuario
     public function user()
     {

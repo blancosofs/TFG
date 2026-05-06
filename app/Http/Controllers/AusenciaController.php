@@ -15,12 +15,8 @@ class AusenciaController extends Controller
         return view('ausencias.index', compact('ausencias'));
     }
 
-    public function create()
-    {
-        return view('ausencias.create');
-    }
 
-    public function store(Request $request)
+    public function storeAusencia(Request $request)
     {
         $request->validate([
             'fecha'         => 'required|date',
@@ -34,7 +30,8 @@ class AusenciaController extends Controller
 
         Ausencia::create($request->all());
 
-        return redirect()->back()->with('success', 'Falta registrada correctamente.');
+        return response()->
+        json(['ok' => true, 'mensaje' => 'Ausencia registrada']);
     }
 
     /**
@@ -97,15 +94,6 @@ class AusenciaController extends Controller
         return response()->json($ausencias);
     }
 
-    public function show(Ausencia $ausencia)
-    {
-        return view('ausencias.show', compact('ausencia'));
-    }
-
-    public function edit(Ausencia $ausencia)
-    {
-        return view('ausencias.edit', compact('ausencia'));
-    }
 
     public function update(Request $request, Ausencia $ausencia)
     {
@@ -116,6 +104,6 @@ class AusenciaController extends Controller
     public function destroy(Ausencia $ausencia)
     {
         $ausencia->delete();
-        return redirect()->route('ausencias.index')->with('info', 'Ausencia eliminada');
+        return response()->json(['ok' => true, 'mensaje' => 'Ausencia eliminada']);
     }
 }

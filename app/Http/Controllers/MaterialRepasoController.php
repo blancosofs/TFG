@@ -17,14 +17,15 @@ class MaterialRepasoController extends Controller
 
     public function store(Request $request)
     {
+        
+
         $request->validate([
             'titulo'    => 'required|string|max:100',
             'link'      => 'required|url',
             'alumno_id' => 'required|exists:alumnos,id'
         ]);
 
-        return redirect()->route('familia.mis-hijos.index')
-            ->with('success', 'Material de repaso compartido con éxito.');
+        return response()->json(['ok' => true, 'mensaje' => 'Material de repaso compartido']);
     }
 }
 

@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Edunoly · Mi Perfil</title>
     <script src="{{ asset('js/temas.js') }}"></script>
     <link rel="stylesheet" href="{{ asset('css/temas.css') }}">
@@ -26,7 +27,7 @@
                 <li class="derecha menuSesion">
                     <img src="{{ asset('img/perfil.png') }}" class="fotoPerfil" alt="Perfil">
                     <ul class="dropdown">
-                        <li class="dropdown-nombre"><span id="nav-nombre"></span></li>
+                        <li class="dropdown-nombre"><span id="nav-nombre">Docente</span></li>
                         <li class="dropdown-rol"><span id="nav-rol">Docente</span></li>
                         <li class="dropdown-sep"></li>
                         <li><a href="{{ route('perfil') }}">👤 Mi perfil</a></li>
@@ -319,25 +320,13 @@ async function api(method, ruta, body) {
 /* ══════════════════════════════════════════════════════════════
    ARRANQUE — comprueba sesión
 ══════════════════════════════════════════════════════════════ */
-// (async () => {
-//     const data = await api('GET', '/api/me');
-//     if (!data || !data.id) { window.location.href = '/login'; return; }
-//     if (data.rol !== 'docente') { window.location.href = '/login'; return; }
-//     cargarPerfil(data);
-// })();
+ (async () => {
+     const data = await api('GET', '/api/me');
+     if (!data || !data.id) { window.location.href = '/login'; return; }
+     if (data.rol !== 'docente') { window.location.href = '/login'; return; }
+     cargarPerfil(data);
+})();
 
-// Datos de prueba — quitar cuando el servidor esté activo
-cargarPerfil({
-    id: 1,
-    nombre: 'Carlos',
-    apellidos: 'García Martínez',
-    email: 'cgarcia@centro.es',
-    telefono: '600 123 456',
-    rol: 'docente',
-    colegio: 'IES Ejemplo',
-    color: '#47ad79',
-    ultimo_acceso: new Date().toISOString()
-});
 
 /* ══════════════════════════════════════════════════════════════
    CARGAR PERFIL
@@ -519,7 +508,7 @@ function previsualizarFoto(input) {
 document.getElementById('btn-logout')?.addEventListener('click', async e => {
     e.preventDefault();
     await api('POST', '/api/logout');
-    window.location.href = '{{ route('login') }}';
+    window.location.href = '{{ route("/login") }}';
 });
 
 /* ── Utilidades ── */
