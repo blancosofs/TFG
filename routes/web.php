@@ -3,10 +3,9 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
-//use App\Http\Controllers\ProfileController;
-//use App\Http\Controllers\SolicitudController; //Para el formulario de unete
-use App\Http\Controllers\Formularios\ContactoController; //pones aqui la ruta completa y done
-use App\Http\Controllers\AdminController;
+use App\Http\Controllers\Formularios\ContactoController; //pones aqui la ruta completa porque esta en carpeta
+use App\Http\Controllers\toDatabase\AdminController; //pones aqui la ruta completa porque esta en carpeta
+//use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AlumnoController;
 use App\Http\Controllers\AusenciaController;
 use App\Http\Controllers\ClaseController;
@@ -17,11 +16,6 @@ use App\Http\Controllers\DocenteController;
 use App\Http\Controllers\HorarioController;
 use App\Http\Controllers\TutorController; 
 
-//controladores
-//Route::post('/unete', [SolicitudController::class, 'enviar'])->name('solicitud.enviar'); //aqui se maneja el formulario de unete, se llama al metodo enviar del controlador SolicitudController
-
-//Como se importan todo de una sentada pues es más facild manejar
-
 /*
 |--------------------------------------------------------------------------
 | 1. RUTAS PÚBLICAS Y VISTAS ESTÁTICAS 
@@ -30,10 +24,10 @@ use App\Http\Controllers\TutorController;
 Route::view('/', 'PaginaInicio')->name('index');
 Route::view('/contacto', 'PaginaContacto')->name('contacto');
 Route::view('/unete', 'PaginaUnete')->name('unete');
+Route::view('/configuracion', 'configuracion')->name('config');
 
 // Formulario de Contacto (Público)
 Route::post('/contacto-enviar', [ContactoController::class, 'enviarConsulta'])->name('contacto.enviar');
-
 
 /*
 |--------------------------------------------------------------------------
@@ -41,10 +35,6 @@ Route::post('/contacto-enviar', [ContactoController::class, 'enviarConsulta'])->
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth'])->group(function () {
-
-    // Vistas comunes para cualquiera que esté logueado
-    Route::view('/configuracion', 'configuracion')->name('config');
-
     // ZONA DOCENTES
     Route::middleware(['role:docente'])->group(function () {
         // Vistas
@@ -99,14 +89,19 @@ Route::middleware(['auth'])->group(function () {
 
     // ZONA ADMIN GLOBAL
     Route::middleware(['role:admin'])->group(function () {
+        //Formularios
+        Route::post('/registro', [AdminController::class, 'registro'])->name('solicitud.enviar'); //poner la clase y funcion que usas
+
         // Vistas
         Route::view('/admin', 'admin')->name('admin');
         Route::view('/perfilAdmin', 'perfilAdmin')->name('perfilAdmin');
+        Route::view('/registro', 'PaginaUnete')->name('solicitud.enviar');//ver registro
 
         // CRUD de Admin
         Route::prefix('admin')->group(function () {
-            Route::resource('colegios', ColegioController::class);
-            Route::resource('coordinadores', CoordinadorController::class);
+        Route::resource('colegios', ColegioController::class);
+        Route::resource('coordinadores', CoordinadorController::class);
+
         });
     });
 
