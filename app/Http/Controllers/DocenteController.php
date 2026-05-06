@@ -18,6 +18,7 @@ class DocenteController extends Controller
         
         $docentes = Docente::where('colegio_id', $colegioId)
                             ->with('user') // Traemos también sus datos de nombre/email
+                            ->with('clases')
                             ->get();
         // 2. Devolvemos el JSON
         return response()->json($docentes);

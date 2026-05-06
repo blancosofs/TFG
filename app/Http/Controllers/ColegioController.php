@@ -13,7 +13,7 @@ class ColegioController extends Controller
     public function index()
     {
         $colegios = Colegio::all();
-        return view ('colegios.index' ,compact ('colegio'));
+        return view ('colegios.index' ,compact ('colegios'));
     }
 
     /**

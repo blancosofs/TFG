@@ -11,6 +11,11 @@ class Coordinador extends Model
 
     protected $fillable = ['colegio_id', 'user_id'];
 
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
     //Relación 1:N
      public function docentes()
     {

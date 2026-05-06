@@ -17,16 +17,9 @@ class CoordinadorController extends Controller
     public function index()
     {
         $coordinadores = Coordinador::with('user')->get(); 
-        return view('coordinadores.index', compact('coordinadores'));  //<--- Crea un array a partir de variables que ya existen.
+        return response()->json($coordinadores);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        return view('coordinadores.create');
-    }
 
     /**
      * Store a newly created resource in storage.
@@ -59,23 +52,7 @@ class CoordinadorController extends Controller
             ]);
         });
 
-        return redirect()->route('coordinadores.index')->with('success', 'Coordinador creado con éxito');
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Coordinador $coordinador)
-    {
-        return view('coordinadores.show', compact('coordinador'));
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Coordinador $coordinador)
-    {
-        return view('coordinadores.edit', compact('coordinador'));
+        return response()->json(['ok' => true, 'mensaje' => 'Coordinador creado con éxito']);
     }
 
     /**
@@ -93,7 +70,7 @@ class CoordinadorController extends Controller
         }
         $coordinador->user->update($userData);
 
-        return redirect()->route('coordinadores.index')->with('success', 'Coordinador actualizado');
+            return response()->json(['ok' => true, 'mensaje' => 'Coordinador actualizado']);
     }
 
     /**
@@ -105,6 +82,6 @@ class CoordinadorController extends Controller
         $coordinador->delete(); // Borra el registro en 'coordinadores'
         $user->delete();    // Borra el registro en 'users'
         
-        return redirect()->route('coordinadores.index')->with('success', 'Coordinador eliminado');
+        return response()->json(['ok' => true, 'mensaje' => 'Coordinador eliminado']);
     }
 }

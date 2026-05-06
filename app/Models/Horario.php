@@ -15,7 +15,17 @@ class Horario extends Model
         'hora_fin'    => 'datetime',
     ];
 
-    //Relación 1:N 
+    public function docente()
+    {
+        return $this->belongsTo(Docente::class);
+    }
+
+    public function clase()
+    {
+        return $this->belongsTo(Clase::class);
+    }
+
+    //Relación 1:N
      public function ausencias()
     {
         return $this->hasMany(Ausencia::class);

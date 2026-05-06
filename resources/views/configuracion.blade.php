@@ -251,10 +251,10 @@
 
 <div class="toast" id="toast"></div>
 
-<script src="temas.js"></script>
-<script src="traducciones.js"></script>
-<script src="MenuSesion.js"></script>
-<script src="configuracion.js"></script>
-<script src="menuResponsive.js"></script>
+<script src="assets/js/configuracion.js"></script>
+<script src="assets/js/traducciones.js"></script>
+<script src="assets/js/MenuSesion.js"></script>
+<script src="assets/js/configuracion.js"></script>
+<script src="assets/js/menuResponsive.js"></script>
 </body>
 </html>

@@ -15,6 +15,7 @@ use App\Http\Controllers\CursoController;
 use App\Http\Controllers\DocenteController;
 use App\Http\Controllers\HorarioController;
 use App\Http\Controllers\TutorController; 
+use App\Http\Controllers\TablonController;
 
 /*
 |--------------------------------------------------------------------------
@@ -104,6 +105,13 @@ Route::middleware(['auth'])->group(function () {
 
         });
     });
+
+    Route::post('/tablon', [TablonController::class, 'store']);
+    Route::put('/tablon/{tablon}', [TablonController::class, 'update']);
+    Route::delete('/tablon/{tablon}', [TablonController::class, 'destroy']);
+    Route::post('/tablon/{tablon}/comentarios', [TablonController::class, 'storeComentario']);
+    Route::delete('/comentarios/{comentario}', [TablonController::class, 'destroyComentario']);
+
 
 });
 

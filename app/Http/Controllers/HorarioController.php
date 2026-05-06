@@ -7,21 +7,14 @@ use Illuminate\Http\Request;
 
 class HorarioController extends Controller
 {
-       /**
-     * Display a listing of the resource.
-     */
-    public function index()
+public function index()
     {
-        $horarios = Horario::all();
-        return view ('horarios.index' ,compact ('horario'));
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        return view ('horarios.create');
+        $horarios = Horario::with(['docente', 'clase'])->get();
+        
+        return response()->json([
+            'ok' => true,
+            'horarios' => $horarios
+        ]);
     }
 
     /**
@@ -29,7 +22,7 @@ class HorarioController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
+        $datosValidados = $request->validate([
             'dia_semana' => 'required|in:lunes,martes,miercoles,jueves,viernes',
             'hora_inicio' => 'required|date_format:H:i',
             'hora_fin' => 'required|date_format:H:i|after:hora_inicio',
@@ -37,23 +30,38 @@ class HorarioController extends Controller
             'clase_id' => 'required|integer|exists:clases,id'
         ]);
 
-    // Si todo está bien, lo guardamos
-        Horario::create($request->all());
+        // Guardamos usando solo los datos que han pasado la validación
+        $horario = Horario::create($datosValidados);
 
-       return response()->json([
+        return response()->json([
             'ok' => true,
-            'mensaje' => 'Horario creado con éxito'
-        ]);
+            'mensaje' => 'Horario creado con éxito',
+            'horario' => $horario // Devolvemos el objeto recién creado
+        ], 201);
     }
-
 
     /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, Horario $horario)
     {
-        $horario->update($request->all());
-        return redirect()->route('horarios.index')->with('info', 'Datos del horario actualizados');
+        // Ponemos 'sometimes' para permitir actualizaciones parciales
+        $datosValidados = $request->validate([
+            'dia_semana' => 'sometimes|required|in:lunes,martes,miercoles,jueves,viernes',
+            'hora_inicio' => 'sometimes|required|date_format:H:i',
+            'hora_fin' => 'sometimes|required|date_format:H:i|after:hora_inicio',
+            'docente_id' => 'sometimes|required|integer|exists:docentes,id',
+            'clase_id' => 'sometimes|required|integer|exists:clases,id'
+        ]);
+
+        // Actualizamos de forma segura
+        $horario->update($datosValidados);
+
+        return response()->json([
+            'ok' => true,
+            'mensaje' => 'Horario actualizado con éxito',
+            'horario' => $horario
+        ]);
     }
 
     /**
@@ -62,6 +70,11 @@ class HorarioController extends Controller
     public function destroy(Horario $horario)
     {
         $horario->delete();
-        return redirect()->route('horarios.index')->with('info', 'Horario eliminada');
+        
+        return response()->json([
+            'ok' => true,
+            'mensaje' => 'Horario eliminado con éxito'
+        ]);
     }
-}
+
+}    

@@ -56,6 +56,11 @@ class TablonController extends Controller
 
     public function update(Request $request, Tablon $tablon)
     {
+        $docente = Auth::user()->docente;
+        if (!$docente || $tablon->docente_id !== $docente->id) {
+            return response()->json(['ok' => false, 'mensaje' => 'No autorizado.'], 403);
+        }
+
         $request->validate([
             'titulo'      => 'sometimes|string|max:200',
             'categoria'   => 'sometimes|in:General,Examen,Evento,Urgente,Tarea',
@@ -74,6 +79,14 @@ class TablonController extends Controller
 
     public function destroy(Tablon $tablon)
     {
+        $user = Auth::user();
+        $esAutor = $user->docente && $tablon->docente_id === $user->docente->id;
+        $esCoordinador = (bool) $user->coordinador;
+
+        if (!$esAutor && !$esCoordinador) {
+            return response()->json(['ok' => false, 'mensaje' => 'No autorizado.'], 403);
+        }
+
         $tablon->delete();
         return response()->json(['ok' => true, 'mensaje' => 'Publicación eliminada.']);
     }
@@ -99,6 +112,14 @@ class TablonController extends Controller
 
     public function destroyComentario(ComentarioTablon $comentario)
     {
+        $user = Auth::user();
+        $esAutor = $comentario->user_id === $user->id;
+        $esCoordinador = (bool) $user->coordinador;
+
+        if (!$esAutor && !$esCoordinador) {
+            return response()->json(['ok' => false, 'mensaje' => 'No autorizado.'], 403);
+        }
+
         $comentario->delete();
         return response()->json(['ok' => true, 'mensaje' => 'Comentario eliminado.']);
     }
