@@ -1,5 +1,5 @@
 *.log
-/.claude
+/.claude #ignorar
 .DS_Store
 .env
 .env.backup
