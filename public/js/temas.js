@@ -30,12 +30,11 @@
             document.head.appendChild(s);
         }
 
-        // Alto contraste
+        // Alto contraste — añade clase al body en vez de filter
         if (opts.contraste) {
-            const s = document.createElement('style');
-            s.id = 'estilo-contraste';
-            s.textContent = `body { filter: contrast(1.25); }`;
-            document.head.appendChild(s);
+            document.addEventListener('DOMContentLoaded', () => {
+                document.body.classList.add('alto-contraste');
+            });
         }
 
         // Subrayar enlaces

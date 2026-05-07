@@ -1,6 +1,8 @@
 /* ══════════════════════════════════════════════════════════════
-   Estado — config guardada vs temporal
+   Edunoly · configuracionPerfiles.js
 ══════════════════════════════════════════════════════════════ */
+
+/* ── Estado — config guardada vs temporal ── */
 let configGuardada = {};
 let configTemporal = {};
 let temaGuardado   = '';
@@ -36,6 +38,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Aplicar opciones guardadas
     aplicarOpciones(configGuardada);
+
+    // Aplicar idioma con pequeño delay para asegurar que traducciones.js está cargado
+    setTimeout(() => {
+        if (typeof aplicarIdioma === 'function') {
+            aplicarIdioma(configGuardada.idioma || 'es');
+        }
+    }, 50);
 });
 
 /* ── Rellena todos los controles con una config dada ── */
@@ -66,9 +75,12 @@ function seleccionarTema(nombre, el) {
 function guardarOpcion(clave, valor) {
     configTemporal[clave] = valor;
     aplicarOpciones(configTemporal);
-    // Idioma se aplica inmediatamente para ver el cambio al instante
-    if (clave === 'idioma' && typeof aplicarIdioma === 'function') {
-        aplicarIdioma(valor);
+    if (clave === 'idioma') {
+        // El idioma se persiste de inmediato para que otras páginas lo lean al navegar
+        const stored = JSON.parse(localStorage.getItem('edunoly-config') || '{}');
+        stored.idioma = valor;
+        localStorage.setItem('edunoly-config', JSON.stringify(stored));
+        if (typeof aplicarIdioma === 'function') aplicarIdioma(valor);
     }
 }
 
@@ -97,16 +109,15 @@ function aplicarOpciones(opts) {
         ? `*, *::before, *::after { animation-duration: 0ms !important; transition-duration: 0ms !important; }`
         : '';
 
-    /* ── Alto contraste ── */
-    let estiloContraste = document.getElementById('estilo-contraste');
-    if (!estiloContraste) {
-        estiloContraste = document.createElement('style');
-        estiloContraste.id = 'estilo-contraste';
-        document.head.appendChild(estiloContraste);
+    /* ── Alto contraste — clase en body en vez de filter ── */
+    if (get('contraste')) {
+        document.body.classList.add('alto-contraste');
+    } else {
+        document.body.classList.remove('alto-contraste');
     }
-    estiloContraste.textContent = get('contraste')
-        ? `body { filter: contrast(1.3); } .config-seccion, .tema-card { border-width: 2px !important; }`
-        : '';
+    // Limpiar el estilo inyectado si existía antes
+    const estiloContrasteViejo = document.getElementById('estilo-contraste');
+    if (estiloContrasteViejo) estiloContrasteViejo.textContent = '';
 
     /* ── Subrayar enlaces ── */
     let estiloEnlaces = document.getElementById('estilo-enlaces');
@@ -157,5 +168,5 @@ function mostrarToast(msg) {
 document.getElementById('btn-logout')?.addEventListener('click', async e => {
     e.preventDefault();
     await fetch('/api/logout', { method: 'POST', credentials: 'include' });
-    window.location.href = '/login';
+    window.location.href = 'login.html';
 });

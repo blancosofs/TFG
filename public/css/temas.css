@@ -38,8 +38,8 @@
     --select-fondo:      #ffffff;
     --select-texto:      #333333;
 
-    --card-fondo:        #ffffff;
-    --card-texto:        #1a2e28;
+    --card-fondo:        #092422;
+    --card-texto:        #ffffff;
 
     --logo-fondo:        #47ad79;
     --logo-texto:        #ffffff;
@@ -463,6 +463,8 @@ input[type="email"]:focus {
 /* Tabs de perfil */
 .tab { background: var(--card-fondo) !important; border-color: var(--borde) !important; }
 .tab span { color: var(--card-texto) !important; }
+.tab-icon { background: color-mix(in srgb, var(--card-texto) 12%, transparent) !important; }
+.tab-icon svg { color: var(--card-texto) !important; }
 
 .tab:hover,
 .tab.active {
@@ -470,8 +472,16 @@ input[type="email"]:focus {
     background: var(--acento-palido) !important;
 }
 
+.tab.active span,
+.tab:hover span {
+    color: var(--texto-sobre-claro) !important;
+}
+
 .tab.active .tab-icon,
 .tab:hover .tab-icon { background: var(--acento) !important; }
+
+.tab.active .tab-icon svg,
+.tab:hover .tab-icon svg { color: #fff !important; }
 
 /* Notice */
 .notice {
@@ -483,11 +493,15 @@ input[type="email"]:focus {
 /* Botón principal (login) */
 .btn-primary {
     background: var(--acento) !important;
-    color: var(--texto-oscuro) !important;
+    color: var(--texto-sobre-claro) !important;
     box-shadow: 0 2px 10px color-mix(in srgb, var(--acento) 40%, transparent) !important;
 }
 
 .btn-primary:hover { background: var(--acento-medio) !important; }
+
+/* Checkbox "Mantener sesión" */
+.check-label { color: var(--card-texto) !important; }
+.check-box { border-color: color-mix(in srgb, var(--card-texto) 35%, transparent) !important; }
 
 /* Pie de card */
 .card-foot { border-color: var(--borde) !important; }
@@ -514,7 +528,7 @@ input[type="email"]:focus {
 .mini-titulo      { color: var(--texto) !important; }
 .mini-day         { color: var(--texto-suave) !important; }
 .mini-day.hoy     { color: var(--acento) !important; }
-.mini-day.sel     { background: var(--acento) !important; color: var(--texto-oscuro) !important; }
+.mini-day.sel     { background: var(--acento) !important; color: var(--texto-sobre-claro) !important; }
 .mini-dl          { color: var(--texto-muy-suave) !important; }
 
 /* Próximas clases */
@@ -529,7 +543,7 @@ input[type="email"]:focus {
 .celda-num          { color: var(--texto-suave) !important; }
 .mes-celda.hoy-celda .celda-num {
     background: var(--acento) !important;
-    color: var(--texto-oscuro) !important;
+    color: var(--texto-sobre-claro) !important;
 }
 
 .mes-wd-c           { color: var(--texto-muy-suave) !important; }
@@ -569,7 +583,7 @@ input[type="email"]:focus {
 .opcion-select  { background: var(--input-fondo) !important; color: var(--texto) !important; border-color: var(--input-borde) !important; }
 
 /* Botones de guardar */
-.btn-guardar  { background: var(--acento) !important; color: var(--texto-oscuro) !important; }
+.btn-guardar  { background: var(--acento) !important; color: var(--texto-sobre-claro) !important; }
 .btn-cancelar { color: var(--texto-suave) !important; border-color: var(--input-borde) !important; }
 
 
@@ -678,9 +692,7 @@ input[type="email"]:focus {
 .dropdown li a           { color: #333 !important; }
 .dropdown li a:hover     { background-color: #f2f2f2 !important; color: #111 !important; }
 .dropdown-nombre         { color: #111 !important; padding: 10px 15px 2px !important; font-size: 13px !important; font-weight: 700 !important; }
-.dropdown-nombre span    { color: #111 !important; }
 .dropdown-rol            { color: #888 !important; padding: 0 15px 8px !important; font-size: 11px !important; }
-.dropdown-rol span       { color: #888 !important; }
 
 
 /* ══════════════════════════════════════════════════════════════
@@ -815,3 +827,94 @@ body.fuente-muy-grande .infoCopyright p { font-size: 24px !important; }
 body.fuente-muy-grande h1 { font-size: 44px !important; }
 body.fuente-muy-grande h2 { font-size: 34px !important; }
 body.fuente-muy-grande h3:not(.infoTitulo) { font-size: 28px !important; }
+
+
+/* ══════════════════════════════════════════════════════════════
+   ALTO CONTRASTE — clase aplicada al body
+   Aumenta el contraste visualmente sin romper los temas:
+   - Texto más brillante
+   - Fondos más oscuros
+   - Bordes más gruesos y visibles
+   - Inputs uniformes con el fondo del tema
+══════════════════════════════════════════════════════════════ */
+
+/* ══════════════════════════════════════════════════════════════
+   ALTO CONTRASTE — usa var(--texto) para que funcione
+   en todos los temas incluyendo el blanco
+══════════════════════════════════════════════════════════════ */
+
+/* Texto principal — usa la variable del tema para respetar
+   si es oscuro (blanco) o claro (negro) */
+body.alto-contraste p,
+body.alto-contraste span,
+body.alto-contraste label,
+body.alto-contraste h1,
+body.alto-contraste h2,
+body.alto-contraste h3,
+body.alto-contraste h4,
+body.alto-contraste li {
+    color: var(--texto) !important;
+    font-weight: 600;
+}
+
+/* Textos secundarios — más visibles que por defecto */
+body.alto-contraste .opcion-desc,
+body.alto-contraste .seccion-sub,
+body.alto-contraste .hero-sub,
+body.alto-contraste .etiqueta,
+body.alto-contraste .pasoDesc,
+body.alto-contraste .textoNosotros,
+body.alto-contraste .infoLista li,
+body.alto-contraste .infoCopyright p,
+body.alto-contraste .dato-lbl,
+body.alto-contraste .flabel {
+    color: var(--texto) !important;
+    opacity: 0.85 !important;
+}
+
+/* Inputs, select, textarea — uniformes con el tema */
+body.alto-contraste input:not([type="radio"]):not([type="submit"]):not([type="checkbox"]),
+body.alto-contraste select,
+body.alto-contraste textarea {
+    background-color: var(--fondo) !important;
+    color: var(--texto) !important;
+    border: 2px solid var(--acento) !important;
+}
+
+/* Placeholder */
+body.alto-contraste ::placeholder {
+    color: var(--texto-suave) !important;
+    opacity: 1 !important;
+}
+
+/* Select options */
+body.alto-contraste select option {
+    background-color: var(--fondo) !important;
+    color: var(--texto) !important;
+}
+
+/* Bordes más gruesos y en color acento */
+body.alto-contraste .config-seccion,
+body.alto-contraste .tema-card,
+body.alto-contraste .anuncio-card,
+body.alto-contraste .seccion-card,
+body.alto-contraste .alumno-card,
+body.alto-contraste .hijo-card,
+body.alto-contraste .tabla-wrap,
+body.alto-contraste .finput,
+body.alto-contraste .filtro-input,
+body.alto-contraste .opcion-fila {
+    border-width: 2px !important;
+    border-color: var(--acento) !important;
+}
+
+/* En tema blanco el texto ya es oscuro, solo aumentamos peso */
+[data-tema="blanco"] body.alto-contraste p,
+[data-tema="blanco"] body.alto-contraste span,
+[data-tema="blanco"] body.alto-contraste label,
+[data-tema="blanco"] body.alto-contraste h1,
+[data-tema="blanco"] body.alto-contraste h2,
+[data-tema="blanco"] body.alto-contraste h3,
+[data-tema="blanco"] body.alto-contraste li {
+    color: #000000 !important;
+}

@@ -8,7 +8,7 @@
     <!-- Temas PRIMERO para evitar flash de color incorrecto -->
     <script src="{{ asset('js/temas.js') }}"></script>
     <link rel="stylesheet" href="{{ asset('css/temas.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/EstilosConfiguracion.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/EstilosConfiguracionPerfiles.css') }}">
 </head>
 <body>
 
@@ -23,9 +23,19 @@
                         <span></span><span></span><span></span>
                     </button>
                 </li>
-                <li><a href="{{ route('index') }}" data-i18n="nav.inicio">Inicio</a></li>
-                <li><a href="{{ route('contacto') }}" data-i18n="nav.contacto">Contacto</a></li>
-                <li class="activo"><a href="{{ route('config') }}" data-i18n="nav.configuracion">Configuración</a></li>
+                <li><a href="#" id="linkPerfil" data-i18n="nav.miPerfil">Mi Perfil</a></li>
+                <li class="activo"><a href="{{ route('configPerfiles') }}" data-i18n="nav.configuracion">Configuración</a></li>
+                <li class="derecha menuSesion">
+                    <img src="{{ asset('img/perfil.png') }}" class="fotoPerfil" alt="Perfil">
+                    <ul class="dropdown">
+                        <li class="dropdown-nombre"><span id="nav-nombre"></span></li>
+                        <li class="dropdown-rol"><span id="nav-rol"></span></li>
+                        <li class="dropdown-sep"></li>
+                        <li><a href="#" id="linkPerfilDropdown">👤 Mi perfil</a></li>
+                        <li><a href="{{ route('configPerfiles') }}">⚙️ Configuración</a></li>
+                        <li><a href="#" id="btn-logout">Cerrar sesión</a></li>
+                    </ul>
+                </li>
             </ul>
         </div>
     </nav>
@@ -240,6 +250,59 @@
 
     </div>
 
+    <!-- SECCIÓN: NOTIFICACIONES -->
+    <div class="config-seccion">
+        <div class="seccion-header">
+            <div class="seccion-titulo" data-i18n="config.notificaciones">🔔 Notificaciones</div>
+            <div class="seccion-sub" data-i18n="config.notificacionesSub">Decide qué notificaciones quieres recibir.</div>
+        </div>
+
+        <div class="opcion-fila">
+            <div class="opcion-info">
+                <div class="opcion-nombre" data-i18n="config.recordatorio">Recordatorio de clases</div>
+                <div class="opcion-desc" data-i18n="config.recordatorioDesc">Aviso 15 minutos antes de que empiece cada clase.</div>
+            </div>
+            <label class="toggle">
+                <input type="checkbox" id="opt-recordatorio" onchange="guardarOpcion('recordatorio', this.checked)">
+                <span class="toggle-slider"></span>
+            </label>
+        </div>
+
+        <div class="opcion-fila">
+            <div class="opcion-info">
+                <div class="opcion-nombre" data-i18n="config.cambios">Cambios en el horario</div>
+                <div class="opcion-desc" data-i18n="config.cambiosDesc">Notificar cuando el coordinador modifique alguna clase.</div>
+            </div>
+            <label class="toggle">
+                <input type="checkbox" id="opt-cambios" onchange="guardarOpcion('cambios', this.checked)">
+                <span class="toggle-slider"></span>
+            </label>
+        </div>
+
+        <div class="opcion-fila">
+            <div class="opcion-info">
+                <div class="opcion-nombre" data-i18n="config.faltas">Nuevas faltas de asistencia</div>
+                <div class="opcion-desc" data-i18n="config.faltasDesc">Recibir aviso cuando se registre una falta de un alumno a tu cargo.</div>
+            </div>
+            <label class="toggle">
+                <input type="checkbox" id="opt-faltas" onchange="guardarOpcion('faltas', this.checked)">
+                <span class="toggle-slider"></span>
+            </label>
+        </div>
+
+        <div class="opcion-fila">
+            <div class="opcion-info">
+                <div class="opcion-nombre" data-i18n="config.sonido">Sonido de notificaciones</div>
+                <div class="opcion-desc" data-i18n="config.sonidoDesc">Reproducir un sonido al recibir una notificación nueva.</div>
+            </div>
+            <label class="toggle">
+                <input type="checkbox" id="opt-sonido" onchange="guardarOpcion('sonido', this.checked)">
+                <span class="toggle-slider"></span>
+            </label>
+        </div>
+
+    </div>
+
     <!-- Footer -->
     <div class="config-footer">
         <button class="btn-cancelar" onclick="cancelar()" data-i18n="config.cancelar">Cancelar</button>
@@ -253,7 +316,7 @@
 <script src="{{ asset('js/temas.js') }}"></script>
 <script src="{{ asset('js/traducciones.js') }}"></script>
 <script src="{{ asset('js/MenuSesion.js') }}"></script>
-<script src="{{ asset('js/configuracion.js') }}"></script>
+<script src="{{ asset('js/configuracionPerfiles.js') }}"></script>
 <script src="{{ asset('js/menuResponsive.js') }}"></script>
 </body>
 </html>
