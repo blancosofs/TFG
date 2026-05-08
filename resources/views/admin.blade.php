@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Edunoly · Panel de Administración</title>
     <script src="{{ asset('js/temas.js') }}"></script>
     <link rel="stylesheet" href="{{ asset('css/temas.css') }}">
@@ -28,7 +27,6 @@
         .menu li a:hover { background-color: var(--nav-hover); }
         .logo { display: inline-block; padding: 20px; }
 
-        /* Badge admin en la nav */
         .badge-admin {
             display: inline-flex; align-items: center; gap: 6px;
             background: color-mix(in srgb, var(--acento) 20%, transparent);
@@ -58,7 +56,7 @@
         .stat-chip-num   { font-size: 22px; font-weight: 700; color: var(--acento); line-height: 1; }
         .stat-chip-label { font-size: 10px; color: var(--texto-suave); text-transform: uppercase; letter-spacing: .06em; margin-top: 3px; }
 
-        /* ── Layout de dos columnas ── */
+        /* ── Layout ── */
         .admin-layout {
             max-width: 1200px; margin: 0 auto;
             padding: 28px 40px;
@@ -73,7 +71,7 @@
             .admin-hero   { padding: 1.5rem 20px 1.2rem; }
         }
 
-        /* ── Card base ── */
+        /* ── Card ── */
         .card {
             background: color-mix(in srgb, var(--texto) 4%, transparent);
             border: 1px solid color-mix(in srgb, var(--texto) 10%, transparent);
@@ -122,7 +120,6 @@
 
         .ftextarea { resize: vertical; min-height: 80px; }
 
-        /* Separador de sección dentro del form */
         .form-sep {
             grid-column: 1 / -1;
             display: flex; align-items: center; gap: 10px;
@@ -148,6 +145,7 @@
             display: inline-flex; align-items: center; gap: 6px;
         }
         .btn-primary:hover { opacity: .88; transform: translateY(-1px); }
+        .btn-primary:disabled { opacity: .5; cursor: not-allowed; transform: none; }
 
         .btn-ghost {
             padding: 9px 18px; border-radius: 8px;
@@ -159,19 +157,9 @@
         }
         .btn-ghost:hover { color: var(--texto); border-color: color-mix(in srgb, var(--texto) 35%, transparent); }
 
-        .btn-danger {
-            padding: 9px 18px; border-radius: 8px;
-            border: 1px solid rgba(231,76,60,.35);
-            background: rgba(231,76,60,.08); color: #e74c3c;
-            font-family: inherit; font-size: 13px; font-weight: 600;
-            cursor: pointer; transition: all .15s;
-            display: inline-flex; align-items: center; gap: 6px;
-        }
-        .btn-danger:hover { background: rgba(231,76,60,.16); }
-
         .form-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 18px; }
 
-        /* ── Alert de éxito ── */
+        /* ── Alerts ── */
         .alert {
             border-radius: 10px; padding: 14px 16px;
             display: flex; align-items: flex-start; gap: 10px;
@@ -199,19 +187,11 @@
         .alert-txt { flex: 1; line-height: 1.5; }
         .alert-txt strong { display: block; font-weight: 700; margin-bottom: 2px; }
 
-        /* ── Lista de colegios (sidebar) ── */
+        /* ── Lista de colegios ── */
         .colegio-item {
             display: flex; align-items: center; gap: 10px;
             padding: 11px 14px; border-radius: 10px;
-            cursor: pointer; transition: background .15s;
             border: 1px solid transparent;
-        }
-
-        .colegio-item:hover { background: color-mix(in srgb, var(--texto) 5%, transparent); }
-
-        .colegio-item.activo {
-            background: color-mix(in srgb, var(--acento) 10%, transparent);
-            border-color: color-mix(in srgb, var(--acento) 30%, transparent);
         }
 
         .colegio-ico {
@@ -221,125 +201,16 @@
             font-size: 16px; flex-shrink: 0;
         }
 
-        .colegio-item.activo .colegio-ico {
-            background: var(--acento); font-size: 15px;
-        }
-
         .colegio-info { flex: 1; min-width: 0; }
         .colegio-nombre { font-size: 13px; font-weight: 600; color: var(--texto); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .colegio-meta   { font-size: 11px; color: var(--texto-suave); margin-top: 1px; }
-
-        .colegio-arrow { color: var(--texto-suave); font-size: 12px; flex-shrink: 0; }
-        .colegio-item.activo .colegio-arrow { color: var(--acento); }
+        .colegio-coord  { font-size: 11px; color: var(--acento); margin-top: 2px; }
 
         .colegios-empty {
             text-align: center; padding: 28px 16px;
             color: var(--texto-suave); font-size: 13px;
         }
         .colegios-empty span { font-size: 28px; display: block; margin-bottom: 8px; }
-
-        /* ── Panel de acciones del colegio seleccionado ── */
-        .panel-colegio {
-            display: none;
-            flex-direction: column;
-            gap: 14px;
-            margin-top: 16px;
-            padding-top: 16px;
-            border-top: 1px solid color-mix(in srgb, var(--texto) 8%, transparent);
-            animation: slideIn .25s ease;
-        }
-
-        .panel-colegio.visible { display: flex; }
-
-        .panel-colegio-titulo {
-            font-size: 12px; font-weight: 700; color: var(--texto-suave);
-            text-transform: uppercase; letter-spacing: .08em; margin-bottom: 4px;
-        }
-
-        .accion-btn {
-            display: flex; align-items: center; gap: 12px;
-            padding: 12px 14px; border-radius: 10px;
-            border: 1px solid color-mix(in srgb, var(--texto) 12%, transparent);
-            background: color-mix(in srgb, var(--texto) 3%, transparent);
-            cursor: pointer; transition: all .15s; text-align: left; width: 100%;
-            font-family: inherit;
-        }
-
-        .accion-btn:hover {
-            background: color-mix(in srgb, var(--acento) 8%, transparent);
-            border-color: color-mix(in srgb, var(--acento) 30%, transparent);
-        }
-
-        .accion-btn.danger:hover {
-            background: rgba(231,76,60,.08);
-            border-color: rgba(231,76,60,.3);
-        }
-
-        .accion-ico {
-            width: 34px; height: 34px; border-radius: 8px; flex-shrink: 0;
-            display: flex; align-items: center; justify-content: center; font-size: 15px;
-        }
-
-        .accion-ico.verde { background: color-mix(in srgb, var(--acento) 15%, transparent); }
-        .accion-ico.ambar { background: rgba(201,160,47,.15); }
-        .accion-ico.rojo  { background: rgba(231,76,60,.12); }
-
-        .accion-txt h4 { font-size: 13px; font-weight: 600; color: var(--texto); }
-        .accion-txt p  { font-size: 11px; color: var(--texto-suave); margin-top: 2px; }
-
-        /* ── Modal ── */
-        .modal-overlay {
-            position: fixed; inset: 0;
-            background: rgba(0,0,0,.65); backdrop-filter: blur(5px);
-            z-index: 100; display: flex; align-items: center; justify-content: center;
-            padding: 20px; opacity: 0; pointer-events: none; transition: opacity .2s;
-        }
-        .modal-overlay.open { opacity: 1; pointer-events: all; }
-
-        .modal {
-            background: var(--fondo-oscuro);
-            border: 1px solid color-mix(in srgb, var(--acento) 25%, transparent);
-            border-radius: 18px; padding: 28px; width: 100%; max-width: 480px;
-            box-shadow: 0 24px 64px rgba(0,0,0,.5);
-            transform: translateY(16px); transition: transform .2s;
-        }
-        .modal-overlay.open .modal { transform: translateY(0); }
-
-        .modal-head {
-            display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px;
-        }
-        .modal-titulo { font-size: 17px; font-weight: 700; color: var(--texto); display: flex; align-items: center; gap: 8px; }
-        .modal-cerrar {
-            width: 28px; height: 28px; border-radius: 50%;
-            background: color-mix(in srgb, var(--texto) 8%, transparent);
-            border: none; cursor: pointer; color: var(--texto-suave);
-            font-size: 14px; display: flex; align-items: center; justify-content: center;
-            transition: all .15s;
-        }
-        .modal-cerrar:hover { background: color-mix(in srgb, var(--texto) 15%, transparent); color: var(--texto); }
-
-        .modal-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .modal-form-grid .full { grid-column: 1 / -1; }
-        .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 20px; }
-
-        /* Modal de confirmación de eliminación */
-        .confirm-body { text-align: center; padding: 8px 0 4px; }
-        .confirm-ico  { font-size: 40px; margin-bottom: 12px; }
-        .confirm-body h3 { font-size: 17px; font-weight: 700; color: var(--texto); margin-bottom: 8px; }
-        .confirm-body p  { font-size: 13px; color: var(--texto-suave); line-height: 1.6; }
-        .confirm-body .nombre-dest { color: #e74c3c; font-weight: 700; }
-        .confirm-actions { display: flex; gap: 10px; justify-content: center; margin-top: 20px; }
-
-        /* ── Toast ── */
-        .toast {
-            position: fixed; bottom: 20px; right: 20px;
-            background: var(--fondo-oscuro); color: var(--texto);
-            border: 1px solid color-mix(in srgb, var(--texto) 15%, transparent);
-            border-radius: 10px; padding: 12px 18px; font-size: 13px; font-weight: 500;
-            z-index: 200; transform: translateY(60px); opacity: 0; transition: all .3s;
-            box-shadow: 0 4px 20px rgba(0,0,0,.3); max-width: 300px;
-        }
-        .toast.show { transform: translateY(0); opacity: 1; }
 
         /* ── Buscador ── */
         .buscador-wrap { position: relative; margin-bottom: 14px; }
@@ -353,10 +224,20 @@
         .buscador:focus { border-color: var(--acento); }
         .buscador::placeholder { color: var(--texto-suave); }
 
-        /* Scrollable list */
-        .colegios-lista { max-height: 420px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; }
+        .colegios-lista { max-height: 480px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; }
         .colegios-lista::-webkit-scrollbar { width: 4px; }
         .colegios-lista::-webkit-scrollbar-thumb { background: color-mix(in srgb, var(--texto) 20%, transparent); border-radius: 4px; }
+
+        /* ── Toast ── */
+        .toast {
+            position: fixed; bottom: 20px; right: 20px;
+            background: var(--fondo-oscuro); color: var(--texto);
+            border: 1px solid color-mix(in srgb, var(--texto) 15%, transparent);
+            border-radius: 10px; padding: 12px 18px; font-size: 13px; font-weight: 500;
+            z-index: 200; transform: translateY(60px); opacity: 0; transition: all .3s;
+            box-shadow: 0 4px 20px rgba(0,0,0,.3); max-width: 300px;
+        }
+        .toast.show { transform: translateY(0); opacity: 1; }
     </style>
 </head>
 <body>
@@ -367,10 +248,20 @@
         <div class="barraNav">
             <ul class="menu">
                 <li class="logo"><img src="{{ asset('img/logo.svg') }}" alt="Edunoly"></li>
-                <li><a href="{{ route('index') }}">Inicio</a></li>
-                <li><span class="badge-admin">⚙ Admin</span></li>
-                <li class="derecha" style="display:flex;align-items:center;padding-right:20px">
-                    <span style="font-size:13px;color:var(--nav-texto);opacity:.7">Panel de Administración</span>
+                <li class="activo"><a href="{{ route('admin') }}">Panel Admin</a></li>
+                <li><a href="{{ route('perfilAdmin') }}">Mi Perfil</a></li>
+                <li><a href="{{ route('configuracionPerfiles') }}">Configuración</a></li>
+
+                <li class="derecha menuSesion">
+                    <img src="{{ asset('img/perfil.png') }}" class="fotoPerfil" alt="Perfil">
+                    <ul class="dropdown">
+                        <li class="dropdown-nombre"><span id="nav-nombre">Administrador</span></li>
+                        <li class="dropdown-rol">Sistema</li>
+                        <li class="dropdown-sep"></li>
+                        <li><a href="{{ route('perfilAdmin') }}">👤 Mi perfil</a></li>
+                        <li><a href="{{ route('config') }}">⚙️ Configuración</a></li>
+                        <li><a href="#" id="btn-logout">Cerrar sesión</a></li>
+                    </ul>
                 </li>
             </ul>
         </div>
@@ -383,7 +274,7 @@
         <div>
             <p class="etiqueta">Panel de administración</p>
             <h1>Gestión de centros educativos</h1>
-            <p>Registra colegios en el sistema y gestiona sus coordinadores.</p>
+            <p>Registra un colegio y su coordinador en un solo paso.</p>
         </div>
         <div class="stats-row">
             <div class="stat-chip">
@@ -401,249 +292,177 @@
 <!-- ── LAYOUT ── -->
 <div class="admin-layout">
 
-    <!-- COLUMNA IZQUIERDA: Formulario de nuevo colegio -->
-    <div style="display:flex;flex-direction:column;gap:20px">
+    <!-- COLUMNA IZQUIERDA: Formulario unificado -->
+    <div class="card">
+        <div class="card-header">
+            <h2><span>🏫</span> Registrar nuevo colegio</h2>
+        </div>
+        <div class="card-body">
 
-        <!-- Formulario -->
-        <div class="card">
-            <div class="card-header">
-                <h2><span>🏫</span> Registrar nuevo colegio</h2>
+            <div id="alert-form"></div>
+
+            <div class="form-grid">
+
+                <!-- ── Datos del centro ── -->
+                <div class="form-sep full"><span>Datos del centro</span></div>
+
+                <div class="fgroup full">
+                    <label class="flabel">Nombre del centro *</label>
+                    <input class="finput" id="c-nombre" type="text" placeholder="Ej: Colegio Salesiano Santo Domingo Savio">
+                </div>
+
+                <div class="fgroup">
+                    <label class="flabel">Tipo de centro *</label>
+                    <select class="fselect" id="c-tipo">
+                        <option value="">Seleccionar…</option>
+                        <option>Colegio público</option>
+                        <option>Colegio concertado</option>
+                        <option>Colegio privado</option>
+                        <option>Instituto público</option>
+                        <option>Instituto privado</option>
+                        <option>Centro de FP</option>
+                        <option>Otro</option>
+                    </select>
+                </div>
+
+                <div class="fgroup">
+                    <label class="flabel">Etapas educativas</label>
+                    <select class="fselect" id="c-etapas">
+                        <option value="">Seleccionar…</option>
+                        <option>Infantil</option>
+                        <option>Primaria</option>
+                        <option>Secundaria (ESO)</option>
+                        <option>Bachillerato</option>
+                        <option>Infantil + Primaria</option>
+                        <option>Primaria + Secundaria</option>
+                        <option>Infantil + Primaria + Secundaria</option>
+                        <option>FP</option>
+                        <option>Todas</option>
+                    </select>
+                </div>
+
+                <!-- ── Ubicación ── -->
+                <div class="form-sep full"><span>Ubicación</span></div>
+
+                <div class="fgroup full">
+                    <label class="flabel">Calle y número *</label>
+                    <input class="finput" id="c-calle" type="text" placeholder="Ej: C/ Impresores, 2">
+                </div>
+
+                <div class="fgroup">
+                    <label class="flabel">Ciudad *</label>
+                    <input class="finput" id="c-ciudad" type="text" placeholder="Ej: Madrid">
+                </div>
+
+                <div class="fgroup">
+                    <label class="flabel">Comunidad autónoma</label>
+                    <select class="fselect" id="c-comunidad">
+                        <option value="">Seleccionar…</option>
+                        <option>Andalucía</option><option>Aragón</option>
+                        <option>Asturias</option><option>Baleares</option>
+                        <option>Canarias</option><option>Cantabria</option>
+                        <option>Castilla-La Mancha</option><option>Castilla y León</option>
+                        <option>Cataluña</option><option>Ceuta</option>
+                        <option>Extremadura</option><option>Galicia</option>
+                        <option>La Rioja</option><option>Madrid</option>
+                        <option>Melilla</option><option>Murcia</option>
+                        <option>Navarra</option><option>País Vasco</option>
+                        <option>Valencia</option>
+                    </select>
+                </div>
+
+                <div class="fgroup">
+                    <label class="flabel">Código postal *</label>
+                    <input class="finput" id="c-cp" type="text" placeholder="28016" maxlength="5" pattern="[0-9]{5}">
+                </div>
+
+                <!-- ── Contacto del centro ── -->
+                <div class="form-sep full"><span>Contacto del centro</span></div>
+
+                <div class="fgroup">
+                    <label class="flabel">Teléfono *</label>
+                    <input class="finput" id="c-telefono" type="tel" placeholder="91 422 88 00">
+                </div>
+
+                <div class="fgroup">
+                    <label class="flabel">Email del centro *</label>
+                    <input class="finput" id="c-email" type="email" placeholder="info@colegio.es">
+                </div>
+
+                <div class="fgroup full">
+                    <label class="flabel">Sitio web</label>
+                    <input class="finput" id="c-web" type="url" placeholder="https://www.colegio.es">
+                </div>
+
+                <div class="fgroup">
+                    <label class="flabel">Número de alumnos aproximado</label>
+                    <input class="finput" id="c-alumnos" type="number" placeholder="Ej: 800" min="1">
+                </div>
+
+                <div class="fgroup">
+                    <label class="flabel">Notas adicionales</label>
+                    <input class="finput" id="c-notas" type="text" placeholder="Observaciones opcionales">
+                </div>
+
+                <!-- ── Coordinador ── -->
+                <div class="form-sep full"><span>Coordinador del centro</span></div>
+
+                <div class="fgroup">
+                    <label class="flabel">Nombre *</label>
+                    <input class="finput" id="coord-nombre" type="text" placeholder="Nombre">
+                </div>
+
+                <div class="fgroup">
+                    <label class="flabel">Apellidos *</label>
+                    <input class="finput" id="coord-apellidos" type="text" placeholder="Apellidos">
+                </div>
+
+                <div class="fgroup full">
+                    <label class="flabel">Email del coordinador (usuario de acceso) *</label>
+                    <input class="finput" id="coord-email" type="email" placeholder="coordinador@colegio.es">
+                </div>
+
+                <div class="fgroup">
+                    <label class="flabel">Teléfono</label>
+                    <input class="finput" id="coord-telefono" type="tel" placeholder="600 000 000">
+                </div>
+
+                <div class="fgroup">
+                    <label class="flabel">Contraseña inicial *</label>
+                    <input class="finput" id="coord-password" type="password" placeholder="Mín. 8 caracteres">
+                </div>
+
             </div>
-            <div class="card-body">
 
-                <div id="alert-colegio"></div>
-
-                <div class="form-grid">
-
-                    <div class="form-sep full"><span>Datos del centro</span></div>
-
-                    <div class="fgroup full">
-                        <label class="flabel">Nombre del centro *</label>
-                        <input class="finput" id="c-nombre" type="text" placeholder="Ej: Colegio Salesiano Santo Domingo Savio">
-                    </div>
-
-                    <div class="fgroup">
-                        <label class="flabel">Tipo de centro *</label>
-                        <select class="fselect" id="c-tipo">
-                            <option value="">Seleccionar…</option>
-                            <option>Colegio público</option>
-                            <option>Colegio concertado</option>
-                            <option>Colegio privado</option>
-                            <option>Instituto público</option>
-                            <option>Instituto privado</option>
-                            <option>Centro de FP</option>
-                            <option>Otro</option>
-                        </select>
-                    </div>
-
-                    <div class="fgroup">
-                        <label class="flabel">Etapas educativas *</label>
-                        <select class="fselect" id="c-etapas">
-                            <option value="">Seleccionar…</option>
-                            <option>Infantil</option>
-                            <option>Primaria</option>
-                            <option>Secundaria (ESO)</option>
-                            <option>Bachillerato</option>
-                            <option>Infantil + Primaria</option>
-                            <option>Primaria + Secundaria</option>
-                            <option>Infantil + Primaria + Secundaria</option>
-                            <option>FP</option>
-                            <option>Todas</option>
-                        </select>
-                    </div>
-
-                    <div class="form-sep full"><span>Ubicación</span></div>
-
-                    <div class="fgroup full">
-                        <label class="flabel">Calle y número *</label>
-                        <input class="finput" id="c-calle" type="text" placeholder="Ej: C/ Impresores, 2">
-                    </div>
-
-                    <div class="fgroup">
-                        <label class="flabel">Ciudad *</label>
-                        <input class="finput" id="c-ciudad" type="text" placeholder="Ej: Madrid">
-                    </div>
-
-                    <div class="fgroup">
-                        <label class="flabel">Comunidad autónoma *</label>
-                        <select class="fselect" id="c-comunidad">
-                            <option value="">Seleccionar…</option>
-                            <option>Andalucía</option><option>Aragón</option>
-                            <option>Asturias</option><option>Baleares</option>
-                            <option>Canarias</option><option>Cantabria</option>
-                            <option>Castilla-La Mancha</option><option>Castilla y León</option>
-                            <option>Cataluña</option><option>Ceuta</option>
-                            <option>Extremadura</option><option>Galicia</option>
-                            <option>La Rioja</option><option>Madrid</option>
-                            <option>Melilla</option><option>Murcia</option>
-                            <option>Navarra</option><option>País Vasco</option>
-                            <option>Valencia</option>
-                        </select>
-                    </div>
-
-                    <div class="fgroup">
-                        <label class="flabel">Código postal *</label>
-                        <input class="finput" id="c-cp" type="text" placeholder="28016" maxlength="5" pattern="[0-9]{5}">
-                    </div>
-
-                    <div class="form-sep full"><span>Contacto</span></div>
-
-                    <div class="fgroup">
-                        <label class="flabel">Teléfono *</label>
-                        <input class="finput" id="c-telefono" type="tel" placeholder="91 422 88 00">
-                    </div>
-
-                    <div class="fgroup">
-                        <label class="flabel">Email del centro *</label>
-                        <input class="finput" id="c-email" type="email" placeholder="info@colegio.es">
-                    </div>
-
-                    <div class="fgroup full">
-                        <label class="flabel">Sitio web</label>
-                        <input class="finput" id="c-web" type="url" placeholder="https://www.colegio.es">
-                    </div>
-
-                    <div class="fgroup full">
-                        <label class="flabel">Número de alumnos aproximado</label>
-                        <input class="finput" id="c-alumnos" type="number" placeholder="Ej: 800" min="1">
-                    </div>
-
-                    <div class="fgroup full">
-                        <label class="flabel">Notas adicionales</label>
-                        <textarea class="ftextarea" id="c-notas" placeholder="Información adicional sobre el centro…"></textarea>
-                    </div>
-
-                </div>
-
-                <div class="form-actions">
-                    <button class="btn-ghost" onclick="limpiarFormColegio()">Limpiar</button>
-                    <button class="btn-primary" onclick="guardarColegio()">
-                        💾 Guardar colegio
-                    </button>
-                </div>
+            <div class="form-actions">
+                <button class="btn-ghost" onclick="limpiarForm()">Limpiar</button>
+                <button class="btn-primary" id="btn-guardar" onclick="guardar()">
+                    💾 Registrar colegio y coordinador
+                </button>
             </div>
         </div>
-
     </div>
 
-    <!-- COLUMNA DERECHA: Lista de colegios + acciones -->
-    <div style="display:flex;flex-direction:column;gap:16px">
+    <!-- COLUMNA DERECHA: Lista de colegios registrados -->
+    <div class="card">
+        <div class="card-header">
+            <h2><span>📋</span> Colegios registrados</h2>
+            <span id="badge-total" style="font-size:11px;color:var(--texto-suave)">0 centros</span>
+        </div>
+        <div class="card-body">
 
-        <div class="card">
-            <div class="card-header">
-                <h2><span>📋</span> Colegios registrados</h2>
-                <span id="badge-total" style="font-size:11px;color:var(--texto-suave)">0 centros</span>
+            <div class="buscador-wrap">
+                <span class="buscador-ico">🔍</span>
+                <input class="buscador" id="buscador" type="text" placeholder="Buscar colegio…" oninput="filtrarColegios()">
             </div>
-            <div class="card-body">
 
-                <div class="buscador-wrap">
-                    <span class="buscador-ico">🔍</span>
-                    <input class="buscador" id="buscador" type="text" placeholder="Buscar colegio…" oninput="filtrarColegios()">
+            <div class="colegios-lista" id="colegios-lista">
+                <div class="colegios-empty">
+                    <span>🏫</span>
+                    Aún no hay colegios registrados.<br>Crea el primero con el formulario.
                 </div>
-
-                <div class="colegios-lista" id="colegios-lista">
-                    <div class="colegios-empty">
-                        <span>🏫</span>
-                        Aún no hay colegios registrados.<br>Crea el primero con el formulario.
-                    </div>
-                </div>
-
-                <!-- Panel de acciones — aparece al seleccionar un colegio -->
-                <div class="panel-colegio" id="panel-acciones">
-                    <div class="panel-colegio-titulo" id="panel-titulo">Acciones para el colegio</div>
-
-                    <button class="accion-btn" onclick="abrirModalCoord('añadir')">
-                        <div class="accion-ico verde">➕</div>
-                        <div class="accion-txt">
-                            <h4>Añadir coordinador</h4>
-                            <p>Asignar un nuevo coordinador a este centro</p>
-                        </div>
-                    </button>
-
-                    <button class="accion-btn" onclick="abrirModalCoord('modificar')">
-                        <div class="accion-ico ambar">✏️</div>
-                        <div class="accion-txt">
-                            <h4>Modificar coordinador</h4>
-                            <p>Editar los datos del coordinador actual</p>
-                        </div>
-                    </button>
-
-                    <button class="accion-btn danger" onclick="abrirConfirmElimCoord()">
-                        <div class="accion-ico rojo">🗑️</div>
-                        <div class="accion-txt">
-                            <h4>Eliminar coordinador</h4>
-                            <p>Desasignar el coordinador de este centro</p>
-                        </div>
-                    </button>
-                </div>
-
             </div>
-        </div>
 
-    </div>
-</div>
-
-<!-- ══ MODAL: Añadir / Modificar coordinador ══ -->
-<div class="modal-overlay" id="modal-coord">
-    <div class="modal">
-        <div class="modal-head">
-            <div class="modal-titulo" id="modal-coord-titulo">➕ Añadir coordinador</div>
-            <button class="modal-cerrar" onclick="cerrarModal('modal-coord')">✕</button>
-        </div>
-
-        <div id="alert-coord"></div>
-
-        <div class="modal-form-grid">
-            <div class="fgroup">
-                <label class="flabel">Nombre *</label>
-                <input class="finput" id="coord-nombre" type="text" placeholder="Nombre">
-            </div>
-            <div class="fgroup">
-                <label class="flabel">Apellidos *</label>
-                <input class="finput" id="coord-apellidos" type="text" placeholder="Apellidos">
-            </div>
-            <div class="fgroup full">
-                <label class="flabel">Email (usuario de acceso) *</label>
-                <input class="finput" id="coord-email" type="email" placeholder="coordinador@colegio.es">
-            </div>
-            <div class="fgroup">
-                <label class="flabel">Teléfono</label>
-                <input class="finput" id="coord-telefono" type="tel" placeholder="600 000 000">
-            </div>
-            <div class="fgroup">
-                <label class="flabel">Contraseña inicial *</label>
-                <input class="finput" id="coord-password" type="password" placeholder="Mín. 8 caracteres">
-            </div>
-            <div class="fgroup full">
-                <label class="flabel">Notas</label>
-                <input class="finput" id="coord-notas" type="text" placeholder="Observaciones opcionales">
-            </div>
-        </div>
-
-        <div class="modal-actions">
-            <button class="btn-ghost" onclick="cerrarModal('modal-coord')">Cancelar</button>
-            <button class="btn-primary" id="btn-guardar-coord" onclick="guardarCoordinador()">
-                💾 Guardar coordinador
-            </button>
-        </div>
-    </div>
-</div>
-
-<!-- ══ MODAL: Confirmar eliminar coordinador ══ -->
-<div class="modal-overlay" id="modal-confirm-coord">
-    <div class="modal" style="max-width:400px">
-        <div class="confirm-body">
-            <div class="confirm-ico">⚠️</div>
-            <h3>¿Eliminar coordinador?</h3>
-            <p>Vas a desasignar al coordinador<br>
-               <span class="nombre-dest" id="coord-nombre-dest">—</span><br>
-               del colegio <strong id="colegio-dest-nombre">—</strong>.<br><br>
-               Esta acción no se puede deshacer.
-            </p>
-        </div>
-        <div class="confirm-actions">
-            <button class="btn-ghost" onclick="cerrarModal('modal-confirm-coord')">Cancelar</button>
-            <button class="btn-danger" onclick="eliminarCoordinador()">🗑️ Eliminar</button>
         </div>
     </div>
 </div>
@@ -653,28 +472,13 @@
 <script src="{{ asset('js/temas.js') }}"></script>
 <script src="{{ asset('js/MenuSesion.js') }}"></script>
 <script>
-/* ══════════════════════════════════════════════════════════════
-   CONFIG
-══════════════════════════════════════════════════════════════ */
-const API = '';
+const API = '/api';
 
-/* ══════════════════════════════════════════════════════════════
-   ESTADO LOCAL
-   En producción todo viene de la API. Aquí mantenemos una copia
-   en memoria para refrescar la UI sin recargar.
-══════════════════════════════════════════════════════════════ */
-let colegios       = [];   // [{ id, nombre, tipo, ciudad, cp, telefono, email, coordinador }]
-let colegioActivo  = null; // id del colegio seleccionado en la lista
-let modoCoord      = 'añadir'; // 'añadir' | 'modificar'
-
-/* ══════════════════════════════════════════════════════════════
-   API
-══════════════════════════════════════════════════════════════ */
-const CSRF = document.querySelector('meta[name="csrf-token"]')?.content ?? '';
+let colegios = [];
 
 async function api(method, ruta, body) {
     try {
-        const opts = { method, credentials: 'include', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF } };
+        const opts = { method, credentials: 'include', headers: { 'Content-Type': 'application/json' } };
         if (body) opts.body = JSON.stringify(body);
         const r = await fetch(API + ruta, opts);
         return await r.json();
@@ -683,81 +487,116 @@ async function api(method, ruta, body) {
     }
 }
 
-/* ══════════════════════════════════════════════════════════════
-   CARGA INICIAL
-══════════════════════════════════════════════════════════════ */
 async function cargarColegios() {
-    const data = await api('GET', '/api/admin/colegios');
+    const data = await api('GET', '/admin/colegios');
     if (data.error) { toast('❌ ' + data.error); return; }
     colegios = data || [];
     renderColegios();
     actualizarStats();
 }
 
-/* ══════════════════════════════════════════════════════════════
-   GUARDAR COLEGIO
-══════════════════════════════════════════════════════════════ */
-async function guardarColegio() {
+async function guardar() {
     const nombre    = v('c-nombre');
     const tipo      = v('c-tipo');
-    const etapas    = v('c-etapas');
     const calle     = v('c-calle');
     const ciudad    = v('c-ciudad');
-    const comunidad = v('c-comunidad');
     const cp        = v('c-cp');
     const telefono  = v('c-telefono');
     const email     = v('c-email');
-    const web       = v('c-web');
-    const alumnos   = v('c-alumnos');
-    const notas     = v('c-notas');
 
-    // Validación
+    const coordNombre    = v('coord-nombre');
+    const coordApellidos = v('coord-apellidos');
+    const coordEmail     = v('coord-email');
+    const coordPassword  = v('coord-password');
+
     if (!nombre || !tipo || !calle || !ciudad || !cp || !telefono || !email) {
-        mostrarAlert('alert-colegio', 'err', 'Campos obligatorios', 'Rellena todos los campos marcados con *.');
+        mostrarAlert('err', 'Campos obligatorios', 'Rellena todos los campos del centro marcados con *.');
         return;
     }
-
     if (!/^\d{5}$/.test(cp)) {
-        mostrarAlert('alert-colegio', 'err', 'Código postal inválido', 'Debe tener exactamente 5 dígitos.');
+        mostrarAlert('err', 'Código postal inválido', 'Debe tener exactamente 5 dígitos.');
+        return;
+    }
+    if (!coordNombre || !coordApellidos || !coordEmail || !coordPassword) {
+        mostrarAlert('err', 'Campos obligatorios', 'Rellena todos los campos del coordinador marcados con *.');
+        return;
+    }
+    if (coordPassword.length < 8) {
+        mostrarAlert('err', 'Contraseña muy corta', 'La contraseña del coordinador debe tener al menos 8 caracteres.');
         return;
     }
 
-    const payload = { nombre, tipo, etapas, calle, ciudad, comunidad, cp, telefono, email, web, alumnos: parseInt(alumnos) || null, notas };
-    const data = await api('POST', '/api/admin/colegios', payload);
+    const btn = document.getElementById('btn-guardar');
+    btn.disabled = true;
+    btn.textContent = 'Guardando…';
 
-    if (data.error) {
-        mostrarAlert('alert-colegio', 'err', 'Error al guardar', data.error);
+    // 1. Crear el colegio
+    const resColegio = await api('POST', '/admin/colegios', {
+        nombre, tipo,
+        etapas   : v('c-etapas'),
+        calle, ciudad,
+        comunidad: v('c-comunidad'),
+        cp, telefono, email,
+        web      : v('c-web'),
+        alumnos  : parseInt(v('c-alumnos')) || null,
+        notas    : v('c-notas'),
+    });
+
+    if (resColegio.error) {
+        mostrarAlert('err', 'Error al crear el colegio', resColegio.error);
+        btn.disabled = false;
+        btn.textContent = '💾 Registrar colegio y coordinador';
         return;
     }
 
-    // Éxito
-    mostrarAlert('alert-colegio', 'ok', '✓ Colegio guardado correctamente',
-        `"${nombre}" ha sido registrado en la base de datos con ID #${data.id}.`);
+    const colegioId = resColegio.id;
 
-    // Añadir a la lista local
-    colegios.push({ id: data.id, nombre, tipo, ciudad, cp, telefono, email, etapas, coordinador: null });
+    // 2. Crear el coordinador ligado al colegio
+    const resCoord = await api('POST', `/admin/colegios/${colegioId}/coordinador`, {
+        nombre   : coordNombre,
+        apellidos: coordApellidos,
+        email    : coordEmail,
+        telefono : v('coord-telefono'),
+        password : coordPassword,
+    });
+
+    if (resCoord.error) {
+        mostrarAlert('err', 'Colegio creado pero error en el coordinador', resCoord.error);
+        btn.disabled = false;
+        btn.textContent = '💾 Registrar colegio y coordinador';
+        return;
+    }
+
+    mostrarAlert('ok', '✓ Registrado correctamente',
+        `"${nombre}" y el coordinador ${coordNombre} ${coordApellidos} han sido creados.`);
+
+    colegios.push({
+        id: colegioId, nombre, tipo, ciudad, cp,
+        coordinador: { nombre: coordNombre, apellidos: coordApellidos, email: coordEmail }
+    });
     renderColegios();
     actualizarStats();
-    limpiarFormColegio();
-    toast('🏫 Colegio registrado');
+    limpiarForm();
+
+    btn.disabled = false;
+    btn.textContent = '💾 Registrar colegio y coordinador';
+    toast('🏫 Colegio y coordinador registrados');
 }
 
-function limpiarFormColegio() {
+function limpiarForm() {
     ['c-nombre','c-tipo','c-etapas','c-calle','c-ciudad','c-comunidad',
-     'c-cp','c-telefono','c-email','c-web','c-alumnos','c-notas'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.value = '';
-    });
-    document.getElementById('alert-colegio').innerHTML = '';
+     'c-cp','c-telefono','c-email','c-web','c-alumnos','c-notas',
+     'coord-nombre','coord-apellidos','coord-email','coord-telefono','coord-password']
+        .forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+    document.getElementById('alert-form').innerHTML = '';
 }
 
-/* ══════════════════════════════════════════════════════════════
-   RENDER LISTA DE COLEGIOS
-══════════════════════════════════════════════════════════════ */
 function renderColegios(filtro = '') {
     const lista = document.getElementById('colegios-lista');
     const q = filtro.toLowerCase();
-    const filtrados = q ? colegios.filter(c => c.nombre.toLowerCase().includes(q) || c.ciudad?.toLowerCase().includes(q)) : colegios;
+    const filtrados = q
+        ? colegios.filter(c => c.nombre.toLowerCase().includes(q) || c.ciudad?.toLowerCase().includes(q))
+        : colegios;
 
     document.getElementById('badge-total').textContent = `${colegios.length} centro${colegios.length !== 1 ? 's' : ''}`;
 
@@ -767,13 +606,15 @@ function renderColegios(filtro = '') {
     }
 
     lista.innerHTML = filtrados.map(c => `
-        <div class="colegio-item ${colegioActivo === c.id ? 'activo' : ''}" onclick="seleccionarColegio(${c.id})">
-            <div class="colegio-ico">${colegioActivo === c.id ? '✓' : '🏫'}</div>
+        <div class="colegio-item">
+            <div class="colegio-ico">🏫</div>
             <div class="colegio-info">
                 <div class="colegio-nombre">${c.nombre}</div>
-                <div class="colegio-meta">${c.ciudad || '—'} · ${c.tipo || '—'}${c.coordinador ? ' · <span style="color:var(--acento)">✓ Coord.</span>' : ''}</div>
+                <div class="colegio-meta">${c.ciudad || '—'} · ${c.tipo || '—'}</div>
+                ${c.coordinador
+                    ? `<div class="colegio-coord">👤 ${c.coordinador.nombre} ${c.coordinador.apellidos}</div>`
+                    : ''}
             </div>
-            <span class="colegio-arrow">${colegioActivo === c.id ? '◀' : '▶'}</span>
         </div>`).join('');
 }
 
@@ -781,152 +622,12 @@ function filtrarColegios() {
     renderColegios(document.getElementById('buscador').value);
 }
 
-/* ══════════════════════════════════════════════════════════════
-   SELECCIONAR COLEGIO
-══════════════════════════════════════════════════════════════ */
-function seleccionarColegio(id) {
-    colegioActivo = colegioActivo === id ? null : id;
-    renderColegios(document.getElementById('buscador').value);
-
-    const panel = document.getElementById('panel-acciones');
-    if (colegioActivo) {
-        const c = colegios.find(x => x.id === id);
-        document.getElementById('panel-titulo').textContent = `Acciones · ${c.nombre}`;
-        panel.classList.add('visible');
-    } else {
-        panel.classList.remove('visible');
-    }
-}
-
-/* ══════════════════════════════════════════════════════════════
-   COORDINADOR — MODALES
-══════════════════════════════════════════════════════════════ */
-function abrirModalCoord(modo) {
-    if (!colegioActivo) return;
-    modoCoord = modo;
-    const c = colegios.find(x => x.id === colegioActivo);
-
-    document.getElementById('modal-coord-titulo').textContent =
-        modo === 'añadir' ? '➕ Añadir coordinador' : '✏️ Modificar coordinador';
-
-    document.getElementById('btn-guardar-coord').textContent =
-        modo === 'añadir' ? '💾 Guardar coordinador' : '💾 Actualizar coordinador';
-
-    // Si es modificar y hay coordinador, prefill
-    if (modo === 'modificar' && c?.coordinador) {
-        const coord = c.coordinador;
-        set('coord-nombre',    coord.nombre    || '');
-        set('coord-apellidos', coord.apellidos || '');
-        set('coord-email',     coord.email     || '');
-        set('coord-telefono',  coord.telefono  || '');
-        set('coord-password',  '');
-        set('coord-notas',     coord.notas     || '');
-    } else {
-        ['coord-nombre','coord-apellidos','coord-email','coord-telefono','coord-password','coord-notas']
-            .forEach(id => set(id, ''));
-    }
-
-    document.getElementById('alert-coord').innerHTML = '';
-    abrirModal('modal-coord');
-}
-
-async function guardarCoordinador() {
-    const nombre    = v('coord-nombre');
-    const apellidos = v('coord-apellidos');
-    const email     = v('coord-email');
-    const password  = v('coord-password');
-    const telefono  = v('coord-telefono');
-    const notas     = v('coord-notas');
-
-    if (!nombre || !apellidos || !email) {
-        mostrarAlert('alert-coord', 'err', 'Campos obligatorios', 'Nombre, apellidos y email son obligatorios.');
-        return;
-    }
-
-    if (modoCoord === 'añadir' && !password) {
-        mostrarAlert('alert-coord', 'err', 'Contraseña requerida', 'Debes establecer una contraseña inicial.');
-        return;
-    }
-
-    if (password && password.length < 8) {
-        mostrarAlert('alert-coord', 'err', 'Contraseña muy corta', 'La contraseña debe tener al menos 8 caracteres.');
-        return;
-    }
-
-    const payload = { nombre, apellidos, email, telefono, notas, colegioId: colegioActivo };
-    if (password) payload.password = password;
-
-    const ruta = modoCoord === 'añadir'
-        ? `/api/admin/colegios/${colegioActivo}/coordinador`
-        : `/api/admin/colegios/${colegioActivo}/coordinador`;
-    const method = modoCoord === 'añadir' ? 'POST' : 'PUT';
-
-    const data = await api(method, ruta, payload);
-
-    if (data.error) {
-        mostrarAlert('alert-coord', 'err', 'Error', data.error);
-        return;
-    }
-
-    // Actualizar estado local
-    const c = colegios.find(x => x.id === colegioActivo);
-    if (c) c.coordinador = { nombre, apellidos, email, telefono, notas };
-
-    cerrarModal('modal-coord');
-    renderColegios(document.getElementById('buscador').value);
-    actualizarStats();
-    toast(modoCoord === 'añadir' ? '✓ Coordinador añadido' : '✓ Coordinador actualizado');
-}
-
-function abrirConfirmElimCoord() {
-    if (!colegioActivo) return;
-    const c = colegios.find(x => x.id === colegioActivo);
-
-    if (!c?.coordinador) {
-        toast('⚠️ Este colegio no tiene coordinador asignado.');
-        return;
-    }
-
-    document.getElementById('coord-nombre-dest').textContent =
-        `${c.coordinador.nombre} ${c.coordinador.apellidos}`;
-    document.getElementById('colegio-dest-nombre').textContent = c.nombre;
-    abrirModal('modal-confirm-coord');
-}
-
-async function eliminarCoordinador() {
-    const data = await api('DELETE', `/api/admin/colegios/${colegioActivo}/coordinador`);
-
-    if (data.error) { toast('❌ ' + data.error); return; }
-
-    const c = colegios.find(x => x.id === colegioActivo);
-    if (c) c.coordinador = null;
-
-    cerrarModal('modal-confirm-coord');
-    renderColegios(document.getElementById('buscador').value);
-    actualizarStats();
-    toast('🗑️ Coordinador eliminado');
-}
-
-/* ══════════════════════════════════════════════════════════════
-   STATS
-══════════════════════════════════════════════════════════════ */
 function actualizarStats() {
     document.getElementById('stat-colegios').textContent      = colegios.length;
     document.getElementById('stat-coordinadores').textContent = colegios.filter(c => c.coordinador).length;
 }
 
-/* ══════════════════════════════════════════════════════════════
-   UTILIDADES
-══════════════════════════════════════════════════════════════ */
-function v(id)       { return document.getElementById(id)?.value.trim() || ''; }
-function set(id, val){ const el = document.getElementById(id); if(el) el.value = val; }
-
-function abrirModal(id)  { document.getElementById(id).classList.add('open'); }
-function cerrarModal(id) { document.getElementById(id).classList.remove('open'); }
-
-document.querySelectorAll('.modal-overlay').forEach(o => {
-    o.addEventListener('click', e => { if (e.target === o) o.classList.remove('open'); });
-});
+function v(id) { return document.getElementById(id)?.value.trim() || ''; }
 
 function toast(msg, duracion = 2800) {
     const t = document.getElementById('toast');
@@ -934,17 +635,14 @@ function toast(msg, duracion = 2800) {
     setTimeout(() => t.classList.remove('show'), duracion);
 }
 
-function mostrarAlert(contenedorId, tipo, titulo, texto) {
-    document.getElementById(contenedorId).innerHTML = `
+function mostrarAlert(tipo, titulo, texto) {
+    document.getElementById('alert-form').innerHTML = `
         <div class="alert alert-${tipo === 'ok' ? 'ok' : 'err'}">
             <span class="alert-ico">${tipo === 'ok' ? '✅' : '❌'}</span>
-            <div class="alert-txt"><strong>${titulo}</strong>${texto}</div>
+            <div class="alert-txt"><strong>${titulo}</strong> ${texto}</div>
         </div>`;
 }
 
-/* ══════════════════════════════════════════════════════════════
-   INIT
-══════════════════════════════════════════════════════════════ */
 cargarColegios();
 </script>
 </body>
