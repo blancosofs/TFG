@@ -172,6 +172,6 @@ function mostrarToast(msg) {
 /* ── Logout ── */
 document.getElementById('btn-logout')?.addEventListener('click', async e => {
     e.preventDefault();
-    await fetch('/api/logout', { method: 'POST', credentials: 'include' });
-    window.location.href = 'login.html';
+    await fetch('/api/logout', { method: 'POST', credentials: 'include', headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content ?? '' } });
+    window.location.href = '/login';
 });

@@ -24,7 +24,21 @@
                         <li><a href="{{ route('index') }}" data-i18n="nav.inicio">Inicio</a></li>
                         <li><a href="{{ route('contacto') }}" data-i18n="nav.contacto">Contacto</a></li>
                         <li><a href="{{ route('config') }}" data-i18n="nav.configuracion">Configuración</a></li>
-                        <li class="derecha"><a href="{{ route('login') }}" data-i18n="nav.iniciarSesion">Iniciar Sesión</a></li>
+                        @auth
+                            @php
+                                $u = Auth::user();
+                                $panelUrl = match(true) {
+                                    is_null($u->colegio_id) => route('admin'),
+                                    (bool)$u->coordinador   => route('coordinador'),
+                                    (bool)$u->docente       => route('perfil'),
+                                    (bool)$u->tutor         => route('perfilFamilia'),
+                                    default                 => '/',
+                                };
+                            @endphp
+                            <li class="derecha"><a href="{{ $panelUrl }}">Mi Panel</a></li>
+                        @else
+                            <li class="derecha"><a href="{{ route('login') }}" data-i18n="nav.iniciarSesion">Iniciar Sesión</a></li>
+                        @endauth
                     </ul>
                 </div>
             </nav>

@@ -13,7 +13,8 @@
       NO están presentes (ausencias y retrasos)
 ══════════════════════════════════════════════════════════════ */
 
-const API = '';
+const API  = '';
+const CSRF = document.querySelector('meta[name="csrf-token"]')?.content ?? '';
 
 /* ── Estado ── */
 let sesion        = null;
@@ -367,7 +368,7 @@ function toast(msg) {
 
 async function api(method, ruta, body) {
     try {
-        const opts = { method, credentials: 'include', headers: { 'Content-Type': 'application/json' } };
+        const opts = { method, credentials: 'include', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF } };
         if (body) opts.body = JSON.stringify(body);
         const r = await fetch(API + ruta, opts);
         return await r.json();

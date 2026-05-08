@@ -3,11 +3,12 @@
    Lógica del perfil del docente
 ══════════════════════════════════════════════════════════════ */
 
-const API = '';
+const API  = '';
+const CSRF = document.querySelector('meta[name="csrf-token"]')?.content ?? '';
 
 async function api(method, ruta, body) {
     try {
-        const opts = { method, credentials: 'include', headers: { 'Content-Type': 'application/json' } };
+        const opts = { method, credentials: 'include', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF } };
         if (body) opts.body = JSON.stringify(body);
         const r = await fetch(API + ruta, opts);
         return await r.json();
@@ -17,26 +18,12 @@ async function api(method, ruta, body) {
 }
 
 /* ── Arranque — comprueba sesión ── */
-// (async () => {
-//     const data = await api('GET', '/api/me');
-//     if (!data || !data.id) { window.location.href = '/login'; return; }
-//     if (data.rol !== 'docente') { window.location.href = '/login'; return; }
-//     cargarPerfil(data);
-// })();
-
-// Datos de prueba — quitar cuando el servidor esté activo
-cargarPerfil({
-    id: 1,
-    nombre: 'Carlos',
-    apellidos: 'García Martínez',
-    email: 'cgarcia@centro.es',
-    telefono: '600 123 456',
-    rol: 'docente',
-    colegio: 'IES Ejemplo',
-    color: '#47ad79',
-    fechaNacimiento: '1985-03-15',
-    ultimo_acceso: new Date().toISOString()
-});
+(async () => {
+    const data = await api('GET', '/api/me');
+    if (!data || !data.id) { window.location.href = '/login'; return; }
+    if (data.rol !== 'docente') { window.location.href = '/login'; return; }
+    await cargarPerfil(data);
+})();
 
 /* ── Cargar perfil ── */
 async function cargarPerfil(usuario) {
@@ -67,30 +54,22 @@ async function cargarPerfil(usuario) {
 
     document.getElementById('v-colegio').textContent = usuario.colegio || '—';
 
-    // const clases = await api('GET', '/api/clases?desde=2025-01-01&hasta=2099-12-31');
-    // Datos de prueba — quitar cuando el servidor esté activo
-    const clases = [
-        { materia: 'Matemáticas',  grupo: '1ºA' },
-        { materia: 'Matemáticas',  grupo: '1ºB' },
-        { materia: 'Física',       grupo: '2ºA' },
-        { materia: 'Programación', grupo: '2ºB' },
-    ];
+    const misClases = await api('GET', '/api/mis-clases');
+    if (misClases && !misClases.error && misClases.length) {
+        const asigs       = misClases[0].asignaturas ?? [];
+        const clasesUnicas = [...new Set(misClases.map(c => c.nombre).filter(Boolean))];
 
-    if (clases && !clases.error) {
-        const asigs       = [...new Set(clases.map(c => c.materia))];
-        const gruposUnicos = [...new Set(clases.map(c => c.grupo).filter(Boolean))];
-
-        document.getElementById('stat-clases').textContent      = gruposUnicos.length || '—';
+        document.getElementById('stat-clases').textContent      = clasesUnicas.length || '—';
         document.getElementById('stat-asignaturas').textContent = asigs.length        || '—';
-        document.getElementById('stat-alumnos').textContent     = gruposUnicos.length
-            ? `~${gruposUnicos.length * 25}` : '—';
+        document.getElementById('stat-alumnos').textContent     = clasesUnicas.length
+            ? `~${clasesUnicas.length * 25}` : '—';
 
         document.getElementById('v-asignaturas').innerHTML = asigs.length
             ? asigs.map(a => `<span class="tag-item">${a}</span>`).join('')
             : '<span class="dato-val">—</span>';
 
-        document.getElementById('v-clases').innerHTML = gruposUnicos.length
-            ? gruposUnicos.map(g => `<span class="tag-item tag-clase">${g}</span>`).join('')
+        document.getElementById('v-clases').innerHTML = clasesUnicas.length
+            ? clasesUnicas.map(g => `<span class="tag-item tag-clase">${g}</span>`).join('')
             : '<span class="dato-val">—</span>';
     }
 }

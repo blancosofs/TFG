@@ -98,8 +98,8 @@ async function cargarPerfil(usuario) {
         document.getElementById('ultimo-acceso').textContent =
             new Date(usuario.ultimo_acceso).toLocaleString('es-ES');
 
-    // const hijos = await api('GET', '/api/tutor/alumnos');
-    // renderHijos(hijos);  // descomentar cuando el servidor esté activo
+    const hijos = await api('GET', '/api/tutor/alumnos');
+    renderHijos(hijos);  // descomentar cuando el servidor esté activo
 }
 
 /* ── Render tarjetas de hijos ── */

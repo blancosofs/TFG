@@ -135,12 +135,38 @@ class MockSeederEstresante extends Seeder
         // ==========================================
         // 6. HORARIOS Y AUSENCIAS
         // ==========================================
+        
+        // Horario Base (Ligado a la ausencia posterior)
         $horarioId = DB::table('horarios')->insertGetId([
             'dia_semana' => 'lunes', 'hora_inicio' => '09:00:00', 'hora_fin' => '09:55:00',
             'docente_id' => $docente1->id, 'clase_id' => $clase1A->id,
             'created_at' => now(), 'updated_at' => now()
         ]);
 
+        // --- NUEVOS HORARIOS AÑADIDOS PARA PRUEBAS DEL BLADE ---
+        $nuevosHorarios = [
+            // Continuación del Lunes para 1ºA
+            ['dia_semana' => 'lunes', 'hora_inicio' => '09:55:00', 'hora_fin' => '10:50:00', 'docente_id' => $docente2->id, 'clase_id' => $clase1A->id, 'created_at' => now(), 'updated_at' => now()],
+            
+            // Martes
+            ['dia_semana' => 'martes', 'hora_inicio' => '09:00:00', 'hora_fin' => '09:55:00', 'docente_id' => $docente2->id, 'clase_id' => $clase1A->id, 'created_at' => now(), 'updated_at' => now()],
+            ['dia_semana' => 'martes', 'hora_inicio' => '10:20:00', 'hora_fin' => '11:15:00', 'docente_id' => $docente1->id, 'clase_id' => $clase1A->id, 'created_at' => now(), 'updated_at' => now()], // Después del recreo
+            
+            // Miércoles (Otra clase para comprobar filtros)
+            ['dia_semana' => 'miercoles', 'hora_inicio' => '11:45:00', 'hora_fin' => '12:40:00', 'docente_id' => $docente1->id, 'clase_id' => $clase1B->id, 'created_at' => now(), 'updated_at' => now()],
+            
+            // Jueves
+            ['dia_semana' => 'jueves', 'hora_inicio' => '12:40:00', 'hora_fin' => '13:35:00', 'docente_id' => $docente2->id, 'clase_id' => $clase2A->id, 'created_at' => now(), 'updated_at' => now()],
+            
+            // Viernes (A primera hora)
+            ['dia_semana' => 'viernes', 'hora_inicio' => '08:00:00', 'hora_fin' => '08:55:00', 'docente_id' => $docente1->id, 'clase_id' => $clase1A->id, 'created_at' => now(), 'updated_at' => now()],
+        ];
+        
+        // Insertamos todos de golpe
+        DB::table('horarios')->insert($nuevosHorarios);
+        // -------------------------------------------------------
+
+        // Ausencia ligada al primer horario
         DB::table('ausencias')->insert([
             'fecha' => Carbon::yesterday(), 'tipo' => 'falta', 
             'justificada' => true, 'justificacion' => 'Cita médica (Pediatra)',

@@ -13,7 +13,12 @@ class ColegioController extends Controller
     public function index()
     {
         $colegios = Colegio::all();
-        return view ('colegios.index' ,compact ('colegios'));
+
+        if (request()->wantsJson()) {
+            return response()->json($colegios);
+        }
+
+        return view('colegios.index', compact('colegios'));
     }
 
     /**

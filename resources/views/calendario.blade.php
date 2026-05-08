@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Edunoly · Mi Horario</title>
     <script src="{{ asset('js/temas.js') }}"></script>
     <link rel="stylesheet" href="{{ asset('css/temas.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/EstilosCalendario.css') }}"> 
+    <link rel="stylesheet" href="{{ asset('css/EstilosCalendario.css') }}">
 </head>
 <body>
 
@@ -120,6 +121,6 @@
 
 <div class="toast" id="toast"></div>
 
-<script src="calendario.js"></script>
+<script src="{{ asset('js/calendario.js') }}"></script>
 </body>
 </html>

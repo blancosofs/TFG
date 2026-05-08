@@ -23,7 +23,21 @@
                     <li><a href="{{ route('config') }}">Configuracion</a></li>
                     <li><a href="{{ route('unete') }}">Unete</a></li>
 
-                    <li class="derecha"><a href="{{ route('login') }}">Iniciar Sesión</a></li>
+                    @auth
+                        @php
+                            $u = Auth::user();
+                            $panelUrl = match(true) {
+                                $u->colegio_id === null => route('admin'),
+                                (bool)$u->coordinador   => route('coordinador'),
+                                (bool)$u->docente       => route('perfil'),
+                                (bool)$u->tutor         => route('perfilFamilia'),
+                                default                 => '/',
+                            };
+                        @endphp
+                        <li class="derecha"><a href="{{ $panelUrl }}">Mi Panel</a></li>
+                    @else
+                        <li class="derecha"><a href="{{ route('login') }}">Iniciar Sesión</a></li>
+                    @endauth
                     <li class="menuSesion">
                         <img src="{{ asset('img/perfil.png') }}" class="fotoPerfil" alt="Perfil">
                         <ul class="dropdown">

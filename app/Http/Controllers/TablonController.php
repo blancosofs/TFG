@@ -18,6 +18,15 @@ class TablonController extends Controller
         return view('tablon.index', compact('publicaciones'));
     }
 
+    public function apiIndex()
+    {
+        $publicaciones = Tablon::with(['docente.user', 'clase'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return response()->json($publicaciones);
+    }
+
     public function store(Request $request)
     {
         $request->validate([

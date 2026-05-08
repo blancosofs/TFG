@@ -16,7 +16,7 @@ class MisClasesController extends Controller
         // 2. Traemos sus clases. Usamos withCount para saber cuántos alumnos tiene cada una
         $misClases = $docente->clases()->withCount('alumnos')->get();
 
-        return 
+        return response()->json($misClases);
     }
 
     public function show($id)
@@ -26,6 +26,6 @@ class MisClasesController extends Controller
         // 3. SEGURIDAD: Buscamos la clase pero solo si pertenece a este docente
         $clase = $docente->clases()->with('alumnos')->findOrFail($id);
 
-        return view('profesor.mis_clases.show', compact('clase'));
+        return response()->json($clase);
     }
 }

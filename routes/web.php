@@ -128,28 +128,7 @@ Route::prefix('api')->middleware(['auth'])->group(function () {
         return response()->json(['ok' => true]);
     });
 
-    // 1. Ruta para comprobar quién está logueado
-    Route::get('/me', function (Request $request) {
-        
-    //$user = $request->user(); //Esto es lo que hace realmente pero se puede poner como en la sig. linea!
-        $user = Auth::user();
-        
-        // Calculamos el rol exacto
-        $rol = 'sin_rol';
-        if (is_null($user->colegio_id)) $rol = 'admin';
-        elseif ($user->coordinador) $rol = 'coordinador';
-        elseif ($user->docente) $rol = 'docente';
-        elseif ($user->tutor) $rol = 'tutor';
-
-        return response()->json([
-            'id'         => $user->id,
-            'nombre'     => $user->name,
-            'apellidos'  => $user->apellidos,
-            'email'      => $user->email,
-            'colegio_id' => $user->colegio_id,
-            'rol'        => $rol
-        ]);
-    });
+    Route::get('/me', [\App\Http\Controllers\ProfileController::class, 'me']);
 
     // 2. Rutas para el Frontend del Coordinador
     Route::get('/alumnos', [AlumnoController::class, 'index']);
@@ -170,9 +149,20 @@ Route::prefix('api')->middleware(['auth'])->group(function () {
     Route::get('/cursos', [CursoController::class, 'index']);
     Route::get('/clases', [ClaseController::class, 'index']);
     Route::get('/mis-clases', [ClaseController::class, 'misClases']);
-    Route::get('/clases/{id}/alumnos', [ClaseController::class, 'alumnos']);
+    Route::get('/clases/{id}/alumnos', [ClaseController::class, 'visualizarAlumnos']);
     Route::post('/asistencia', [AusenciaController::class, 'storeAsistencia']);
     Route::get('/ausencias/alumno/{alumnoId}', [AusenciaController::class, 'porAlumno']);
+
+    Route::get('/tutor/alumnos', [TutorController::class, 'misAlumnos']);
+    Route::put('/me/datos',      [\App\Http\Controllers\ProfileController::class, 'actualizarDatos']);
+    Route::put('/me/password',   [\App\Http\Controllers\ProfileController::class, 'actualizarPassword']);
+
+    Route::get('/tablon', [TablonController::class, 'apiIndex']);
+
+    Route::middleware(['role:admin'])->group(function () {
+        Route::get('/admin/colegios',  [ColegioController::class, 'apiIndex']);
+        Route::post('/admin/colegios', [ColegioController::class, 'apiStore']);
+    });
 });
 
 // Rutas de autenticación por defecto (Laravel Breeze)

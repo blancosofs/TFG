@@ -15,7 +15,8 @@
      fecha_limite, docente_id, colegio_id, creado_en
 ══════════════════════════════════════════════════════════════ */
 
-const API = '';
+const API  = '';
+const CSRF = document.querySelector('meta[name="csrf-token"]')?.content ?? '';
 
 /* ── Estado ── */
 let sesion           = null;
@@ -39,21 +40,10 @@ const CATEGORIAS = {
    ARRANQUE
 ════════════════════════════════════════════ */
 (async () => {
-    // const data = await api('GET', '/api/me');
-    // if (!data?.id) { window.location.href = '/login'; return; }
-    // if (data.rol !== 'docente' && data.rol !== 'tutor') { window.location.href = '/login'; return; }
-    // sesion = data;
-
-    // Datos de prueba — cambiar según quien prueba
-    // Para probar como TUTOR cambia rol a 'tutor'
-    sesion = {
-        id: 1,
-        nombre: 'Pedro',
-        apellidos: 'Fernández Gil',
-        rol: 'docente',          // 'docente' | 'tutor'
-        colegio: 'IES Ejemplo Madrid',
-        colegio_id: 1
-    };
+    const data = await api('GET', '/api/me');
+    if (!data?.id) { window.location.href = '/login'; return; }
+    if (data.rol !== 'docente' && data.rol !== 'tutor') { window.location.href = '/login'; return; }
+    sesion = data;
 
     configurarVistaPorRol();
     await cargarAnuncios();
@@ -87,10 +77,32 @@ function configurarVistaPorRol() {
    CARGAR ANUNCIOS
 ════════════════════════════════════════════ */
 async function cargarAnuncios() {
-    // const data = await api('GET', '/api/anuncios');
-    // anuncios = data || [];
+    const data = await api('GET', '/api/tablon');
+    if (data && !data.error) {
+        anuncios = data.map(p => ({
+            id:          p.id,
+            titulo:      p.titulo,
+            contenido:   p.contenido,
+            categoria:   p.categoria?.toLowerCase() ?? 'general',
+            dirigido_a:  p.dirigido_a === 'Solo familias' ? 'familias'
+                       : p.dirigido_a === 'Solo docentes' ? 'docentes' : 'todos',
+            clase:       p.clase?.nombre ?? null,
+            fecha_limite: p.fecha_limite,
+            autor:       p.docente?.user?.name
+                         ? `${p.docente.user.name} ${p.docente.user.apellidos ?? ''}`.trim()
+                         : 'Autor desconocido',
+            autor_rol:   'docente',
+            fecha:       p.created_at?.slice(0, 10) ?? new Date().toISOString().slice(0, 10),
+        }));
+    } else {
+        anuncios = [];
+    }
 
-    // Datos de prueba
+    aplicarFiltros();
+    actualizarStats();
+    return;
+
+    // Datos de prueba (desactivados)
     const hoy = new Date().toISOString().slice(0, 10);
     anuncios = [
         {
@@ -314,28 +326,30 @@ async function publicarAnuncio() {
 
     const hoy = new Date().toISOString().slice(0, 10);
 
+    const dirigidoMap = { todos: 'Todos', familias: 'Solo familias', docentes: 'Solo docentes' };
+    const categoriaMap = { general: 'General', examen: 'Examen', evento: 'Evento', urgente: 'Urgente', tarea: 'Tarea' };
+
+    const payload = {
+        titulo,
+        contenido,
+        categoria:   categoriaMap[categoria] ?? 'General',
+        dirigido_a:  dirigidoMap[dirigido]   ?? 'Todos',
+        clase_id:    clase  || null,
+        fecha_limite: limite || null,
+    };
+
     if (modoEdicion) {
-        // await api('PUT', `/api/anuncios/${idEditando}`, { titulo, contenido, categoria, dirigido_a: dirigido, clase, fecha_limite: limite });
-        const idx = anuncios.findIndex(a => a.id === idEditando);
-        if (idx !== -1) {
-            anuncios[idx] = { ...anuncios[idx], titulo, contenido, categoria, dirigido_a: dirigido, clase, fecha_limite: limite };
-        }
+        const r = await api('PUT', `/tablon/${idEditando}`, payload);
+        if (r?.ok === false) { toast('❌ ' + (r.mensaje || 'Error al actualizar')); return; }
         toast('✓ Anuncio actualizado');
     } else {
-        // const data = await api('POST', '/api/anuncios', { titulo, contenido, categoria, dirigido_a: dirigido, clase, fecha_limite: limite });
-        const nuevo = {
-            id: Date.now(),
-            titulo, contenido, categoria,
-            dirigido_a: dirigido,
-            clase, fecha_limite: limite,
-            autor: `${sesion.nombre} ${sesion.apellidos}`,
-            autor_rol: sesion.rol,
-            fecha: hoy,
-        };
-        anuncios.unshift(nuevo);
+        const r = await api('POST', '/tablon', payload);
+        if (r?.ok === false) { toast('❌ ' + (r.mensaje || 'Error al publicar')); return; }
         const dirigidoTexto = { todos: 'familias y docentes', familias: 'familias', docentes: 'docentes' };
-        toast(`📢 Anuncio publicado · 🔔 Notificación enviada a ${dirigidoTexto[dirigido] || 'todos'}`);
+        toast(`📢 Anuncio publicado · Enviado a ${dirigidoTexto[dirigido] || 'todos'}`);
     }
+
+    await cargarAnuncios();
 
     cerrarModal('modal-publicar');
     aplicarFiltros();
@@ -351,11 +365,10 @@ async function publicarAnuncio() {
 function pedirEliminar(id) {
     idEliminar = id;
     document.getElementById('btn-confirmar-eliminar').onclick = async () => {
-        // await api('DELETE', `/api/anuncios/${id}`);
-        anuncios = anuncios.filter(a => a.id !== id);
+        const r = await api('DELETE', `/tablon/${id}`);
+        if (r?.ok === false) { toast('❌ ' + (r.mensaje || 'Error al eliminar')); cerrarModal('modal-eliminar'); return; }
         cerrarModal('modal-eliminar');
-        aplicarFiltros();
-        actualizarStats();
+        await cargarAnuncios();
         toast('🗑️ Anuncio eliminado');
     };
     abrirModalConScroll('modal-eliminar');
@@ -467,7 +480,7 @@ function toast(msg) {
 
 async function api(method, ruta, body) {
     try {
-        const opts = { method, credentials: 'include', headers: { 'Content-Type': 'application/json' } };
+        const opts = { method, credentials: 'include', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF } };
         if (body) opts.body = JSON.stringify(body);
         const r = await fetch(API + ruta, opts);
         return await r.json();

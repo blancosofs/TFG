@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Edunoly · Panel de Administración</title>
     <script src="{{ asset('js/temas.js') }}"></script>
     <link rel="stylesheet" href="{{ asset('css/temas.css') }}">
@@ -655,7 +656,7 @@
 /* ══════════════════════════════════════════════════════════════
    CONFIG
 ══════════════════════════════════════════════════════════════ */
-const API = '/api'; //para que deje de ser relativo al path del colegio y apunte a lo definido en routes/api.php
+const API = '';
 
 /* ══════════════════════════════════════════════════════════════
    ESTADO LOCAL
@@ -669,9 +670,11 @@ let modoCoord      = 'añadir'; // 'añadir' | 'modificar'
 /* ══════════════════════════════════════════════════════════════
    API
 ══════════════════════════════════════════════════════════════ */
+const CSRF = document.querySelector('meta[name="csrf-token"]')?.content ?? '';
+
 async function api(method, ruta, body) {
     try {
-        const opts = { method, credentials: 'include', headers: { 'Content-Type': 'application/json' } };
+        const opts = { method, credentials: 'include', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF } };
         if (body) opts.body = JSON.stringify(body);
         const r = await fetch(API + ruta, opts);
         return await r.json();

@@ -3,6 +3,7 @@
    Cambia API_BASE solo si el backend está en otro dominio/puerto
 ══════════════════════════════════════════════════════════════ */
 const API_BASE = '';
+const CSRF = document.querySelector('meta[name="csrf-token"]')?.content ?? '';
 
 /* ══════════════════════════════════════════════════════════════
    CONSTANTES
@@ -44,7 +45,7 @@ function fmtFecha(d) {
    API
 ══════════════════════════════════════════════════════════════ */
 async function api(method, ruta, body) {
-    const opts = { method, credentials: 'include', headers: {'Content-Type':'application/json'} };
+    const opts = { method, credentials: 'include', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF } };
     if (body) opts.body = JSON.stringify(body);
     const r = await fetch(API_BASE + ruta, opts);
     return r.json();

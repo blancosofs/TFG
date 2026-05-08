@@ -15,6 +15,43 @@ class TutorController extends Controller
     /**
      * Display a listing of the resource.
      */
+    public function misAlumnos()
+    {
+        $tutor = Auth::user()->tutor;
+        if (!$tutor) return response()->json([], 403);
+
+        $hijos = $tutor->alumnos()->with([
+            'clase.docentes.user',
+            'clase.curso',
+            'colegio',
+            'ausencias' => fn($q) => $q->whereMonth('fecha', now()->month)
+                                       ->whereYear('fecha', now()->year),
+        ])->get();
+
+        return response()->json($hijos->map(function ($alumno) {
+            $docentes = $alumno->clase
+                ? $alumno->clase->docentes->map(fn($d) => [
+                    'id'         => $d->id,
+                    'nombre'     => $d->user->name ?? '—',
+                    'apellidos'  => $d->user->apellidos ?? '—',
+                    'asignatura' => $d->asignaturas ?? '—',
+                ])
+                : [];
+
+            return [
+                'id'         => $alumno->id,
+                'nombre'     => $alumno->nombre,
+                'apellidos'  => $alumno->apellidos,
+                'curso'      => $alumno->clase?->curso?->nombre ?? '—',
+                'clase'      => $alumno->clase?->nombre ?? '—',
+                'colegio'    => $alumno->colegio?->nombre ?? '—',
+                'parentesco' => $alumno->pivot->parentesco ?? 'Tutor legal',
+                'faltas'     => $alumno->ausencias->count(),
+                'docentes'   => $docentes,
+            ];
+        }));
+    }
+
     public function index()
     {
         // 1. Identificamos el colegio del coordinador

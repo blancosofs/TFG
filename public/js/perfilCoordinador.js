@@ -109,8 +109,8 @@ async function guardarPersonal() {
     const payload = { nombre: v('e-nombre'), apellidos: v('e-apellidos'), telefono: v('e-telefono') };
     if (!payload.nombre || !payload.apellidos) { toast('⚠️ Nombre y apellidos son obligatorios.'); return; }
 
-    // const data = await api('PUT', '/api/me/datos', payload);
-    // if (data.error) { toast('❌ ' + data.error); return; }
+    const data = await api('PUT', '/api/me/datos', payload);
+    if (data.error) { toast('❌ ' + data.error); return; }
 
     document.getElementById('v-nombre').textContent    = payload.nombre;
     document.getElementById('v-apellidos').textContent = payload.apellidos;
@@ -134,8 +134,8 @@ async function guardarPassword() {
     if (nueva.length < 8)              { alertPass('⚠️ Mínimo 8 caracteres.'); return; }
     if (nueva !== repetir)             { alertPass('⚠️ Las contraseñas no coinciden.'); return; }
 
-    // const data = await api('PUT', '/api/me/password', { passwordActual: actual, passwordNueva: nueva });
-    // if (data.error) { alertPass('❌ ' + data.error); return; }
+    const data = await api('PUT', '/api/me/password', { passwordActual: actual, passwordNueva: nueva });
+    if (data.error) { alertPass('❌ ' + data.error); return; }
 
     ['p-actual','p-nueva','p-repetir'].forEach(id => set(id, ''));
     toggleEditar('pass');
@@ -266,7 +266,7 @@ function renderTabla(tipo) {
             ? `<tr class="fila-vacia"><td colspan="6">No hay alumnos. Pulsa "Nuevo alumno".</td></tr>`
             : alumnos.map(a => `<tr>
                 <td>${a.nombre}</td><td>${a.apellidos}</td>
-                <td>${a.fnac ? formatFecha(a.fnac) : '—'}</td>
+                <td>${a.fecha_nacimiento ? formatFecha(a.fecha_nacimiento) : '—'}</td>
                 <td>${a.curso || '—'}</td><td>${a.clase || '—'}</td>
                 <td><div class="acciones">
                     <button class="btn-tabla" onclick="editarAlumno(${a.id})">✏️ Editar</button>
@@ -276,26 +276,40 @@ function renderTabla(tipo) {
     } else if (tipo === 'docentes') {
         tbody.innerHTML = !docentes.length
             ? `<tr class="fila-vacia"><td colspan="6">No hay docentes. Pulsa "Nuevo docente".</td></tr>`
-            : docentes.map(d => `<tr>
-                <td>${d.nombre}</td><td>${d.apellidos}</td>
-                <td>${d.email}</td><td>${d.telefono || '—'}</td>
-                <td>${(d.asignaturas||[]).map(a=>`<span class="tag">${a}</span>`).join('') || '—'}</td>
-                <td><div class="acciones">
-                    <button class="btn-tabla" onclick="editarDocente(${d.id})">✏️ Editar</button>
-                    <button class="btn-tabla danger" onclick="confirmarEliminar('docente',${d.id},'${d.nombre} ${d.apellidos}')">🗑️</button>
-                </div></td></tr>`).join('');
+            : docentes.map(d => {
+                const nombre    = d.user?.name      ?? '—';
+                const apellidos = d.user?.apellidos  ?? '—';
+                const email     = d.user?.email      ?? '—';
+                const asigs     = d.asignaturas
+                    ? d.asignaturas.split(',').map(a => `<span class="tag">${a.trim()}</span>`).join('')
+                    : '—';
+                return `<tr>
+                    <td>${nombre}</td><td>${apellidos}</td>
+                    <td>${email}</td><td>${d.telefono || '—'}</td>
+                    <td>${asigs}</td>
+                    <td><div class="acciones">
+                        <button class="btn-tabla" onclick="editarDocente(${d.id})">✏️ Editar</button>
+                        <button class="btn-tabla danger" onclick="confirmarEliminar('docente',${d.id},'${nombre} ${apellidos}')">🗑️</button>
+                    </div></td></tr>`;
+            }).join('');
 
     } else if (tipo === 'tutores') {
         tbody.innerHTML = !tutores.length
             ? `<tr class="fila-vacia"><td colspan="6">No hay tutores. Pulsa "Nuevo tutor".</td></tr>`
-            : tutores.map(t => `<tr>
-                <td>${t.nombre}</td><td>${t.apellidos}</td>
-                <td>${t.email}</td><td>${t.telefono || '—'}</td>
-                <td>${(t.alumnos||[]).map(a=>`<span class="tag">${a}</span>`).join('') || '—'}</td>
-                <td><div class="acciones">
-                    <button class="btn-tabla" onclick="editarTutor(${t.id})">✏️ Editar</button>
-                    <button class="btn-tabla danger" onclick="confirmarEliminar('tutor',${t.id},'${t.nombre} ${t.apellidos}')">🗑️</button>
-                </div></td></tr>`).join('');
+            : tutores.map(t => {
+                const nombre    = t.user?.name      ?? '—';
+                const apellidos = t.user?.apellidos  ?? '—';
+                const email     = t.user?.email      ?? '—';
+                const hijos     = (t.alumnos || []).map(a => `<span class="tag">${a.nombre} ${a.apellidos}</span>`).join('') || '—';
+                return `<tr>
+                    <td>${nombre}</td><td>${apellidos}</td>
+                    <td>${email}</td><td>${t.telefono || '—'}</td>
+                    <td>${hijos}</td>
+                    <td><div class="acciones">
+                        <button class="btn-tabla" onclick="editarTutor(${t.id})">✏️ Editar</button>
+                        <button class="btn-tabla danger" onclick="confirmarEliminar('tutor',${t.id},'${nombre} ${apellidos}')">🗑️</button>
+                    </div></td></tr>`;
+            }).join('');
     }
 }
 
@@ -305,7 +319,10 @@ function renderTabla(tipo) {
 function filtrarLista(tipo) {
     const q     = document.getElementById(`buscar-${tipo}`).value.toLowerCase();
     const datos = tipo === 'alumnos' ? alumnos : tipo === 'docentes' ? docentes : tutores;
-    const fil   = q ? datos.filter(x => `${x.nombre} ${x.apellidos}`.toLowerCase().includes(q)) : datos;
+    const fil   = q ? datos.filter(x => {
+        const nom = tipo === 'alumnos' ? `${x.nombre} ${x.apellidos}` : `${x.user?.name ?? ''} ${x.user?.apellidos ?? ''}`;
+        return nom.toLowerCase().includes(q);
+    }) : datos;
     const tbody = document.getElementById(`tbody-${tipo}`);
 
     if (!fil.length) {
@@ -337,7 +354,7 @@ function abrirModalUsuario(modalId, modo) {
         document.getElementById('a-clase').innerHTML = '<option value="">Seleccionar…</option>';
         document.getElementById('a-tutor').innerHTML =
             '<option value="">Sin tutor asignado</option>' +
-            tutores.map(t => `<option value="${t.id}">${t.nombre} ${t.apellidos}</option>`).join('');
+            tutores.map(t => `<option value="${t.id}">${t.user?.name ?? ''} ${t.user?.apellidos ?? ''}</option>`).join('');
         ['a-nombre','a-apellidos','a-fnac'].forEach(id => set(id, ''));
         set('a-curso',''); set('a-tutor','');
         document.getElementById('modal-alumno-titulo').textContent = '➕ Nuevo alumno';
@@ -463,7 +480,7 @@ function editarAlumno(id) {
     modoModal = 'editar'; idEditando = id;
     abrirModalUsuario('modal-alumno', 'editar');
     setTimeout(() => {
-        set('a-nombre', a.nombre); set('a-apellidos', a.apellidos); set('a-fnac', a.fnac||'');
+        set('a-nombre', a.nombre); set('a-apellidos', a.apellidos); set('a-fnac', a.fecha_nacimiento||'');
         document.getElementById('modal-alumno-titulo').textContent = '✏️ Editar alumno';
     }, 50);
 }
@@ -482,14 +499,16 @@ async function guardarDocente() {
     if (password && password.length < 8)   { alertModalUsuario('alert-docente', '⚠️ Mínimo 8 caracteres.'); return; }
 
     if (modoModal === 'nuevo') {
-        // await api('POST', '/api/coord/docentes', { nombre, apellidos, email, telefono, password, fnac });
-        docentes.push({ id: Date.now(), nombre, apellidos, email, telefono, fnac, asignaturas: [] });
+        const r = await api('POST', '/api/docentes', { nombre, apellidos, email, telefono, password });
+        if (!r.ok) { alertModalUsuario('alert-docente', '❌ ' + (r.mensaje || r.error || 'Error al guardar')); return; }
     } else {
-        const idx = docentes.findIndex(d => d.id === idEditando);
-        if (idx !== -1) docentes[idx] = { ...docentes[idx], nombre, apellidos, email, telefono, fnac };
+        const body = { nombre, apellidos, email, telefono };
+        if (password) body.password = password;
+        const r = await api('PUT', `/api/docentes/${idEditando}`, body);
+        if (!r.ok) { alertModalUsuario('alert-docente', '❌ ' + (r.mensaje || r.error || 'Error al guardar')); return; }
     }
 
-    renderTabla('docentes'); actualizarStats();
+    await cargarDatos();
     cerrarModalUsuario('modal-docente');
     toast(modoModal === 'nuevo' ? '✓ Docente registrado' : '✓ Docente actualizado');
 }
@@ -499,8 +518,10 @@ function editarDocente(id) {
     modoModal = 'editar'; idEditando = id;
     abrirModalUsuario('modal-docente', 'editar');
     setTimeout(() => {
-        set('d-nombre',d.nombre); set('d-apellidos',d.apellidos);
-        set('d-email',d.email); set('d-telefono',d.telefono||''); set('d-fnac',d.fnac||'');
+        set('d-nombre',    d.user?.name      || '');
+        set('d-apellidos', d.user?.apellidos || '');
+        set('d-email',     d.user?.email     || '');
+        set('d-telefono',  d.telefono        || '');
         document.getElementById('modal-docente-titulo').textContent = '✏️ Editar docente';
     }, 50);
 }
@@ -519,17 +540,17 @@ async function guardarTutor() {
     if (modoModal === 'nuevo' && !password) { alertModalUsuario('alert-tutor', '⚠️ La contraseña inicial es obligatoria.'); return; }
     if (password && password.length < 8)   { alertModalUsuario('alert-tutor', '⚠️ Mínimo 8 caracteres.'); return; }
 
-    const alumno = alumnos.find(a => a.id == alumnoId);
-
     if (modoModal === 'nuevo') {
-        // await api('POST', '/api/coord/tutores', { nombre, apellidos, email, telefono, password, alumno_id: alumnoId||null, parentesco });
-        tutores.push({ id: Date.now(), nombre, apellidos, email, telefono, alumnos: alumno?[`${alumno.nombre} ${alumno.apellidos}`]:[] });
+        const r = await api('POST', '/api/tutores', { nombre, apellidos, email, telefono, password, alumno_id: alumnoId || null, parentesco });
+        if (!r.ok) { alertModalUsuario('alert-tutor', '❌ ' + (r.mensaje || r.error || 'Error al guardar')); return; }
     } else {
-        const idx = tutores.findIndex(t => t.id === idEditando);
-        if (idx !== -1) tutores[idx] = { ...tutores[idx], nombre, apellidos, email, telefono };
+        const body = { nombre, apellidos, email, telefono };
+        if (password) body.password = password;
+        const r = await api('PUT', `/api/tutores/${idEditando}`, body);
+        if (!r.ok) { alertModalUsuario('alert-tutor', '❌ ' + (r.mensaje || r.error || 'Error al guardar')); return; }
     }
 
-    renderTabla('tutores'); actualizarStats();
+    await cargarDatos();
     cerrarModalUsuario('modal-tutor');
     toast(modoModal === 'nuevo' ? '✓ Tutor registrado' : '✓ Tutor actualizado');
 }
@@ -539,8 +560,10 @@ function editarTutor(id) {
     modoModal = 'editar'; idEditando = id;
     abrirModalUsuario('modal-tutor', 'editar');
     setTimeout(() => {
-        set('t-nombre',t.nombre); set('t-apellidos',t.apellidos);
-        set('t-email',t.email); set('t-telefono',t.telefono||'');
+        set('t-nombre',    t.user?.name      || '');
+        set('t-apellidos', t.user?.apellidos || '');
+        set('t-email',     t.user?.email     || '');
+        set('t-telefono',  t.telefono        || '');
         document.getElementById('modal-tutor-titulo').textContent = '✏️ Editar tutor';
     }, 50);
 }
@@ -550,11 +573,18 @@ function confirmarEliminar(tipo, id, nombre) {
     document.getElementById('confirm-texto').textContent =
         `Vas a eliminar a "${nombre}". Esta acción no se puede deshacer.`;
     document.getElementById('btn-confirm-ok').onclick = async () => {
-        // await api('DELETE', `/api/coord/${tipo}s/${id}`);
-        if (tipo === 'alumno')  alumnos  = alumnos.filter(x => x.id !== id);
-        if (tipo === 'docente') docentes = docentes.filter(x => x.id !== id);
-        if (tipo === 'tutor')   tutores  = tutores.filter(x => x.id !== id);
-        renderTabla(tipo+'s'); actualizarStats();
+        const ruta = tipo === 'alumno' ? `/api/alumnos/${id}`
+                   : tipo === 'docente' ? `/api/docentes/${id}`
+                   : `/api/tutores/${id}`;
+
+        const r = await api('DELETE', ruta);
+        if (r && r.ok === false) {
+            toast('❌ ' + (r.mensaje || 'Error al eliminar'));
+            cerrarModalUsuario('modal-confirmar');
+            return;
+        }
+
+        await cargarDatos();
         cerrarModalUsuario('modal-confirmar');
         toast(`🗑️ ${nombre} eliminado`);
     };

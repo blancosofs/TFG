@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Alumno;
 use App\Models\Clase;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -51,17 +52,52 @@ class ClaseController extends Controller
      */
     public function index(Request $request)
     {
-        // 1. ¿El Frontend nos está pidiendo las clases de un curso específico?
-        // (Ejemplo de petición del JS: fetch('/api/clases?curso_id=5'))
+        // Modo calendario: expande horarios del docente en eventos con fecha concreta
+        if ($request->has('desde') && $request->has('hasta')) {
+            $docente = Auth::user()->docente;
+            if (!$docente) return response()->json([]);
+
+            $desde = Carbon::parse($request->desde);
+            $hasta = Carbon::parse($request->hasta);
+
+            $horarios = $docente->horarios()->with('clase.curso')->get();
+
+            $diasMap = [
+                'lunes' => 1, 'martes' => 2, 'miercoles' => 3,
+                'jueves' => 4, 'viernes' => 5,
+            ];
+
+            $eventos = [];
+            $current = $desde->copy();
+
+            while ($current->lte($hasta)) {
+                if ($current->dayOfWeekIso <= 5) {
+                    foreach ($horarios as $h) {
+                        if (($diasMap[$h->dia_semana] ?? null) === $current->dayOfWeekIso) {
+                            $eventos[] = [
+                                'fecha'       => $current->format('Y-m-d'),
+                                'hora_inicio' => $h->getRawOriginal('hora_inicio'),
+                                'hora_fin'    => $h->getRawOriginal('hora_fin'),
+                                'materia'     => $h->clase?->nombre ?? '—',
+                                'grupo'       => $h->clase?->curso?->nombre ?? '—',
+                                'aula'        => null,
+                                'clase_id'    => $h->clase_id,
+                            ];
+                        }
+                    }
+                }
+                $current->addDay();
+            }
+
+            return response()->json($eventos);
+        }
+
         if ($request->has('curso_id')) {
             $clases = Clase::where('curso_id', $request->curso_id)->get();
             return response()->json($clases);
-    
         }
 
-        // 2. Si no pide un curso específico, buscamos todas las clases del colegio.
         $colegioId = Auth::user()->colegio_id;
-        
         $clases = Clase::whereHas('curso', function ($query) use ($colegioId) {
             $query->where('colegio_id', $colegioId);
         })->get();

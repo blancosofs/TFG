@@ -301,14 +301,15 @@
 /* ══════════════════════════════════════════════════════════════
    CONFIG
 ══════════════════════════════════════════════════════════════ */
-const API = '';
+const API  = '';
+const CSRF = document.querySelector('meta[name="csrf-token"]')?.content ?? '';
 
 /* ══════════════════════════════════════════════════════════════
    API
 ══════════════════════════════════════════════════════════════ */
 async function api(method, ruta, body) {
     try {
-        const opts = { method, credentials: 'include', headers: { 'Content-Type': 'application/json' } };
+        const opts = { method, credentials: 'include', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF } };
         if (body) opts.body = JSON.stringify(body);
         const r = await fetch(API + ruta, opts);
         return await r.json();
@@ -369,26 +370,28 @@ async function cargarPerfil(usuario) {
     document.getElementById('v-colegio').textContent = usuario.colegio || '—';
 
     // Cargar asignaturas y clases desde la API
-    const clases = await api('GET', `/api/clases?desde=2025-01-01&hasta=2099-12-31`);
-    if (clases && !clases.error) {
-        // Asignaturas únicas
-        const asigs = [...new Set(clases.map(c => c.materia))];
-        const gruposUnicos = [...new Set(clases.map(c => c.grupo).filter(Boolean))];
+    const misClases = await api('GET', '/api/mis-clases');
+    if (misClases && !misClases.error && misClases.length) {
+        // Asignaturas únicas del docente (todas las clases comparten el mismo CSV)
+        const asigs = misClases[0].asignaturas ?? [];
 
-        document.getElementById('stat-clases').textContent      = gruposUnicos.length  || '—';
-        document.getElementById('stat-asignaturas').textContent = asigs.length         || '—';
+        // Clases únicas (identificadores como "1A", "2B")
+        const clasesUnicas = [...new Set(misClases.map(c => c.nombre).filter(Boolean))];
+
+        document.getElementById('stat-clases').textContent      = clasesUnicas.length || '—';
+        document.getElementById('stat-asignaturas').textContent = asigs.length        || '—';
 
         document.getElementById('v-asignaturas').innerHTML = asigs.length
             ? asigs.map(a => `<span class="tag-item">${a}</span>`).join('')
             : '<span class="dato-val">—</span>';
 
-        document.getElementById('v-clases').innerHTML = gruposUnicos.length
-            ? gruposUnicos.map(g => `<span class="tag-item tag-clase">${g}</span>`).join('')
+        document.getElementById('v-clases').innerHTML = clasesUnicas.length
+            ? clasesUnicas.map(g => `<span class="tag-item tag-clase">${g}</span>`).join('')
             : '<span class="dato-val">—</span>';
 
-        // Contar alumnos aproximados (grupos × media)
-        document.getElementById('stat-alumnos').textContent = gruposUnicos.length
-            ? `~${gruposUnicos.length * 25}` : '—';
+        // Contar alumnos aproximados (clases × media)
+        document.getElementById('stat-alumnos').textContent = clasesUnicas.length
+            ? `~${clasesUnicas.length * 25}` : '—';
     }
 }
 
@@ -508,7 +511,7 @@ function previsualizarFoto(input) {
 document.getElementById('btn-logout')?.addEventListener('click', async e => {
     e.preventDefault();
     await api('POST', '/api/logout');
-    window.location.href = '{{ route("/login") }}';
+    window.location.href = '{{ route("login") }}';
 });
 
 /* ── Utilidades ── */
