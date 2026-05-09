@@ -2,9 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Controllers\Formularios\ContactoController; //pones aqui la ruta completa porque esta en carpeta
-use App\Http\Controllers\toDatabase\AdminController; //pones aqui la ruta completa porque esta en carpeta
-//use App\Http\Controllers\AdminController;
+use App\Http\Controllers\Formularios\ContactoController;
+use App\Http\Controllers\toDatabase\AdminController;
 use App\Http\Controllers\AlumnoController;
 use App\Http\Controllers\AusenciaController;
 use App\Http\Controllers\ClaseController;
