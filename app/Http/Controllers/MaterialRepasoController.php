@@ -25,7 +25,7 @@ class MaterialRepasoController extends Controller
     public function create()
     {
         $docente = Auth::user()->docente;
-        $tutores = Tutor::whereHas('user', fn($q) => $q->where('colegio_id', $docente->colegio_id))
+        $tutores = Tutor::whereHas('user', fn($q) => $q->where('colegio_id', $docente->colegio_id)->where('activo', true))
             ->with('user')->get();
         return view('material-repaso.create', compact('tutores'));
     }
@@ -38,8 +38,8 @@ class MaterialRepasoController extends Controller
             'titulo'         => 'required|string|max:255',
             'descripcion'    => 'nullable|string|max:1000',
             'tipo_contenido' => 'required|in:archivo,url_externa',
-            'archivo'        => 'required_if:tipo_contenido,archivo|file|max:51200|mimes:pdf,doc,docx,ppt,pptx,xls,xlsx,jpg,jpeg,png,mp4,zip',
-            'url_externa'    => 'required_if:tipo_contenido,url_externa|url|max:500',
+            'archivo'        => 'nullable|required_if:tipo_contenido,archivo|file|max:51200|mimes:pdf,doc,docx,ppt,pptx,xls,xlsx,jpg,jpeg,png,mp4,zip',
+            'url_externa'    => 'nullable|required_if:tipo_contenido,url_externa|url|max:500',
             'materia'        => 'nullable|string|max:100',
             'tema'           => 'nullable|string|max:150',
             'publicado'      => 'nullable|boolean',
@@ -90,7 +90,7 @@ class MaterialRepasoController extends Controller
     {
         $docente = Auth::user()->docente;
         if ($materialRepaso->docente_id !== $docente->id) abort(403);
-        $tutores = Tutor::whereHas('user', fn($q) => $q->where('colegio_id', $docente->colegio_id))
+        $tutores = Tutor::whereHas('user', fn($q) => $q->where('colegio_id', $docente->colegio_id)->where('activo', true))
             ->with('user')->get();
         $materialRepaso->load('tutores');
         return view('material-repaso.edit', ['material' => $materialRepaso, 'tutores' => $tutores]);

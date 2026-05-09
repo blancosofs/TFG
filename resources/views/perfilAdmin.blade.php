@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -27,7 +27,7 @@
                         <li class="dropdown-rol">Sistema</li>
                         <li class="dropdown-sep"></li>
                         <li><a href="{{ route('perfilAdmin') }}">👤 Mi perfil</a></li>
-                        <li><a href="{{ route('config') }}">⚙️ Configuración</a></li>
+                        <li><a href="{{ route('configPerfiles') }}">⚙️ Configuración</a></li>
                         <li><a href="#" id="btn-logout">Cerrar sesión</a></li>
                     </ul>
                 </li>
@@ -102,7 +102,7 @@
                 <span>Gestión de colegios</span>
                 <span class="link-arrow">›</span>
             </a>
-            <a href="{{ route('config') }}" class="link-rapido">
+            <a href="{{ route('configPerfiles') }}" class="link-rapido">
                 <span class="link-ico">⚙️</span>
                 <span>Configuración</span>
                 <span class="link-arrow">›</span>

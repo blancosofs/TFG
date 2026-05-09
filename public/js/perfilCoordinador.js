@@ -42,19 +42,6 @@ async function api(method, ruta, body) {
     if (data.rol !== 'coordinador') { window.location.href = '/login'; return; }
     sesion = data;
 
-    // Datos de prueba — quitar cuando el servidor esté activo
-    /*sesion = {
-        id: 1,
-        nombre: 'Ana',
-        apellidos: 'Ruiz Sánchez',
-        email: 'aruiz@colegio.es',
-        telefono: '600 111 222',
-        rol: 'coordinador',
-        colegio: 'IES Ejemplo Madrid',
-        colegio_id: 1,
-        ultimo_acceso: new Date().toISOString()
-    };*/
-
     cargarPerfil(sesion);
     await cargarDatos();
 })();
@@ -185,42 +172,6 @@ function cambiarSeccionDesde(seccion) {
    CARGA DE DATOS DEL CENTRO
 ════════════════════════════════════════════ */
 async function cargarDatos() {
-
-    // Cursos y clases de prueba
-    /*cursos = [
-        { id: 1, nombre: '1º ESO' }, { id: 2, nombre: '2º ESO' },
-        { id: 3, nombre: '3º ESO' }, { id: 4, nombre: '4º ESO' },
-    ];
-    clases = [
-        { id: 1, nombre: 'A', curso_id: 1 }, { id: 2, nombre: 'B', curso_id: 1 },
-        { id: 3, nombre: 'A', curso_id: 2 }, { id: 4, nombre: 'B', curso_id: 2 },
-        { id: 5, nombre: 'A', curso_id: 3 }, { id: 6, nombre: 'A', curso_id: 4 },
-    ];
-
-    // Alumnos de prueba
-    alumnos = [
-        { id: 1, nombre: 'Carlos',    apellidos: 'García López',    fnac: '2010-03-15', curso: '1º ESO', clase: 'A', tutor: 'María López' },
-        { id: 2, nombre: 'Lucía',     apellidos: 'Martínez Ruiz',   fnac: '2011-07-22', curso: '1º ESO', clase: 'B', tutor: 'Juan Martínez' },
-        { id: 3, nombre: 'Alejandro', apellidos: 'Sánchez Pérez',   fnac: '2010-11-03', curso: '2º ESO', clase: 'A', tutor: '' },
-    ];
-
-    // Docentes de prueba
-    docentes = [
-        { id: 1, nombre: 'Pedro',   apellidos: 'Fernández Gil', email: 'pfernandez@colegio.es', telefono: '600 111 222', asignaturas: ['Matemáticas', 'Física'] },
-        { id: 2, nombre: 'Carmen',  apellidos: 'Torres Vega',   email: 'ctorres@colegio.es',    telefono: '600 333 444', asignaturas: ['Lengua'] },
-    ];
-
-    // Tutores de prueba
-    tutores = [
-        { id: 1, nombre: 'María', apellidos: 'López Sánchez',   email: 'mlopez@gmail.com',    telefono: '600 987 654', alumnos: ['Carlos García López'] },
-        { id: 2, nombre: 'Juan',  apellidos: 'Martínez García', email: 'jmartinez@gmail.com',  telefono: '600 123 456', alumnos: ['Lucía Martínez Ruiz'] },
-    ];
-
-    renderTabla('alumnos');
-    renderTabla('docentes');
-    renderTabla('tutores');
-    actualizarStats();*/
-
 
     // Pedimos los datos a Laravel
     const resCursos   = await api('GET', '/api/cursos');
@@ -407,35 +358,6 @@ function resetFotoPreview(previewId, emoji, inputId) {
     const input = document.getElementById(inputId);
     if (input) input.value = '';
 }
-
-/*async function guardarAlumno() {
-    const nombre    = v('a-nombre');
-    const apellidos = v('a-apellidos');
-    const cursoId   = v('a-curso');
-    const claseId   = v('a-clase');
-    const tutorId   = v('a-tutor');
-    const fnac      = v('a-fnac');
-
-    if (!nombre || !apellidos || !cursoId || !claseId) {
-        alertModalUsuario('alert-alumno', '⚠️ Nombre, apellidos, curso y clase son obligatorios.'); return;
-    }
-
-    const curso = cursos.find(c => c.id == cursoId);
-    const clase = clases.find(c => c.id == claseId);
-    const tutor = tutores.find(t => t.id == tutorId);
-
-    if (modoModal === 'nuevo') {
-        // await api('POST', '/api/coord/alumnos', { nombre, apellidos, fnac, curso_idCurso: cursoId, clase_idClase: claseId, tutor_id: tutorId||null });
-        alumnos.push({ id: Date.now(), nombre, apellidos, fnac, curso: curso?.nombre||'', clase: clase?.nombre||'', tutor: tutor?`${tutor.nombre} ${tutor.apellidos}`:'' });
-    } else {
-        const idx = alumnos.findIndex(a => a.id === idEditando);
-        if (idx !== -1) alumnos[idx] = { ...alumnos[idx], nombre, apellidos, fnac, curso: curso?.nombre||'', clase: clase?.nombre||'' };
-    }
-
-    renderTabla('alumnos'); actualizarStats();
-    cerrarModalUsuario('modal-alumno');
-    toast(modoModal === 'nuevo' ? '✓ Alumno registrado' : '✓ Alumno actualizado');
-}*/
 
 async function guardarAlumno() {
     const nombre    = v('a-nombre');

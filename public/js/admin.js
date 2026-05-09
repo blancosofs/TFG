@@ -7,11 +7,22 @@ const API = '';
 
 let colegios = [];
 
+const CSRF = document.querySelector('meta[name="csrf-token"]')?.content ?? '';
+
 async function api(method, ruta, body) {
     try {
-        const opts = { method, credentials: 'include', headers: { 'Content-Type': 'application/json' } };
+        const opts = {
+            method,
+            credentials: 'include',
+            headers: {
+                'Content-Type':  'application/json',
+                'Accept':        'application/json',
+                'X-CSRF-TOKEN':  CSRF,
+            }
+        };
         if (body) opts.body = JSON.stringify(body);
         const r = await fetch(API + ruta, opts);
+        if (!r.ok && r.status === 419) return { error: 'Sesión expirada. Recarga la página.' };
         return await r.json();
     } catch (e) {
         return { error: 'Error de conexión con el servidor.' };
@@ -73,8 +84,8 @@ async function guardar() {
         notas    : v('c-notas'),
     });
 
-    if (resColegio.error) {
-        mostrarAlert('err', 'Error al crear el colegio', resColegio.error);
+    if (!resColegio?.ok) {
+        mostrarAlert('err', 'Error al crear el colegio', resColegio.mensaje || resColegio.message || 'Error desconocido.');
         btn.disabled = false;
         btn.textContent = '💾 Registrar colegio y coordinador';
         return;
@@ -91,8 +102,8 @@ async function guardar() {
         password : coordPassword,
     });
 
-    if (resCoord.error) {
-        mostrarAlert('err', 'Colegio creado pero error en el coordinador', resCoord.error);
+    if (!resCoord?.ok) {
+        mostrarAlert('err', 'Colegio creado pero error en el coordinador', resCoord.mensaje || resCoord.message || 'Error desconocido.');
         btn.disabled = false;
         btn.textContent = '💾 Registrar colegio y coordinador';
         return;

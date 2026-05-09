@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -25,7 +25,7 @@
                         <li class="dropdown-rol"><span id="nav-rol">Docente</span></li>
                         <li class="dropdown-sep"></li>
                         <li><a href="{{ route('perfil') }}">👤 Mi perfil</a></li>
-                        <li><a href="{{ route('config') }}">⚙️ Configuración</a></li>
+                        <li><a href="{{ route('configPerfiles') }}">⚙️ Configuración</a></li>
                         <li><a href="#" id="btn-logout">Cerrar sesión</a></li>
                     </ul>
                 </li>
@@ -44,6 +44,15 @@
 
 <main class="mat-main">
 <div class="mat-form-card">
+
+    @if($errors->any())
+    <div class="flash-err">
+        <strong>Corrige los siguientes errores:</strong>
+        <ul style="margin:.4rem 0 0 1.2rem">
+            @foreach($errors->all() as $e)<li>{{ $e }}</li>@endforeach
+        </ul>
+    </div>
+    @endif
 
     <form action="{{ route('material-repaso.store') }}" method="POST" enctype="multipart/form-data">
         @csrf

@@ -25,53 +25,6 @@ async function api(method, ruta, body) {
      cargarPerfil(data);
 })();
 
-// Datos de prueba — quitar cuando el servidor esté activo
-//document.addEventListener('DOMContentLoaded', () => {
-
-/*cargarPerfil({
-    id: 1,
-    nombre: 'María',
-    apellidos: 'López Sánchez',
-    email: 'mlopez@gmail.com',
-    telefono: '600 987 654',
-    rol: 'tutor',
-    colegio: 'IES Ejemplo',
-    ultimo_acceso: new Date().toISOString()
-});
-
-renderHijos([
-    {
-        id: 1,
-        nombre: 'Alejandro',
-        apellidos: 'López García',
-        foto: '',
-        curso: '1º ESO',
-        clase: 'A',
-        colegio: 'IES Ejemplo',
-        parentesco: 'Madre',
-        faltas: 2,
-        docentes: [
-            { nombre: 'Carlos', apellidos: 'García', asignatura: 'Matemáticas' },
-            { nombre: 'Ana',    apellidos: 'Ruiz',   asignatura: 'Lengua' }
-        ]
-    },
-    {
-        id: 2,
-        nombre: 'Sofía',
-        apellidos: 'López García',
-        foto: '',
-        curso: '3º Primaria',
-        clase: 'B',
-        colegio: 'IES Ejemplo',
-        parentesco: 'Madre',
-        faltas: 0,
-        docentes: [
-            { nombre: 'Pedro', apellidos: 'Martínez', asignatura: 'Ciencias' }
-        ]
-    }
-]);
-
-}); // fin DOMContentLoaded*/
 
 /* ── Cargar perfil ── */
 async function cargarPerfil(usuario) {
@@ -171,13 +124,11 @@ function renderHijos(hijosData) {
 }
 
 /* ── Acciones de hijos ── */
-function verFaltas(idAlumno)       { 
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    setTimeout(() => toast('📋 Próximamente: historial de faltas'), 350);
+function verFaltas(idAlumno) {
+    window.location.href = '/faltas';
 }
 function justificarFalta(idAlumno) { 
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    setTimeout(() => toast('✏️ Próximamente: justificación de faltas'), 350);
+    window.location.href = '/faltas/ausencias';
 }
 
 /* ── Contactar docente — abre el modal ── */

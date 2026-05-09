@@ -20,7 +20,7 @@ class TutorController extends Controller
         $tutor = Auth::user()->tutor;
         if (!$tutor) return response()->json([], 403);
 
-        $hijos = $tutor->alumnos()->with([
+        $hijos = $tutor->alumnos()->where('activo', true)->with([
             'clase.docentes.user',
             'clase.curso',
             'colegio',
@@ -59,9 +59,9 @@ class TutorController extends Controller
 
         // 2. Buscamos a los tutores usando "whereHas" para filtrar por la tabla users
         $tutores = Tutor::whereHas('user', function ($query) use ($colegioId) {
-                            $query->where('colegio_id', $colegioId);
+                            $query->where('colegio_id', $colegioId)->where('activo', true);
                         })
-                        ->with(['user', 'alumnos']) // ¡Traemos los datos del usuario y de sus hijos!
+                        ->with(['user', 'alumnos'])
                         ->get();
 
         // 3. Devolvemos el JSON al Frontend

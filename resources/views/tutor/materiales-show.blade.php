@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -17,6 +17,7 @@
             <ul class="menu">
                 <li class="logo"><img src="{{ asset('img/logo.svg') }}" alt="Edunoly"></li>
                 <li><a href="{{ route('index') }}">Inicio</a></li>
+                <li><a href="{{ route('tutor.faltas') }}">Faltas</a></li>
                 <li><a href="{{ route('tutor.materiales.index') }}">← Material</a></li>
                 <li class="derecha menuSesion">
                     <img src="{{ asset('img/perfil.png') }}" class="fotoPerfil" alt="Perfil">
@@ -25,7 +26,7 @@
                         <li class="dropdown-rol"><span id="nav-rol">Tutor legal</span></li>
                         <li class="dropdown-sep"></li>
                         <li><a href="{{ route('perfilFamilia') }}">👤 Mi perfil</a></li>
-                        <li><a href="{{ route('config') }}">⚙️ Configuración</a></li>
+                        <li><a href="{{ route('configPerfiles') }}">⚙️ Configuración</a></li>
                         <li><a href="#" id="btn-logout">Cerrar sesión</a></li>
                     </ul>
                 </li>

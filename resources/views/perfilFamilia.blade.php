@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -21,6 +21,7 @@
                     <img src="{{ asset('img/logo.svg') }}" alt="Edunoly">
                 </li>
                 <li><a href="{{ route('index') }}">Inicio</a></li>
+                <li><a href="{{ route('tutor.faltas') }}">Faltas</a></li>
                 <li><a href="{{ route('tutor.materiales.index') }}">Material</a></li>
                 <li class="activo"><a href="{{ route('perfilFamilia') }}">Mi Perfil</a></li>
 
@@ -31,7 +32,7 @@
                         <li class="dropdown-rol"><span id="nav-rol">Tutor legal</span></li>
                         <li class="dropdown-sep"></li>
                         <li><a href="{{ route('perfilFamilia') }}">👤 Mi perfil</a></li>
-                        <li><a href="{{ route('config') }}">⚙️ Configuración</a></li>
+                        <li><a href="{{ route('configPerfiles') }}">⚙️ Configuración</a></li>
                         <li>
                             <a href="#" id="btn-logout"
                                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
@@ -105,7 +106,7 @@
         <!-- Accesos rápidos -->
         <div class="card-links">
             <p class="card-section-titulo">Accesos rápidos</p>
-            <a href="{{ route('config') }}" class="link-rapido">
+            <a href="{{ route('configPerfiles') }}" class="link-rapido">
                 <span class="link-ico">⚙️</span>
                 <span>Configuración</span>
                 <span class="link-arrow">›</span>

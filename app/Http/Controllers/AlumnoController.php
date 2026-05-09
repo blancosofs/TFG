@@ -16,7 +16,8 @@ class AlumnoController extends Controller
         // 2. Buscamos TODOS los alumnos de ese colegio, 
         // e incluimos ("with") la información de su clase y curso para poder pintarla
         $alumnos = Alumno::where('colegio_id', $colegioId)
-                        ->with(['clase', 'curso']) 
+                        ->where('activo', true)
+                        ->with(['clase', 'curso'])
                         ->get();
 
         // 3. Se lo escupimos al JavaScript de tu compañero en formato JSON

@@ -36,6 +36,9 @@ Route::post('/contacto-enviar', [ContactoController::class, 'enviarConsulta'])->
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth'])->group(function () {
+    // Configuración extendida para usuarios logueados (con notificaciones y perfil dinámico)
+    Route::view('/configuracion-perfil', 'configuracionPerfiles')->name('configPerfiles');
+
     // Tablón (accesible a todos los roles autenticados)
     Route::view('/tablon', 'tablon')->name('tablon');
 
@@ -91,6 +94,9 @@ Route::middleware(['auth'])->group(function () {
             Route::resource('profesores', DocenteController::class)->only(['index', 'show']);
             Route::resource('ausencias', AusenciaController::class)->only(['index', 'create', 'store', 'update', 'edit']);
         });
+
+        // Faltas del tutor
+        Route::view('/faltas', 'tutor.faltas')->name('tutor.faltas');
 
         // Material de Repaso (tutor)
         Route::get('tutor/materiales', [TutorMaterialController::class, 'index'])->name('tutor.materiales.index');

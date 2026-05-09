@@ -88,6 +88,12 @@ class AusenciaController extends Controller
      */
     public function porAlumno($alumnoId)
     {
+        $tutor = Auth::user()->tutor;
+        if (!$tutor) return response()->json([], 403);
+
+        $tieneAcceso = $tutor->alumnos()->where('alumnos.id', $alumnoId)->exists();
+        if (!$tieneAcceso) return response()->json([], 403);
+
         $ausencias = Ausencia::where('alumno_id', $alumnoId)
             ->orderBy('fecha', 'desc')
             ->get(['id', 'fecha', 'tipo', 'justificada', 'justificacion']);
@@ -98,6 +104,12 @@ class AusenciaController extends Controller
 
     public function update(Request $request, Ausencia $ausencia)
     {
+        $tutor = Auth::user()->tutor;
+        if ($tutor) {
+            $tieneAcceso = $tutor->alumnos()->where('alumnos.id', $ausencia->alumno_id)->exists();
+            if (!$tieneAcceso) return response()->json(['ok' => false, 'mensaje' => 'No autorizado.'], 403);
+        }
+
         $ausencia->update($request->only(['justificada', 'justificacion']));
         return response()->json(['ok' => true, 'mensaje' => 'Ausencia actualizada']);
     }

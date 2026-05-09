@@ -72,9 +72,14 @@ const TRADUCCIONES = {
         'config.enlaces':              'Subrayar enlaces',
         'config.enlacesDesc':          'Muestra un subrayado en todos los enlaces para identificarlos más fácilmente.',
         'config.recordatorio':         'Recordatorio de clases',
+        'config.recordatorioDesc':     'Aviso 15 minutos antes de que empiece cada clase.',
         'config.cambios':              'Cambios en el horario',
+        'config.cambiosDesc':          'Notificar cuando el coordinador modifique alguna clase.',
         'config.faltas':               'Nuevas faltas de asistencia',
+        'config.faltasDesc':           'Recibir aviso cuando se registre una falta de un alumno a tu cargo.',
         'config.sonido':               'Sonido de notificaciones',
+        'config.sonidoDesc':           'Reproducir un sonido al recibir una notificación nueva.',
+        'config.notificacionesSub':    'Decide qué notificaciones quieres recibir.',
 
         /* Perfil */
         'perfil.titulo':          'Mi Perfil',
