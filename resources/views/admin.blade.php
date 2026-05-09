@@ -114,8 +114,8 @@
                 <div class="form-sep full"><span>Ubicación</span></div>
 
                 <div class="fgroup full">
-                    <label class="flabel">Calle y número *</label>
-                    <input class="finput" id="c-calle" type="text" placeholder="Ej: C/ Impresores, 2">
+                    <label class="flabel">Dirección *</label>
+                    <input class="finput" id="c-direccion" type="text" placeholder="Ej: Av. de la Constitución, 15 / Rotonda del Parque, s/n">
                 </div>
 
                 <div class="fgroup">

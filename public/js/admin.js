@@ -29,7 +29,7 @@ async function cargarColegios() {
 async function guardar() {
     const nombre    = v('c-nombre');
     const tipo      = v('c-tipo');
-    const calle     = v('c-calle');
+    const direccion     = v('c-direccion');
     const ciudad    = v('c-ciudad');
     const cp        = v('c-cp');
     const telefono  = v('c-telefono');
@@ -40,7 +40,7 @@ async function guardar() {
     const coordEmail     = v('coord-email');
     const coordPassword  = v('coord-password');
 
-    if (!nombre || !tipo || !calle || !ciudad || !cp || !telefono || !email) {
+    if (!nombre || !tipo || !direccion || !ciudad || !cp || !telefono || !email) {
         mostrarAlert('err', 'Campos obligatorios', 'Rellena todos los campos del centro marcados con *.');
         return;
     }
@@ -65,7 +65,7 @@ async function guardar() {
     const resColegio = await api('POST', '/api/admin/colegios', {
         nombre, tipo,
         etapas   : v('c-etapas'),
-        calle, ciudad,
+        direccion, ciudad,
         comunidad: v('c-comunidad'),
         cp, telefono, email,
         web      : v('c-web'),
@@ -115,7 +115,7 @@ async function guardar() {
 }
 
 function limpiarForm() {
-    ['c-nombre','c-tipo','c-etapas','c-calle','c-ciudad','c-comunidad',
+    ['c-nombre','c-tipo','c-etapas','c-direccion','c-ciudad','c-comunidad',
      'c-cp','c-telefono','c-email','c-web','c-alumnos','c-notas',
      'coord-nombre','coord-apellidos','coord-email','coord-telefono','coord-password']
         .forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
