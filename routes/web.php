@@ -2,7 +2,6 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Formularios\ContactoController; //pones aqui la ruta completa porque esta en carpeta
 use App\Http\Controllers\toDatabase\AdminController; //pones aqui la ruta completa porque esta en carpeta
 //use App\Http\Controllers\AdminController;
@@ -16,6 +15,8 @@ use App\Http\Controllers\DocenteController;
 use App\Http\Controllers\HorarioController;
 use App\Http\Controllers\TutorController; 
 use App\Http\Controllers\TablonController;
+use App\Http\Controllers\MaterialRepasoController;
+use App\Http\Controllers\TutorMaterialController;
 
 /*
 |--------------------------------------------------------------------------
@@ -42,7 +43,7 @@ Route::middleware(['auth'])->group(function () {
         Route::view('/calendario', 'calendario')->name('calendario');
         Route::view('/perfilDocente', 'perfilProfesor')->name('perfil');
         Route::view('/pasarLista', 'pasarLista')->name('pasarLista');
-        
+
         // CRUD de Docentes
         Route::prefix('profesor')->as('profesor.')->group(function () {
             Route::resource('mis-clases', ClaseController::class)->only(['index', 'show']);
@@ -50,8 +51,10 @@ Route::middleware(['auth'])->group(function () {
             Route::resource('tutores', TutorController::class)->only(['show']);
             Route::resource('horarios', HorarioController::class)->only(['index']);
             Route::resource('ausencias', AusenciaController::class)->only(['create', 'store', 'index']);
-            
         });
+
+        // Material de Repaso (docente)
+        Route::resource('material-repaso', MaterialRepasoController::class);
     });
 
     // ZONA COORDINADORES
@@ -86,6 +89,11 @@ Route::middleware(['auth'])->group(function () {
             Route::resource('profesores', DocenteController::class)->only(['index', 'show']);
             Route::resource('ausencias', AusenciaController::class)->only(['index', 'create', 'store', 'update', 'edit']);
         });
+
+        // Material de Repaso (tutor)
+        Route::get('tutor/materiales', [TutorMaterialController::class, 'index'])->name('tutor.materiales.index');
+        Route::get('tutor/materiales/{materialRepaso}', [TutorMaterialController::class, 'show'])->name('tutor.materiales.show');
+        Route::get('tutor/materiales/{materialRepaso}/descargar', [TutorMaterialController::class, 'descargar'])->name('tutor.materiales.descargar');
     });
 
     // ZONA ADMIN GLOBAL
@@ -168,5 +176,3 @@ Route::prefix('api')->middleware(['auth'])->group(function () {
 
 // Rutas de autenticación por defecto (Laravel Breeze)
 require __DIR__.'/auth.php';
-
-?>

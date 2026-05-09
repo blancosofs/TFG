@@ -13,6 +13,7 @@ use App\Models\Clase;
 use App\Models\Docente;
 use App\Models\Tutor;
 use App\Models\Alumno;
+use App\Models\MaterialRepaso;
 use Carbon\Carbon;
 
 class MockSeederEstresante extends Seeder
@@ -243,10 +244,78 @@ class MockSeederEstresante extends Seeder
             'titulo'       => 'ESTE ES UN TÍTULO EXTREMADAMENTE LARGO PARA COMPROBAR SI EL DISEÑO DE LAS TARJETAS DEL TABLÓN SE ROMPE O SI SE ADAPTA CORRECTAMENTE A VARIAS LÍNEAS CUANDO UN PROFESOR ESCRIBE EN MAYÚSCULAS.',
             'categoria'    => 'General',
             'dirigido_a'   => 'Todos',
-            'contenido'    => str_repeat('Este es un texto muy largo para probar el scroll. ', 30), // Repite el texto 30 veces
+            'contenido'    => str_repeat('Este es un texto muy largo para probar el scroll. ', 30),
             'clase_id'     => null,
             'created_at'   => now(),
             'updated_at'   => now()
+        ]);
+
+        // ==========================================
+        // 9. MATERIAL DE REPASO
+        // ==========================================
+
+        // Material 1: PDF publicado, asignado a la madre de Hugo → aparece en la vista de tutor
+        $mat1 = MaterialRepaso::create([
+            'docente_id'              => $docente1->id,
+            'colegio_id'              => $colegio->id,
+            'titulo'                  => 'Ejercicios Tema 3: Ecuaciones de Primer Grado',
+            'descripcion'             => 'Batería de ejercicios para repasar antes del examen del martes. Incluye soluciones al final.',
+            'tipo_contenido'          => 'archivo',
+            'archivo_nombre_original' => 'ejercicios_ecuaciones_t3.pdf',
+            'archivo_ruta'            => 'materiales/1/mock_ejercicios_t3.pdf',
+            'archivo_tamaño'          => 524288,
+            'materia'                 => 'Matemáticas',
+            'tema'                    => 'Ecuaciones de Primer Grado',
+            'publicado'               => true,
+        ]);
+        DB::table('material_repaso_tutor')->insert([
+            'material_repaso_id' => $mat1->id,
+            'tutor_id'           => $tutor1->id,
+        ]);
+
+        // Material 2: URL externa publicada, asignada a la madre → aparece en la vista de tutor
+        $mat2 = MaterialRepaso::create([
+            'docente_id'     => $docente1->id,
+            'colegio_id'     => $colegio->id,
+            'titulo'         => 'Video Repaso: Sistemas de Ecuaciones (Khan Academy)',
+            'descripcion'    => 'Video de Khan Academy sobre resolución de sistemas por sustitución. Recomendado ver antes del examen.',
+            'tipo_contenido' => 'url_externa',
+            'url_externa'    => 'https://es.khanacademy.org/math/algebra',
+            'materia'        => 'Matemáticas',
+            'tema'           => 'Sistemas de Ecuaciones',
+            'publicado'      => true,
+        ]);
+        DB::table('material_repaso_tutor')->insert([
+            'material_repaso_id' => $mat2->id,
+            'tutor_id'           => $tutor1->id,
+        ]);
+
+        // Material 3: PDF en borrador (no publicado) → docente lo ve en su lista pero el tutor NO lo ve
+        MaterialRepaso::create([
+            'docente_id'              => $docente2->id,
+            'colegio_id'              => $colegio->id,
+            'titulo'                  => 'Guía de Repaso: El Romanticismo [BORRADOR]',
+            'descripcion'             => 'Resumen del movimiento romántico pendiente de revisión antes de publicar.',
+            'tipo_contenido'          => 'archivo',
+            'archivo_nombre_original' => 'romanticismo_borrador.pdf',
+            'archivo_ruta'            => 'materiales/2/mock_romanticismo.pdf',
+            'archivo_tamaño'          => 204800,
+            'materia'                 => 'Lengua Castellana',
+            'tema'                    => 'El Romanticismo',
+            'publicado'               => false,
+        ]);
+
+        // Material 4: URL publicada sin tutores asignados → docente lo ve, ningún tutor lo recibe
+        MaterialRepaso::create([
+            'docente_id'     => $docente2->id,
+            'colegio_id'     => $colegio->id,
+            'titulo'         => 'Documental: La Revolución Francesa',
+            'descripcion'    => 'Documental educativo recomendado para afianzar el Tema 5. Pendiente de asignar destinatarios.',
+            'tipo_contenido' => 'url_externa',
+            'url_externa'    => 'https://www.youtube.com/results?search_query=revolucion+francesa+documental',
+            'materia'        => 'Historia',
+            'tema'           => 'La Revolución Francesa',
+            'publicado'      => true,
         ]);
     }
 }

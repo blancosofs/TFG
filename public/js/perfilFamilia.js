@@ -26,7 +26,7 @@ async function api(method, ruta, body) {
 })();
 
 // Datos de prueba — quitar cuando el servidor esté activo
-document.addEventListener('DOMContentLoaded', () => {
+//document.addEventListener('DOMContentLoaded', () => {
 
 /*cargarPerfil({
     id: 1,
@@ -368,5 +368,3 @@ function toast(msg) {
     t.textContent = msg; t.classList.add('show');
     setTimeout(() => t.classList.remove('show'), 3000);
 }
-
-});

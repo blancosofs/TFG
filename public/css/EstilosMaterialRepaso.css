@@ -1,0 +1,430 @@
+/* ══════════════════════════════════════════════════════════════
+   Edunoly · EstilosMaterialRepaso.css
+   Usa siempre variables de temas.css — sin colores hardcodeados
+══════════════════════════════════════════════════════════════ */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: var(--fondo);
+    color: var(--texto);
+    min-height: 100vh;
+}
+
+/* ── Navegación (idéntica a EstilosPerfil) ── */
+.barraNav {
+    background: linear-gradient(to right, var(--nav-inicio), var(--nav-fin));
+    padding: 0 40px;
+}
+
+.menu { display: flex; align-items: center; list-style: none; margin: 0 auto; padding: 0; max-width: 1800px; }
+.menu .derecha { margin-left: auto; }
+.menu li a { text-decoration: none; color: var(--nav-texto); padding: 20px; display: block; transition: background .15s; }
+.menu li a:hover, .menu li.activo > a { background-color: var(--nav-hover); }
+.logo { display: inline-block; padding: 20px; }
+.logo img { vertical-align: middle; }
+
+.menuSesion { position: relative; display: flex; align-items: center; margin-left: 20px; }
+.fotoPerfil { width: 30px; height: 30px; border-radius: 50%; cursor: pointer; object-fit: cover; display: block; }
+
+.dropdown {
+    position: absolute; top: 100%; right: 0; margin-top: 8px;
+    background: white; min-width: 180px; list-style: none; padding: 8px 0;
+    border-radius: 8px; box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    opacity: 0; visibility: hidden; transform: translateY(-10px);
+    transition: all 0.2s ease; z-index: 1000;
+}
+.dropdown.show { opacity: 1; visibility: visible; transform: translateY(0); }
+.menu > li { position: relative; }
+.dropdown li a { display: block; padding: 10px 15px; text-decoration: none; color: #333; }
+.dropdown li a:hover { background-color: #f2f2f2; }
+.dropdown-nombre { padding: 10px 15px 2px; font-size: 13px; font-weight: 700; color: #111; }
+.dropdown-rol    { padding: 0 15px 8px; font-size: 11px; color: #888; border-bottom: 1px solid #eee; }
+.dropdown-sep    { height: 1px; background: #eee; margin: 4px 0; }
+
+/* ── Hero ── */
+.mat-hero {
+    background: linear-gradient(135deg, var(--fondo-oscuro) 0%, var(--fondo) 100%);
+    border-bottom: 1px solid color-mix(in srgb, var(--texto) 10%, transparent);
+    padding: 2.5rem 40px 2rem;
+}
+
+.mat-hero-inner { max-width: 1100px; margin: 0 auto; }
+
+.mat-etiqueta {
+    font-size: 11px; font-weight: 700; letter-spacing: .14em;
+    text-transform: uppercase; color: var(--acento); margin-bottom: .3rem;
+}
+
+.mat-hero h1 {
+    font-size: clamp(22px, 3vw, 30px); font-weight: 700;
+    color: var(--texto); margin-bottom: .3rem;
+}
+
+.mat-hero-sub { font-size: 13px; color: var(--texto-suave); }
+
+/* ── Main container ── */
+.mat-main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2rem 40px;
+}
+
+/* ── Flash ── */
+.flash-ok {
+    background: color-mix(in srgb, var(--acento) 15%, transparent);
+    color: var(--acento);
+    border: 1px solid color-mix(in srgb, var(--acento) 30%, transparent);
+    border-radius: 10px;
+    padding: .75rem 1.25rem;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+}
+
+/* ── Cabecera de sección con botón ── */
+.mat-cabecera {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.mat-cabecera h2 { font-size: 1.15rem; font-weight: 700; color: var(--texto); }
+
+/* ── Botones ── */
+.btn-crear {
+    display: inline-block;
+    padding: .55rem 1.25rem;
+    background: var(--acento);
+    color: var(--texto-sobre-claro);
+    border: none;
+    border-radius: 8px;
+    font-size: .9rem;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+    transition: opacity .15s;
+}
+.btn-crear:hover { opacity: .85; }
+
+.btn-accion {
+    display: inline-block;
+    padding: .3rem .75rem;
+    border-radius: 6px;
+    font-size: .8rem;
+    font-weight: 600;
+    text-decoration: none;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: opacity .15s;
+}
+.btn-accion:hover { opacity: .8; }
+
+.btn-ver {
+    background: color-mix(in srgb, var(--acento) 15%, transparent);
+    color: var(--acento);
+    border-color: color-mix(in srgb, var(--acento) 30%, transparent);
+}
+
+.btn-editar-accion {
+    background: color-mix(in srgb, var(--texto) 10%, transparent);
+    color: var(--texto);
+    border-color: color-mix(in srgb, var(--texto) 15%, transparent);
+}
+
+.btn-eliminar {
+    background: color-mix(in srgb, #ef4444 15%, transparent);
+    color: #ef4444;
+    border-color: color-mix(in srgb, #ef4444 30%, transparent);
+}
+
+.btn-descargar {
+    background: color-mix(in srgb, var(--acento) 20%, transparent);
+    color: var(--acento);
+    border: 1px solid color-mix(in srgb, var(--acento) 35%, transparent);
+    padding: .4rem 1rem;
+    border-radius: 8px;
+    font-weight: 700;
+    text-decoration: none;
+    display: inline-block;
+    transition: opacity .15s;
+}
+.btn-descargar:hover { opacity: .8; }
+
+.btn-enlace {
+    background: color-mix(in srgb, var(--borde) 30%, transparent);
+    color: var(--texto);
+    border: 1px solid color-mix(in srgb, var(--texto) 15%, transparent);
+    padding: .4rem 1rem;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-block;
+    transition: opacity .15s;
+}
+.btn-enlace:hover { opacity: .8; }
+
+.btn-submit {
+    padding: .6rem 1.5rem;
+    background: var(--acento);
+    color: var(--texto-sobre-claro);
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity .15s;
+}
+.btn-submit:hover { opacity: .85; }
+
+.btn-cancelar {
+    padding: .6rem 1.5rem;
+    background: transparent;
+    color: var(--texto-suave);
+    border: 1px solid color-mix(in srgb, var(--texto) 20%, transparent);
+    border-radius: 8px;
+    font-size: 1rem;
+    text-decoration: none;
+    display: inline-block;
+    transition: opacity .15s;
+}
+.btn-cancelar:hover { opacity: .7; }
+
+/* ── Tabla ── */
+.mat-tabla {
+    width: 100%;
+    border-collapse: collapse;
+    background: color-mix(in srgb, var(--texto) 3%, transparent);
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid color-mix(in srgb, var(--texto) 10%, transparent);
+}
+
+.mat-tabla th {
+    background: color-mix(in srgb, var(--texto) 8%, transparent);
+    color: var(--texto-suave);
+    font-size: .75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    padding: .75rem 1rem;
+    text-align: left;
+}
+
+.mat-tabla td {
+    padding: .85rem 1rem;
+    border-top: 1px solid color-mix(in srgb, var(--texto) 8%, transparent);
+    color: var(--texto);
+    vertical-align: middle;
+}
+
+.mat-tabla td strong { color: var(--texto); }
+.mat-tabla td small { color: var(--texto-suave); font-size: .8rem; }
+
+/* ── Badges ── */
+.badge {
+    display: inline-block;
+    padding: .2rem .65rem;
+    border-radius: 20px;
+    font-size: .75rem;
+    font-weight: 700;
+}
+
+.badge-pub {
+    background: color-mix(in srgb, var(--acento) 18%, transparent);
+    color: var(--acento);
+    border: 1px solid color-mix(in srgb, var(--acento) 35%, transparent);
+}
+
+.badge-bor {
+    background: color-mix(in srgb, var(--texto) 10%, transparent);
+    color: var(--texto-suave);
+    border: 1px solid color-mix(in srgb, var(--texto) 15%, transparent);
+}
+
+.badge-tipo {
+    background: color-mix(in srgb, var(--texto) 8%, transparent);
+    color: var(--texto-suave);
+    border: 1px solid color-mix(in srgb, var(--texto) 12%, transparent);
+}
+
+.badge-num {
+    background: color-mix(in srgb, var(--acento) 12%, transparent);
+    color: var(--acento);
+}
+
+/* ── Estado vacío ── */
+.mat-vacio {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--texto-suave);
+    background: color-mix(in srgb, var(--texto) 3%, transparent);
+    border-radius: 12px;
+    border: 1px solid color-mix(in srgb, var(--texto) 8%, transparent);
+}
+
+.mat-vacio p { margin-bottom: 1rem; font-size: 1rem; }
+
+/* ── Tarjeta de detalle ── */
+.mat-detalle {
+    background: color-mix(in srgb, var(--texto) 4%, transparent);
+    border: 1px solid color-mix(in srgb, var(--texto) 10%, transparent);
+    border-radius: 16px;
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+}
+
+.mat-detalle h1 { font-size: 1.5rem; font-weight: 700; color: var(--texto); margin-bottom: .75rem; }
+
+.mat-meta { display: flex; gap: .5rem; flex-wrap: wrap; margin-bottom: 1rem; }
+
+.mat-descripcion { color: var(--texto-suave); font-size: .95rem; margin-bottom: 1.25rem; line-height: 1.6; }
+
+.mat-sep { border: none; border-top: 1px solid color-mix(in srgb, var(--texto) 10%, transparent); margin: 1.25rem 0; }
+
+.mat-dato { margin-bottom: .75rem; }
+.mat-dato-lbl { font-size: .8rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--texto-suave); margin-bottom: .2rem; }
+.mat-dato-val { color: var(--texto); font-size: .95rem; }
+.mat-dato-val a { color: var(--acento); text-decoration: underline; word-break: break-all; }
+
+.mat-tutores-wrap { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .5rem; }
+.mat-tutor-tag {
+    background: color-mix(in srgb, var(--texto) 8%, transparent);
+    border: 1px solid color-mix(in srgb, var(--texto) 12%, transparent);
+    border-radius: 6px;
+    padding: .25rem .65rem;
+    font-size: .85rem;
+    color: var(--texto-suave);
+}
+
+.mat-acciones { display: flex; gap: .75rem; margin-top: 1.5rem; flex-wrap: wrap; }
+
+/* ── Tarjetas de lista (vista tutor) ── */
+.mat-card-lista {
+    background: color-mix(in srgb, var(--texto) 4%, transparent);
+    border: 1px solid color-mix(in srgb, var(--texto) 10%, transparent);
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    transition: border-color .15s;
+}
+
+.mat-card-lista:hover { border-color: color-mix(in srgb, var(--acento) 40%, transparent); }
+
+.mat-card-info h3 { font-size: 1rem; font-weight: 700; color: var(--texto); margin-bottom: .3rem; }
+.mat-card-info p  { font-size: .85rem; color: var(--texto-suave); margin-top: .3rem; line-height: 1.5; }
+.mat-card-acciones { display: flex; gap: .5rem; flex-shrink: 0; }
+
+/* ── Formularios ── */
+.mat-form-card {
+    background: color-mix(in srgb, var(--texto) 4%, transparent);
+    border: 1px solid color-mix(in srgb, var(--texto) 10%, transparent);
+    border-radius: 16px;
+    padding: 2rem;
+    max-width: 720px;
+    margin: 0 auto;
+}
+
+.mat-form-card h1 { font-size: 1.4rem; font-weight: 700; color: var(--texto); margin-bottom: 1.5rem; }
+
+.fgroup { margin-bottom: 1.25rem; }
+
+.flabel {
+    display: block;
+    font-size: .85rem;
+    font-weight: 700;
+    color: var(--texto-suave);
+    margin-bottom: .4rem;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+}
+
+.finput {
+    width: 100%;
+    padding: .55rem .85rem;
+    background: var(--input-fondo);
+    color: var(--input-texto);
+    border: 1px solid var(--input-borde);
+    border-radius: 8px;
+    font-size: .95rem;
+    transition: border-color .15s;
+    box-sizing: border-box;
+}
+
+.finput:focus {
+    outline: none;
+    border-color: var(--acento);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--acento) 14%, transparent);
+}
+
+.finput::placeholder { color: var(--input-placeholder); }
+
+.finput.is-invalid { border-color: #ef4444; }
+.invalid-feedback { color: #ef4444; font-size: .82rem; margin-top: .25rem; }
+
+.frow { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+.radio-fila { display: flex; gap: 1.5rem; margin-top: .25rem; }
+.radio-opcion { display: flex; align-items: center; gap: .4rem; cursor: pointer; color: var(--texto); font-size: .9rem; }
+.radio-opcion input[type="radio"] { accent-color: var(--acento); }
+
+.tutores-scroll {
+    max-height: 200px;
+    overflow-y: auto;
+    background: var(--input-fondo);
+    border: 1px solid var(--input-borde);
+    border-radius: 8px;
+    padding: .5rem;
+}
+
+.tutor-item { display: flex; align-items: center; gap: .5rem; padding: .3rem .5rem; border-radius: 4px; }
+.tutor-item:hover { background: color-mix(in srgb, var(--acento) 8%, transparent); }
+.tutor-item input[type="checkbox"] { accent-color: var(--acento); flex-shrink: 0; }
+.tutor-item label { color: var(--texto); font-size: .9rem; cursor: pointer; }
+
+.check-publicar { display: flex; align-items: center; gap: .5rem; }
+.check-publicar input[type="checkbox"] { accent-color: var(--acento); width: 16px; height: 16px; }
+.check-publicar label { color: var(--texto); font-size: .9rem; cursor: pointer; }
+
+.info-actual {
+    background: color-mix(in srgb, var(--texto) 6%, transparent);
+    border: 1px solid color-mix(in srgb, var(--texto) 12%, transparent);
+    border-radius: 8px;
+    padding: .65rem 1rem;
+    color: var(--texto-suave);
+    font-size: .9rem;
+}
+
+.info-actual small { color: var(--texto-muy-suave); font-size: .8rem; display: block; margin-top: .2rem; }
+
+.form-acciones { display: flex; gap: 1rem; margin-top: 1.75rem; }
+
+/* ── Toast ── */
+.toast {
+    position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(20px);
+    background: color-mix(in srgb, var(--acento) 20%, var(--fondo-oscuro) 80%);
+    color: var(--texto); padding: .75rem 1.5rem; border-radius: 10px;
+    font-size: .9rem; font-weight: 600; opacity: 0; pointer-events: none;
+    transition: all .3s; z-index: 9999;
+    border: 1px solid color-mix(in srgb, var(--acento) 30%, transparent);
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ── Paginación ── */
+.mat-paginacion { margin-top: 1.5rem; }
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+    .mat-main { padding: 1.25rem; }
+    .mat-hero { padding: 1.5rem 1.25rem; }
+    .mat-cabecera { flex-direction: column; align-items: flex-start; gap: .75rem; }
+    .mat-tabla { font-size: .85rem; }
+    .mat-tabla th, .mat-tabla td { padding: .6rem .75rem; }
+    .frow { grid-template-columns: 1fr; }
+    .mat-card-lista { flex-direction: column; align-items: flex-start; }
+}

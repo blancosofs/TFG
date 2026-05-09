@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Attributes\Fillable;
 
 class Colegio extends Model
 {
@@ -11,7 +10,7 @@ class Colegio extends Model
 
     protected $fillable = [
         'nombre', 'entidad', 'direccion', 'activo',
-        'tipo', 'etapas', 'calle', 'ciudad', 'comunidad',
+        'tipo', 'etapas', 'ciudad', 'comunidad',
         'cp', 'telefono', 'email', 'web', 'num_alumnos', 'notas',
     ];
 
