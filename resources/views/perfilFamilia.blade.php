@@ -21,7 +21,7 @@
                     <img src="{{ asset('img/logo.svg') }}" alt="Edunoly">
                 </li>
                 <li><a href="{{ route('index') }}">Inicio</a></li>
-                <li><a href="{{ route('contacto') }}">Contacto</a></li>
+                <li><a href="{{ route('tutor.materiales.index') }}">Material</a></li>
                 <li class="activo"><a href="{{ route('perfilFamilia') }}">Mi Perfil</a></li>
 
                 <li class="derecha menuSesion">

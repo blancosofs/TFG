@@ -42,12 +42,11 @@ const CATEGORIAS = {
 (async () => {
     const data = await api('GET', '/api/me');
     if (!data?.id) { window.location.href = '/login'; return; }
-    if (data.rol !== 'docente' && data.rol !== 'tutor') { window.location.href = '/login'; return; }
     sesion = data;
 
     configurarVistaPorRol();
     await cargarAnuncios();
-    cargarClasesEnModal();
+    if (sesion.rol === 'docente' || sesion.rol === 'coordinador') cargarClasesEnModal();
 })();
 
 /* ════════════════════════════════════════════
@@ -55,22 +54,23 @@ const CATEGORIAS = {
 ════════════════════════════════════════════ */
 function configurarVistaPorRol() {
     const nombre = `${sesion.nombre} ${sesion.apellidos}`;
-    document.getElementById('nav-nombre').textContent    = nombre;
-    document.getElementById('nav-rol-label').textContent = sesion.rol === 'docente' ? 'Docente' : 'Tutor legal';
+    document.getElementById('nav-nombre').textContent = nombre;
 
-// Links de navegación según rol
-    if (sesion.rol === 'docente') {
-        document.getElementById('nav-inicio').href      = '/calendario';
-        document.getElementById('nav-perfil-link').href = '/perfilDocente'; // Usa el nombre de la ruta web.php
-        document.getElementById('nav-mi-perfil').href   = '/perfilDocente';
-        // Solo el docente puede publicar
-        document.getElementById('hero-acciones').style.display = 'block';
-    } else {
-        document.getElementById('nav-inicio').href      = '/perfilFamilia';
-        document.getElementById('nav-perfil-link').href = '/perfilFamilia';
-        document.getElementById('nav-mi-perfil').href   = '/perfilFamilia';
-        document.getElementById('hero-acciones').style.display = 'none';
-    }
+    const etiquetas = { docente: 'Docente', tutor: 'Tutor legal', coordinador: 'Coordinador', admin: 'Administrador' };
+    document.getElementById('nav-rol-label').textContent = etiquetas[sesion.rol] ?? sesion.rol;
+
+    const nav = {
+        docente:     { inicio: '/calendario',        secundario: null,              perfil: '/perfilDocente',     publicar: true  },
+        tutor:       { inicio: '/',                  secundario: null,              perfil: '/perfilFamilia',     publicar: false },
+        coordinador: { inicio: '/dashboard',         secundario: null,              perfil: '/perfilCoordinador', publicar: true  },
+        admin:       { inicio: '/admin',             secundario: null,              perfil: '/perfilAdmin',       publicar: false },
+    };
+    const cfg = nav[sesion.rol] ?? nav.tutor;
+
+    document.getElementById('nav-inicio').href      = cfg.inicio;
+    document.getElementById('nav-perfil-link').href = cfg.perfil;
+    document.getElementById('nav-mi-perfil').href   = cfg.perfil;
+    document.getElementById('hero-acciones').style.display = cfg.publicar ? 'block' : 'none';
 }
 
 /* ════════════════════════════════════════════

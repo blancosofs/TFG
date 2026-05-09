@@ -37,6 +37,9 @@ Route::post('/contacto-enviar', [ContactoController::class, 'enviarConsulta'])->
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth'])->group(function () {
+    // Tablón (accesible a todos los roles autenticados)
+    Route::view('/tablon', 'tablon')->name('tablon');
+
     // ZONA DOCENTES
     Route::middleware(['role:docente'])->group(function () {
         // Vistas

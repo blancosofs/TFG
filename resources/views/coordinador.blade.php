@@ -21,8 +21,10 @@
                         <span></span><span></span><span></span>
                     </button>
                 </li>
-                <li class="activo"><a href="{{ route('coordinador') }}">Mi centro</a></li>
-                <li><a href="{{ route('config') }}">Configuración</a></li>
+                <li><a href="{{ route('index') }}">Inicio</a></li>
+                <li class="activo"><a href="{{ route('coordinador') }}">Mi Centro</a></li>
+                <li><a href="{{ route('tablon') }}">Tablón</a></li>
+                <li><a href="{{ route('perfilCoordinador') }}">Mi Perfil</a></li>
 
                 <li class="derecha menuSesion">
                     <img src="{{ asset('img/perfil.png') }}" class="fotoPerfil" alt="Perfil">

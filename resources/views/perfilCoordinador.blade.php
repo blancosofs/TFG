@@ -23,10 +23,12 @@
                         <span></span><span></span><span></span>
                     </button>
                 </li>
+                <li><a href="{{ route('index') }}">Inicio</a></li>
+                <li><a href="{{ route('coordinador') }}">Mi Centro</a></li>
+                <li><a href="{{ route('tablon') }}">Tablón</a></li>
                 <li class="activo"><a href="{{ route('perfilCoordinador') }}">Mi Perfil</a></li>
-                <li><a href="{{ route('config') }}">Configuración</a></li>
                 <li class="derecha menuSesion">
-                    <img src="perfil.png" class="fotoPerfil" alt="Perfil">
+                    <img src="{{ asset('img/perfil.png') }}" class="fotoPerfil" alt="Perfil">
                     <ul class="dropdown">
                         <li class="dropdown-nombre"><span id="nav-nombre">Coordinador</span></li>
                         <li class="dropdown-rol">Coordinador</li>
