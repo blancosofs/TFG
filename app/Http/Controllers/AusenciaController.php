@@ -43,7 +43,7 @@ class AusenciaController extends Controller
         $request->validate([
             'fecha'                  => 'required|date',
             'clase_id'               => 'required|integer|exists:clases,id',
-            'registros'              => 'required|array',
+            'registros'              => 'nullable|array',
             'registros.*.alumno_id'  => 'required|integer|exists:alumnos,id',
             'registros.*.estado'     => 'required|in:ausente,retraso',
             'registros.*.nota'       => 'nullable|string|max:500',
@@ -56,13 +56,14 @@ class AusenciaController extends Controller
 
         try {
             DB::transaction(function () use ($request, $docente) {
-                // Borramos las ausencias previas del mismo día y clase para evitar duplicados
+                // Borrar TODAS las ausencias previas de esta clase/fecha para evitar duplicados
+                $alumnoIds = \App\Models\Alumno::where('clase_id', $request->clase_id)->pluck('id');
                 Ausencia::where('fecha', $request->fecha)
                     ->where('docente_id', $docente->id)
-                    ->whereIn('alumno_id', collect($request->registros)->pluck('alumno_id'))
+                    ->whereIn('alumno_id', $alumnoIds)
                     ->delete();
 
-                foreach ($request->registros as $reg) {
+                foreach ($request->registros ?? [] as $reg) {
                     Ausencia::create([
                         'fecha'         => $request->fecha,
                         'tipo'          => $reg['estado'] === 'retraso' ? 'retraso' : 'falta',

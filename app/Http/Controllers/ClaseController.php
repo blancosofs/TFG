@@ -39,7 +39,11 @@ class ClaseController extends Controller
      */
     public function visualizarAlumnos($id)
     {
-        $alumnos = Alumno::where('clase_id', $id)
+        $colegioId = Auth::user()->colegio_id;
+        $clase = Clase::whereHas('curso', fn($q) => $q->where('colegio_id', $colegioId))
+            ->findOrFail($id);
+
+        $alumnos = Alumno::where('clase_id', $clase->id)
             ->where('activo', true)
             ->orderBy('apellidos')
             ->get(['id', 'nombre', 'apellidos']);

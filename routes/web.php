@@ -160,8 +160,9 @@ Route::prefix('api')->middleware(['auth'])->group(function () {
     Route::get('/tablon', [TablonController::class, 'apiIndex']);
 
     Route::middleware(['role:admin'])->group(function () {
-        Route::get('/admin/colegios',  [ColegioController::class, 'apiIndex']);
-        Route::post('/admin/colegios', [ColegioController::class, 'apiStore']);
+        Route::get('/admin/colegios',  [ColegioController::class, 'index']);
+        Route::post('/admin/colegios', [ColegioController::class, 'store']);
+        Route::post('/admin/colegios/{id}/coordinador', [CoordinadorController::class, 'storeForColegio']);
     });
 });
 

@@ -22,6 +22,47 @@ class CoordinadorController extends Controller
 
 
     /**
+     * Crea el coordinador de un colegio concreto (usado desde el panel admin).
+     */
+    public function storeForColegio(Request $request, $colegioId)
+    {
+        if (Coordinador::where('colegio_id', $colegioId)->exists()) {
+            return response()->json(['ok' => false, 'mensaje' => 'Este colegio ya tiene un coordinador asignado.'], 422);
+        }
+
+        $request->validate([
+            'nombre'    => 'required|string|max:25',
+            'apellidos' => 'required|string|max:60',
+            'email'     => 'required|email|unique:users,email',
+            'telefono'  => 'nullable|string|max:20',
+            'password'  => 'required|min:8',
+        ]);
+
+        try {
+            DB::transaction(function () use ($request, $colegioId) {
+                $user = User::create([
+                    'name'       => $request->nombre,
+                    'apellidos'  => $request->apellidos,
+                    'email'      => $request->email,
+                    'password'   => Hash::make($request->password),
+                    'colegio_id' => $colegioId,
+                    'activo'     => true,
+                ]);
+
+                Coordinador::create([
+                    'colegio_id' => $colegioId,
+                    'user_id'    => $user->id,
+                ]);
+            });
+
+            return response()->json(['ok' => true, 'mensaje' => 'Coordinador creado con éxito']);
+
+        } catch (\Exception $e) {
+            return response()->json(['ok' => false, 'mensaje' => $e->getMessage()], 500);
+        }
+    }
+
+    /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)

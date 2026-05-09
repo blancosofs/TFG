@@ -12,10 +12,21 @@ class ColegioController extends Controller
      */
     public function index()
     {
-        $colegios = Colegio::all();
+        $colegios = Colegio::with('coordinador.user')->get();
 
         if (request()->wantsJson()) {
-            return response()->json($colegios);
+            return response()->json($colegios->map(fn($c) => [
+                'id'       => $c->id,
+                'nombre'   => $c->nombre,
+                'tipo'     => $c->tipo,
+                'ciudad'   => $c->ciudad,
+                'cp'       => $c->cp,
+                'coordinador' => $c->coordinador ? [
+                    'nombre'    => $c->coordinador->user->name,
+                    'apellidos' => $c->coordinador->user->apellidos,
+                    'email'     => $c->coordinador->user->email,
+                ] : null,
+            ]));
         }
 
         return view('colegios.index', compact('colegios'));
@@ -35,16 +46,41 @@ class ColegioController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-        'nombre' => 'required|string|max:100',
-        'entidad' => 'required|string|max:100',
-        'direccion' => 'required|string|max:100',
-        'activo' => 'required|boolean'
-    ]);
+            'nombre'      => 'required|string|max:100',
+            'tipo'        => 'nullable|string|max:50',
+            'etapas'      => 'nullable|string|max:100',
+            'calle'       => 'nullable|string|max:100',
+            'ciudad'      => 'nullable|string|max:100',
+            'comunidad'   => 'nullable|string|max:100',
+            'cp'          => 'nullable|string|size:5|regex:/^\d{5}$/',
+            'telefono'    => 'nullable|string|max:20',
+            'email'       => 'nullable|email|max:100',
+            'web'         => 'nullable|url|max:255',
+            'alumnos'     => 'nullable|integer|min:1',
+            'notas'       => 'nullable|string|max:1000',
+        ]);
 
-    // Si todo está bien, lo guardamos
-        Colegio::create($request->all());
+        $colegio = Colegio::create([
+            'nombre'      => $request->nombre,
+            'tipo'        => $request->tipo,
+            'etapas'      => $request->etapas,
+            'calle'       => $request->calle,
+            'ciudad'      => $request->ciudad,
+            'comunidad'   => $request->comunidad,
+            'cp'          => $request->cp,
+            'telefono'    => $request->telefono,
+            'email'       => $request->email,
+            'web'         => $request->web,
+            'num_alumnos' => $request->alumnos,
+            'notas'       => $request->notas,
+            'activo'      => true,
+        ]);
 
-        return redirect()->back()->with('success', 'Colegio creada correctamente.');
+        if (request()->wantsJson()) {
+            return response()->json(['ok' => true, 'id' => $colegio->id, 'nombre' => $colegio->nombre]);
+        }
+
+        return redirect()->back()->with('success', 'Colegio creado correctamente.');
     }
 
     /**

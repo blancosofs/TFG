@@ -386,8 +386,4 @@ document.querySelectorAll('.modal-overlay').forEach(o => {
     });
 });
 
-document.getElementById('btn-logout')?.addEventListener('click', async e => {
-    e.preventDefault();
-    await api('POST', '/api/logout');
-    window.location.href = '/login';
-});
+// El logout se gestiona desde el formulario Blade (#logout-form)

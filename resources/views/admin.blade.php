@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Edunoly · Panel de Administración</title>
     <script src="{{ asset('js/temas.js') }}"></script>
     <link rel="stylesheet" href="{{ asset('css/temas.css') }}">
@@ -472,13 +473,22 @@
 <script src="{{ asset('js/temas.js') }}"></script>
 <script src="{{ asset('js/MenuSesion.js') }}"></script>
 <script>
-const API = '/api';
+const API  = '/api';
+const CSRF = document.querySelector('meta[name="csrf-token"]')?.content ?? '';
 
 let colegios = [];
 
 async function api(method, ruta, body) {
     try {
-        const opts = { method, credentials: 'include', headers: { 'Content-Type': 'application/json' } };
+        const opts = {
+            method,
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': CSRF,
+            },
+        };
         if (body) opts.body = JSON.stringify(body);
         const r = await fetch(API + ruta, opts);
         return await r.json();

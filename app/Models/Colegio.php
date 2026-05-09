@@ -9,14 +9,18 @@ class Colegio extends Model
 {
     protected $table = 'colegios';
 
-    protected $fillable = ['nombre', 'entidad', 'direccion', 'activo'];
+    protected $fillable = [
+        'nombre', 'entidad', 'direccion', 'activo',
+        'tipo', 'etapas', 'calle', 'ciudad', 'comunidad',
+        'cp', 'telefono', 'email', 'web', 'num_alumnos', 'notas',
+    ];
 
     protected $casts = ['activo' => 'boolean'];
 
-    //Relación 1:1 - Un colegio tiene un coordinador!
+    // Un colegio tiene un coordinador (coordinadores.colegio_id)
     public function coordinador()
     {
-        return $this->belongsTo(Coordinador::class);
+        return $this->hasOne(Coordinador::class);
     }
 
     //Relación 1:N - Un colegio tiene varios ... !
