@@ -80,20 +80,34 @@ async function cargarAnuncios() {
     const data = await api('GET', '/api/tablon');
     if (data && !data.error) {
         anuncios = data.map(p => ({
-            id:          p.id,
-            titulo:      p.titulo,
-            contenido:   p.contenido,
-            categoria:   p.categoria?.toLowerCase() ?? 'general',
-            dirigido_a:  p.dirigido_a === 'Solo familias' ? 'familias'
-                       : p.dirigido_a === 'Solo docentes' ? 'docentes' : 'todos',
-            clase:       p.clase?.nombre ?? null,
-            fecha_limite: p.fecha_limite,
-            autor:       p.docente?.user?.name
-                         ? `${p.docente.user.name} ${p.docente.user.apellidos ?? ''}`.trim()
-                         : 'Autor desconocido',
-            autor_rol:   'docente',
-            fecha:       p.created_at?.slice(0, 10) ?? new Date().toISOString().slice(0, 10),
+            id:              p.id,
+            titulo:          p.titulo,
+            contenido:       p.contenido,
+            categoria:       p.categoria?.toLowerCase() ?? 'general',
+            dirigido_a:      p.dirigido_a === 'Solo familias' ? 'familias'
+                           : p.dirigido_a === 'Solo docentes' ? 'docentes' : 'todos',
+            clase:           p.clase?.nombre ?? null,
+            fecha_limite:    p.fecha_limite,
+            autor:           p.docente?.user?.name
+                             ? `${p.docente.user.name} ${p.docente.user.apellidos ?? ''}`.trim()
+                             : 'Autor desconocido',
+            autor_rol:       'docente',
+            docente_user_id: p.docente_user_id ?? null,
+            fecha:           p.created_at?.slice(0, 10) ?? new Date().toISOString().slice(0, 10),
+            comentarios_count: (p.comentarios ?? []).length,
         }));
+
+        // Poblar el objeto de comentarios con los datos del servidor
+        data.forEach(p => {
+            comentarios[p.id] = (p.comentarios ?? []).map(c => ({
+                id:      c.id,
+                user_id: c.user_id,
+                autor:   c.autor,
+                rol:     c.rol,
+                texto:   c.texto,
+                fecha:   c.fecha,
+            }));
+        });
     } else {
         anuncios = [];
     }
@@ -197,7 +211,7 @@ function renderAnuncios() {
 
 function renderTarjeta(a) {
     const cat     = CATEGORIAS[a.categoria] || CATEGORIAS.general;
-    const esAutor = sesion.rol === 'docente' && a.autor_rol !== 'tutor';
+    const esAutor = (sesion.rol === 'docente' && a.docente_user_id === sesion.id) || sesion.rol === 'coordinador';
     const textoCorto = a.contenido.length > 180
         ? a.contenido.slice(0, 180).trim() + '…'
         : a.contenido;
@@ -238,7 +252,8 @@ function renderTarjeta(a) {
                     : ''}
                 <span class="anuncio-fecha">${formatFechaRelativa(a.fecha)}</span>
             </div>
-        </div>`;
+        </div>
+    </div>`;
 }
 
 /* ════════════════════════════════════════════
@@ -414,12 +429,12 @@ function actualizarStats() {
 /* ════════════════════════════════════════════
    CARGAR CLASES EN MODAL
 ════════════════════════════════════════════ */
-function cargarClasesEnModal() {
-    // En producción: cargar desde /api/clases
+async function cargarClasesEnModal() {
     const clasesSel = document.getElementById('pub-clase');
-    const clases = ['1ºA','1ºB','2ºA','2ºB','3ºA','4ºA'];
+    const data = await api('GET', '/api/mis-clases');
+    const clases = Array.isArray(data) ? data : [];
     clasesSel.innerHTML = '<option value="">Todas las clases</option>' +
-        clases.map(c => `<option value="${c}">${c}</option>`).join('');
+        clases.map(c => `<option value="${c.id}">${c.nombre}</option>`).join('');
 }
 
 /* ════════════════════════════════════════════
@@ -427,7 +442,7 @@ function cargarClasesEnModal() {
 ════════════════════════════════════════════ */
 function formatFecha(f) {
     if (!f) return '—';
-    const [y,m,d] = f.split('-');
+    const [y,m,d] = f.slice(0, 10).split('-');
     return `${d}/${m}/${y}`;
 }
 
@@ -480,7 +495,7 @@ function toast(msg) {
 
 async function api(method, ruta, body) {
     try {
-        const opts = { method, credentials: 'include', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF } };
+        const opts = { method, credentials: 'include', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': CSRF } };
         if (body) opts.body = JSON.stringify(body);
         const r = await fetch(API + ruta, opts);
         return await r.json();
@@ -498,18 +513,7 @@ document.getElementById('btn-logout')?.addEventListener('click', async e => {
 ══════════════════════════════════════════════════════════════ */
 
 let anuncioActivo = null; // id del anuncio que está abierto en el modal
-let comentarios   = {};   // { anuncio_id: [ {id, autor, rol, texto, fecha} ] }
-
-/* ── Datos de prueba de comentarios ── */
-comentarios = {
-    1: [
-        { id: 1, autor: 'María López', rol: 'tutor',   texto: 'Gracias por avisar con tiempo. ¿Las actividades extraescolares también cambian?', fecha: new Date().toISOString() },
-        { id: 2, autor: 'Pedro Fernández', rol: 'docente', texto: 'Las extraescolares mantienen su horario habitual, solo cambian las clases ordinarias.', fecha: new Date().toISOString() },
-    ],
-    2: [
-        { id: 3, autor: 'Juan Martínez', rol: 'tutor', texto: '¿El examen incluye los ejercicios del libro o solo los de clase?', fecha: new Date().toISOString() },
-    ],
-};
+let comentarios   = {};   // { anuncio_id: [ {id, user_id, autor, rol, texto, fecha} ] }
 
 /* ── Actualizar verAnuncio para incluir comentarios ── */
 const _verAnuncioOriginal = verAnuncio;
@@ -544,7 +548,7 @@ function renderComentarios(anuncioId) {
 
     el.innerHTML = lista.map(c => {
         const ini      = c.autor.split(' ').map(p => p[0]).join('').slice(0, 2).toUpperCase();
-        const esMio    = c.autor === `${sesion.nombre} ${sesion.apellidos}`;
+        const esMio    = c.user_id === sesion.id || sesion.rol === 'coordinador';
         const rolLabel = c.rol === 'docente' ? 'Docente' : 'Familiar';
         const hora     = new Date(c.fecha).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
         const fechaRel = formatFechaRelativa(c.fecha.slice(0, 10));
@@ -572,30 +576,37 @@ async function enviarComentario() {
 
     if (!anuncioActivo) return;
 
-    // await api('POST', `/api/anuncios/${anuncioActivo}/comentarios`, { texto });
+    const r = await api('POST', `/tablon/${anuncioActivo}/comentarios`, { texto });
+    if (!r?.ok) { toast('❌ ' + (r?.mensaje || 'Error al enviar el comentario.')); return; }
 
     if (!comentarios[anuncioActivo]) comentarios[anuncioActivo] = [];
 
     comentarios[anuncioActivo].push({
-        id:     Date.now(),
-        autor:  `${sesion.nombre} ${sesion.apellidos}`,
-        rol:    sesion.rol,
+        id:      r.comentario?.id ?? Date.now(),
+        user_id: sesion.id,
+        autor:   `${sesion.nombre} ${sesion.apellidos}`,
+        rol:     sesion.rol,
         texto,
-        fecha:  new Date().toISOString(),
+        fecha:   new Date().toISOString(),
     });
 
     document.getElementById('comentario-texto').value = '';
     renderComentarios(anuncioActivo);
 
     // Actualizar el contador en la tarjeta
+    const anuncio = anuncios.find(a => a.id === anuncioActivo);
+    if (anuncio) anuncio.comentarios_count = comentarios[anuncioActivo].length;
     actualizarContadorTarjeta(anuncioActivo);
     toast('💬 Comentario enviado');
 }
 
 /* ── Eliminar comentario ── */
 async function eliminarComentario(anuncioId, comentarioId) {
-    // await api('DELETE', `/api/anuncios/${anuncioId}/comentarios/${comentarioId}`);
+    const r = await api('DELETE', `/comentarios/${comentarioId}`);
+    if (!r?.ok) { toast('❌ ' + (r?.mensaje || 'Error al eliminar el comentario.')); return; }
     comentarios[anuncioId] = (comentarios[anuncioId] || []).filter(c => c.id !== comentarioId);
+    const anuncio = anuncios.find(a => a.id === anuncioId);
+    if (anuncio) anuncio.comentarios_count = comentarios[anuncioId].length;
     renderComentarios(anuncioId);
     actualizarContadorTarjeta(anuncioId);
     toast('🗑️ Comentario eliminado');

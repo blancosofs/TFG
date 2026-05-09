@@ -20,9 +20,39 @@ class TablonController extends Controller
 
     public function apiIndex()
     {
-        $publicaciones = Tablon::with(['docente.user', 'clase'])
-            ->orderBy('created_at', 'desc')
-            ->get();
+        $user      = Auth::user();
+        $colegioId = $user->colegio_id;
+
+        $query = Tablon::with(['docente.user', 'clase', 'comentarios.user.docente', 'comentarios.user.tutor'])
+            ->whereHas('docente', fn($q) => $q->where('colegio_id', $colegioId))
+            ->orderBy('created_at', 'desc');
+
+        if ($user->tutor) {
+            $query->where('dirigido_a', '!=', 'Solo docentes');
+        }
+
+        $publicaciones = $query->get()->map(fn($p) => [
+            'id'              => $p->id,
+            'titulo'          => $p->titulo,
+            'contenido'       => $p->contenido,
+            'categoria'       => $p->categoria,
+            'dirigido_a'      => $p->dirigido_a,
+            'fecha_limite'    => $p->fecha_limite,
+            'created_at'      => $p->created_at,
+            'docente_user_id' => $p->docente?->user_id,
+            'docente'         => $p->docente ? [
+                'user' => ['name' => $p->docente->user->name, 'apellidos' => $p->docente->user->apellidos ?? ''],
+            ] : null,
+            'clase'           => $p->clase ? ['id' => $p->clase->id, 'nombre' => $p->clase->nombre] : null,
+            'comentarios'     => $p->comentarios->map(fn($c) => [
+                'id'      => $c->id,
+                'user_id' => $c->user_id,
+                'autor'   => $c->user ? trim("{$c->user->name} {$c->user->apellidos}") : 'Usuario',
+                'rol'     => $c->user?->docente ? 'docente' : ($c->user?->tutor ? 'tutor' : 'coordinador'),
+                'texto'   => $c->texto,
+                'fecha'   => $c->created_at,
+            ]),
+        ]);
 
         return response()->json($publicaciones);
     }
