@@ -220,3 +220,115 @@
     color: var(--acento);
     flex-shrink: 0;
 }
+
+/* ══════════════════════════════════════════════════════════════
+   MODAL CONTACTAR DOCENTE
+══════════════════════════════════════════════════════════════ */
+
+.modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,.7);
+    z-index: 9999;
+    display: flex; align-items: flex-start; justify-content: center;
+    padding: 20px; padding-top: 120px;
+    opacity: 0; pointer-events: none;
+    transition: opacity .2s;
+}
+.modal-overlay.open { opacity: 1; pointer-events: all; }
+
+.modal-contactar-inner {
+    background: var(--fondo-oscuro);
+    border: 1px solid color-mix(in srgb, var(--acento) 25%, transparent);
+    border-radius: 18px; padding: 28px;
+    width: 100%; max-width: 500px;
+    box-shadow: 0 24px 64px rgba(0,0,0,.5);
+    max-height: 80vh; overflow-y: auto;
+}
+
+.modal-contactar-head {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.modal-contactar-titulo { font-size: 17px; font-weight: 700; color: var(--texto); }
+.modal-contactar-subtitulo { font-size: 12px; color: var(--texto-suave); margin-top: 3px; }
+
+.modal-contactar-cerrar {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: color-mix(in srgb, var(--texto) 8%, transparent);
+    border: none; cursor: pointer;
+    color: var(--texto-suave); font-size: 14px;
+    display: flex; align-items: center; justify-content: center;
+}
+
+.modal-destinatario {
+    background: color-mix(in srgb, var(--acento) 8%, transparent);
+    border: 1px solid color-mix(in srgb, var(--acento) 20%, transparent);
+    border-radius: 10px; padding: 12px 14px; margin-bottom: 18px;
+    display: flex; align-items: center; gap: 10px;
+}
+
+.modal-destinatario-ico { font-size: 22px; }
+.modal-docente-nombre { font-size: 13px; font-weight: 700; color: var(--texto); }
+.modal-docente-asig   { font-size: 11px; color: var(--texto-suave); }
+
+.finput-hint { font-size: 11px; color: var(--texto-suave); margin-top: 4px; }
+
+.sugerencias-wrap { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+
+.modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 20px; }
+
+.btn-primary {
+    padding: 9px 22px; border-radius: 8px; border: none;
+    background: var(--acento); color: var(--texto-sobre-claro);
+    font-family: inherit; font-size: 13px; font-weight: 700; cursor: pointer;
+    transition: opacity .15s;
+    display: inline-flex; align-items: center; gap: 6px;
+}
+.btn-primary:hover { opacity: .88; }
+
+.btn-ghost {
+    padding: 9px 18px; border-radius: 8px;
+    border: 1px solid color-mix(in srgb, var(--texto) 20%, transparent);
+    background: transparent; color: var(--texto-suave);
+    font-family: inherit; font-size: 13px; font-weight: 500; cursor: pointer;
+    transition: all .15s;
+    display: inline-flex; align-items: center; gap: 6px;
+}
+.btn-ghost:hover { color: var(--texto); border-color: color-mix(in srgb, var(--texto) 35%, transparent); }
+
+/* ── Sugerencias de asunto ── */
+.sugerencia-btn {
+    padding: 4px 10px;
+    border-radius: 20px;
+    border: 1px solid color-mix(in srgb, var(--texto) 15%, transparent);
+    background: color-mix(in srgb, var(--texto) 5%, transparent);
+    color: var(--texto-suave);
+    font-family: inherit;
+    font-size: 11px;
+    cursor: pointer;
+    transition: all .15s;
+}
+
+.sugerencia-btn:hover {
+    border-color: var(--acento);
+    color: var(--acento);
+    background: color-mix(in srgb, var(--acento) 8%, transparent);
+}
+
+/* ── Focus de inputs del modal ── */
+#contactar-asunto:focus,
+#contactar-mensaje:focus {
+    border-color: var(--acento);
+}
+
+/* ── Alerta de error ── */
+.alert-err {
+    background: rgba(231, 76, 60, .1);
+    border: 1px solid rgba(231, 76, 60, .3);
+    color: #e74c3c;
+    border-radius: 8px;
+    padding: 9px 12px;
+    font-size: 13px;
+    margin-bottom: 12px;
+}
