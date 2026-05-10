@@ -4,17 +4,30 @@ namespace App\Http\Controllers;
 
 use App\Models\Horario;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class HorarioController extends Controller
 {
 public function index()
     {
-        $horarios = Horario::with(['docente', 'clase'])->get();
-        
-        return response()->json([
-            'ok' => true,
-            'horarios' => $horarios
-        ]);
+        $colegioId = Auth::user()->colegio_id;
+
+        $horarios = Horario::with(['docente.user', 'clase'])
+            ->whereHas('docente', fn($q) => $q->where('colegio_id', $colegioId))
+            ->get()
+            ->map(fn($h) => [
+                'id'          => $h->id,
+                'docente_id'  => $h->docente_id,
+                'clase_id'    => $h->clase_id,
+                'dia_semana'  => $h->dia_semana,
+                'hora_inicio' => $h->hora_inicio,
+                'hora_fin'    => $h->hora_fin,
+                'asignatura'  => $h->asignatura,
+                'docente'     => $h->docente ? trim("{$h->docente->user->name} {$h->docente->user->apellidos}") : '—',
+                'clase'       => $h->clase?->nombre ?? '—',
+            ]);
+
+        return response()->json($horarios);
     }
 
     /**
@@ -23,14 +36,14 @@ public function index()
     public function store(Request $request)
     {
         $datosValidados = $request->validate([
-            'dia_semana' => 'required|in:lunes,martes,miercoles,jueves,viernes',
+            'dia_semana'  => 'required|in:lunes,martes,miercoles,jueves,viernes',
             'hora_inicio' => 'required|date_format:H:i',
-            'hora_fin' => 'required|date_format:H:i|after:hora_inicio',
-            'docente_id' => 'required|integer|exists:docentes,id',
-            'clase_id' => 'required|integer|exists:clases,id'
+            'hora_fin'    => 'required|date_format:H:i|after:hora_inicio',
+            'docente_id'  => 'required|integer|exists:docentes,id',
+            'clase_id'    => 'required|integer|exists:clases,id',
+            'asignatura'  => 'nullable|string|max:100',
         ]);
 
-        // Guardamos usando solo los datos que han pasado la validación
         $horario = Horario::create($datosValidados);
 
         return response()->json([
@@ -47,11 +60,12 @@ public function index()
     {
         // Ponemos 'sometimes' para permitir actualizaciones parciales
         $datosValidados = $request->validate([
-            'dia_semana' => 'sometimes|required|in:lunes,martes,miercoles,jueves,viernes',
+            'dia_semana'  => 'sometimes|required|in:lunes,martes,miercoles,jueves,viernes',
             'hora_inicio' => 'sometimes|required|date_format:H:i',
-            'hora_fin' => 'sometimes|required|date_format:H:i|after:hora_inicio',
-            'docente_id' => 'sometimes|required|integer|exists:docentes,id',
-            'clase_id' => 'sometimes|required|integer|exists:clases,id'
+            'hora_fin'    => 'sometimes|required|date_format:H:i|after:hora_inicio',
+            'docente_id'  => 'sometimes|required|integer|exists:docentes,id',
+            'clase_id'    => 'sometimes|required|integer|exists:clases,id',
+            'asignatura'  => 'nullable|string|max:100',
         ]);
 
         // Actualizamos de forma segura

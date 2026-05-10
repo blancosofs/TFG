@@ -1,9 +1,5 @@
 /* ══════════════════════════════════════════════════════════════
    Edunoly · coordinador.js
-   Lógica del panel del coordinador:
-   - CRUD de alumnos, docentes y tutores del colegio
-   - Todos los datos se asocian automáticamente al colegio
-     del coordinador autenticado (viene de la sesión)
 ══════════════════════════════════════════════════════════════ */
 
 const API = '';
@@ -15,6 +11,7 @@ let docentes     = [];
 let tutores      = [];
 let cursos       = [];
 let clases       = [];
+let horarios     = [];
 let modoModal    = 'nuevo'; // 'nuevo' | 'editar'
 let idEditando   = null;
 let tabActiva    = 'alumnos';
@@ -78,9 +75,10 @@ async function cargarTodo() {
         cargarCursos(),
         cargarAlumnos(),
         cargarDocentes(),
-        cargarTutores()
+        cargarTutores(),
+        cargarHorarios(),
     ]);
-    
+
     actualizarStats();
 }
 
@@ -192,6 +190,12 @@ async function cargarTutores() {
     renderTabla('tutores');*/
 }
 
+async function cargarHorarios() {
+    const data = await api('GET', '/api/horarios');
+    horarios = Array.isArray(data) ? data : [];
+    renderTabla('horarios');
+}
+
 /* ════════════════════════════════════════════
    RENDER TABLAS
 ════════════════════════════════════════════ */
@@ -261,6 +265,29 @@ function renderTabla(tipo) {
                     </div>
                 </td>
             </tr>`).join('');
+
+    } else if (tipo === 'horarios') {
+        datos = horarios;
+        if (!datos.length) {
+            tbody.innerHTML = `<tr class="fila-vacia"><td colspan="7">No hay horarios registrados.<br>Pulsa "Nuevo horario" para añadir el primero.</td></tr>`;
+            return;
+        }
+        const diasLabel = { lunes: 'Lunes', martes: 'Martes', miercoles: 'Miércoles', jueves: 'Jueves', viernes: 'Viernes' };
+        html = datos.map(h => `
+            <tr>
+                <td>${h.docente}</td>
+                <td>${h.clase}</td>
+                <td>${h.asignatura ? `<span class="tag">${h.asignatura}</span>` : '—'}</td>
+                <td>${diasLabel[h.dia_semana] ?? h.dia_semana}</td>
+                <td>${h.hora_inicio?.slice(0, 5) ?? '—'}</td>
+                <td>${h.hora_fin?.slice(0, 5) ?? '—'}</td>
+                <td>
+                    <div class="acciones">
+                        <button class="btn-tabla" onclick="editarHorario(${h.id})">✏️ Editar</button>
+                        <button class="btn-tabla danger" onclick="confirmarEliminar('horario', ${h.id}, '${h.docente} – ${h.clase}')">🗑️</button>
+                    </div>
+                </td>
+            </tr>`).join('');
     }
 
     tbody.innerHTML = html;
@@ -282,9 +309,16 @@ function cambiarTab(tab, el) {
 ════════════════════════════════════════════ */
 function filtrarLista(tipo) {
     const q = document.getElementById(`buscar-${tipo}`).value.toLowerCase();
-    const datos = tipo === 'alumnos' ? alumnos : tipo === 'docentes' ? docentes : tutores;
+    const mapa = { alumnos: alumnos, docentes: docentes, tutores: tutores, horarios: horarios };
+    const datos = mapa[tipo] ?? [];
+
     const filtrados = q
-        ? datos.filter(x => `${x.nombre} ${x.apellidos}`.toLowerCase().includes(q) || (x.email && x.email.toLowerCase().includes(q)))
+        ? datos.filter(x => {
+            const texto = tipo === 'horarios'
+                ? `${x.docente} ${x.clase} ${x.dia_semana}`.toLowerCase()
+                : `${x.nombre} ${x.apellidos} ${x.email ?? ''}`.toLowerCase();
+            return texto.includes(q);
+        })
         : datos;
 
     const tbody = document.getElementById(`tbody-${tipo}`);
@@ -293,17 +327,19 @@ function filtrarLista(tipo) {
         return;
     }
 
-    // Re-renderizar con los filtrados
-    const backup = tipo === 'alumnos' ? alumnos : tipo === 'docentes' ? docentes : tutores;
+    const backup = [...datos];
+    mapa[tipo] = filtrados;
     if (tipo === 'alumnos') alumnos = filtrados;
     else if (tipo === 'docentes') docentes = filtrados;
-    else tutores = filtrados;
+    else if (tipo === 'tutores') tutores = filtrados;
+    else if (tipo === 'horarios') horarios = filtrados;
 
     renderTabla(tipo);
 
     if (tipo === 'alumnos') alumnos = backup;
     else if (tipo === 'docentes') docentes = backup;
-    else tutores = backup;
+    else if (tipo === 'tutores') tutores = backup;
+    else if (tipo === 'horarios') horarios = backup;
 }
 
 /* ════════════════════════════════════════════
@@ -357,6 +393,27 @@ function abrirModal(modalId, modo) {
     if (modalId === 'modal-docente') {
         ['d-nombre','d-apellidos','d-email','d-telefono','d-password','d-fnac'].forEach(id => set(id, ''));
         document.getElementById('modal-docente-titulo').textContent = '➕ Nuevo docente';
+    }
+
+    if (modalId === 'modal-horario') {
+        const selDocente = document.getElementById('h-docente');
+        selDocente.innerHTML =
+            '<option value="">Seleccionar docente…</option>' +
+            docentes.map(d => `<option value="${d.id}">${d.nombre} ${d.apellidos}</option>`).join('');
+
+        document.getElementById('h-clase').innerHTML =
+            '<option value="">Seleccionar clase…</option>' +
+            clases.map(c => {
+                const curso = cursos.find(x => x.id === c.curso_id);
+                const label = curso ? `${curso.nombre} – ${c.nombre}` : c.nombre;
+                return `<option value="${c.id}">${label}</option>`;
+            }).join('');
+
+        selDocente.onchange = () => actualizarAsignaturasHorario();
+
+        ['h-dia','h-inicio','h-fin','h-asignatura'].forEach(id => set(id, ''));
+        document.getElementById('alert-horario').innerHTML = '';
+        document.getElementById('modal-horario-titulo').textContent = '➕ Nuevo horario';
     }
 
     document.getElementById(modalId).classList.add('open');
@@ -589,6 +646,66 @@ function editarTutor(id) {
     document.getElementById('modal-tutor-titulo').textContent = '✏️ Editar tutor';
 }
 
+function actualizarAsignaturasHorario(valorActual = '') {
+    const docenteId = parseInt(document.getElementById('h-docente').value);
+    const docente   = docentes.find(d => d.id === docenteId);
+    const asigs     = docente?.asignaturas ?? [];
+
+    document.getElementById('h-asignatura-list').innerHTML =
+        asigs.map(a => `<option value="${a}">`).join('');
+
+    if (valorActual) set('h-asignatura', valorActual);
+}
+
+/* ════════════════════════════════════════════
+   GUARDAR HORARIO
+════════════════════════════════════════════ */
+async function guardarHorario() {
+    const docenteId = v('h-docente');
+    const claseId   = v('h-clase');
+    const dia       = v('h-dia');
+    const inicio    = v('h-inicio');
+    const fin       = v('h-fin');
+
+    if (!docenteId || !claseId || !dia || !inicio || !fin) {
+        alertModal('alert-horario', 'err', '⚠️ Todos los campos son obligatorios.');
+        return;
+    }
+    if (inicio >= fin) {
+        alertModal('alert-horario', 'err', '⚠️ La hora de fin debe ser posterior a la de inicio.');
+        return;
+    }
+
+    const asignatura = v('h-asignatura') || null;
+    const payload = { docente_id: docenteId, clase_id: claseId, dia_semana: dia, hora_inicio: inicio, hora_fin: fin, asignatura };
+    const url    = modoModal === 'nuevo' ? '/api/horarios' : `/api/horarios/${idEditando}`;
+    const metodo = modoModal === 'nuevo' ? 'POST' : 'PUT';
+
+    const r = await api(metodo, url, payload);
+    if (!r?.ok) {
+        alertModal('alert-horario', 'err', '❌ ' + (r?.mensaje || r?.message || 'Error desconocido'));
+        return;
+    }
+
+    await cargarHorarios();
+    cerrarModal('modal-horario');
+    toast(modoModal === 'nuevo' ? '✓ Horario creado' : '✓ Horario actualizado');
+}
+
+function editarHorario(id) {
+    const h = horarios.find(x => x.id === id);
+    if (!h) return;
+    abrirModal('modal-horario', 'editar');
+    idEditando = id;
+    set('h-docente', h.docente_id);
+    actualizarAsignaturasHorario(h.asignatura ?? '');
+    set('h-clase',   h.clase_id);
+    set('h-dia',     h.dia_semana);
+    set('h-inicio',  h.hora_inicio?.slice(0, 5) ?? '');
+    set('h-fin',     h.hora_fin?.slice(0, 5) ?? '');
+    document.getElementById('modal-horario-titulo').textContent = '✏️ Editar horario';
+}
+
 /* ════════════════════════════════════════════
    ELIMINAR
 ════════════════════════════════════════════ */
@@ -599,13 +716,15 @@ function confirmarEliminar(tipo, id, nombre) {
     document.getElementById('btn-confirm-ok').onclick = async () => {
         const respuesta = await api('DELETE', `/api/${tipo}s/${id}`);
 
-        if (respuesta.ok || respuesta.mensaje) {    
+        if (respuesta.ok || respuesta.mensaje) {
 
         if (tipo === 'alumno')  alumnos  = alumnos.filter(x => x.id !== id);
         if (tipo === 'docente') docentes = docentes.filter(x => x.id !== id);
         if (tipo === 'tutor')   tutores  = tutores.filter(x => x.id !== id);
+        if (tipo === 'horario') horarios = horarios.filter(x => x.id !== id);
 
-        renderTabla(tipo === 'alumno' ? 'alumnos' : tipo === 'docente' ? 'docentes' : 'tutores');
+        const tablaMap = { alumno: 'alumnos', docente: 'docentes', tutor: 'tutores', horario: 'horarios' };
+        renderTabla(tablaMap[tipo] ?? tipo + 's');
         
         if (typeof actualizarStats === 'function') actualizarStats();
         

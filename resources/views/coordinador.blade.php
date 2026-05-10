@@ -78,6 +78,9 @@
         <button class="coord-tab" onclick="cambiarTab('tutores', this)">
             👨‍👩‍👧 Tutores legales
         </button>
+        <button class="coord-tab" onclick="cambiarTab('horarios', this)">
+            📅 Horarios
+        </button>
     </div>
 </div>
 
@@ -148,6 +151,42 @@
                 <tbody id="tbody-docentes">
                     <tr class="fila-vacia">
                         <td colspan="6">Cargando docentes…</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ══ PANEL HORARIOS ══ -->
+    <div id="panel-horarios" class="panel">
+
+        <div class="panel-header">
+            <div class="buscador-wrap">
+                <span class="buscador-ico">🔍</span>
+                <input class="buscador" id="buscar-horarios" type="text"
+                       placeholder="Buscar docente o clase…" oninput="filtrarLista('horarios')">
+            </div>
+            <button class="btn-primary" onclick="abrirModal('modal-horario', 'nuevo')">
+                ➕ Nuevo horario
+            </button>
+        </div>
+
+        <div class="tabla-wrap">
+            <table class="tabla" id="tabla-horarios">
+                <thead>
+                    <tr>
+                        <th>Docente</th>
+                        <th>Clase</th>
+                        <th>Asignatura</th>
+                        <th>Día</th>
+                        <th>Inicio</th>
+                        <th>Fin</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="tbody-horarios">
+                    <tr class="fila-vacia">
+                        <td colspan="6">Cargando horarios…</td>
                     </tr>
                 </tbody>
             </table>
@@ -350,6 +389,59 @@
         <div class="modal-actions">
             <button class="btn-ghost" onclick="cerrarModal('modal-tutor')">Cancelar</button>
             <button class="btn-primary" onclick="guardarTutor()">💾 Guardar tutor</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Horario -->
+<div class="modal-overlay" id="modal-horario">
+    <div class="modal">
+        <div class="modal-head">
+            <div class="modal-titulo" id="modal-horario-titulo">➕ Nuevo horario</div>
+            <button class="modal-cerrar" onclick="cerrarModal('modal-horario')">✕</button>
+        </div>
+        <div id="alert-horario"></div>
+        <div class="modal-grid">
+            <div class="fgroup">
+                <label class="flabel">Docente *</label>
+                <select class="finput" id="h-docente">
+                    <option value="">Seleccionar docente…</option>
+                </select>
+            </div>
+            <div class="fgroup">
+                <label class="flabel">Clase *</label>
+                <select class="finput" id="h-clase">
+                    <option value="">Seleccionar clase…</option>
+                </select>
+            </div>
+            <div class="fgroup">
+                <label class="flabel">Día de la semana *</label>
+                <select class="finput" id="h-dia">
+                    <option value="">Seleccionar día…</option>
+                    <option value="lunes">Lunes</option>
+                    <option value="martes">Martes</option>
+                    <option value="miercoles">Miércoles</option>
+                    <option value="jueves">Jueves</option>
+                    <option value="viernes">Viernes</option>
+                </select>
+            </div>
+            <div class="fgroup">
+                <label class="flabel">Asignatura</label>
+                <input class="finput" id="h-asignatura" type="text" placeholder="Ej: Matemáticas, Lengua…" list="h-asignatura-list">
+                <datalist id="h-asignatura-list"></datalist>
+            </div>
+            <div class="fgroup">
+                <label class="flabel">Hora inicio *</label>
+                <input class="finput" id="h-inicio" type="time">
+            </div>
+            <div class="fgroup">
+                <label class="flabel">Hora fin *</label>
+                <input class="finput" id="h-fin" type="time">
+            </div>
+        </div>
+        <div class="modal-actions">
+            <button class="btn-ghost" onclick="cerrarModal('modal-horario')">Cancelar</button>
+            <button class="btn-primary" onclick="guardarHorario()">💾 Guardar horario</button>
         </div>
     </div>
 </div>

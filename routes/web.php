@@ -175,6 +175,11 @@ Route::prefix('api')->middleware(['auth'])->group(function () {
 
     Route::get('/tablon', [TablonController::class, 'apiIndex']);
 
+    Route::get('/horarios',          [HorarioController::class, 'index']);
+    Route::post('/horarios',         [HorarioController::class, 'store']);
+    Route::put('/horarios/{horario}', [HorarioController::class, 'update']);
+    Route::delete('/horarios/{horario}', [HorarioController::class, 'destroy']);
+
     Route::middleware(['role:admin'])->group(function () {
         Route::get('/admin/colegios',  [ColegioController::class, 'index']);
         Route::post('/admin/colegios', [ColegioController::class, 'store']);

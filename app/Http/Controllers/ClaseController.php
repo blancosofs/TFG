@@ -82,8 +82,11 @@ class ClaseController extends Controller
                                 'fecha'       => $current->format('Y-m-d'),
                                 'hora_inicio' => $h->getRawOriginal('hora_inicio'),
                                 'hora_fin'    => $h->getRawOriginal('hora_fin'),
-                                'materia'     => $h->clase?->nombre ?? '—',
-                                'grupo'       => $h->clase?->curso?->nombre ?? '—',
+                                'materia'     => $h->asignatura
+                                                    ?? ($h->clase?->curso?->nombre
+                                                        ? "{$h->clase->curso->nombre} {$h->clase->nombre}"
+                                                        : ($h->clase?->nombre ?? '—')),
+                                'grupo'       => $h->clase?->nombre ?? '—',
                                 'aula'        => null,
                                 'clase_id'    => $h->clase_id,
                             ];
