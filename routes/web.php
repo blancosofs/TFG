@@ -163,7 +163,14 @@ Route::prefix('api')->middleware(['auth'])->group(function () {
     Route::delete('/tutores/{id}', [TutorController::class, 'destroy']);
 
     Route::get('/cursos', [CursoController::class, 'index']);
+    Route::post('/cursos', [CursoController::class, 'store']);
+    Route::put('/cursos/{curso}', [CursoController::class, 'update']);
+    Route::delete('/cursos/{curso}', [CursoController::class, 'destroy']);
+
     Route::get('/clases', [ClaseController::class, 'index']);
+    Route::post('/clases', [ClaseController::class, 'store']);
+    Route::put('/clases/{id}', [ClaseController::class, 'update']);
+    Route::delete('/clases/{id}', [ClaseController::class, 'destroy']);
     Route::get('/mis-clases', [ClaseController::class, 'misClases']);
     Route::get('/clases/{id}/alumnos', [ClaseController::class, 'visualizarAlumnos']);
     Route::post('/asistencia', [AusenciaController::class, 'storeAsistencia']);

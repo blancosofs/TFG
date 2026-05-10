@@ -78,6 +78,12 @@
         <button class="coord-tab" onclick="cambiarTab('tutores', this)">
             👨‍👩‍👧 Tutores legales
         </button>
+        <button class="coord-tab" onclick="cambiarTab('cursos', this)">
+            📚 Cursos
+        </button>
+        <button class="coord-tab" onclick="cambiarTab('clases', this)">
+            🏫 Clases
+        </button>
         <button class="coord-tab" onclick="cambiarTab('horarios', this)">
             📅 Horarios
         </button>
@@ -152,6 +158,62 @@
                     <tr class="fila-vacia">
                         <td colspan="6">Cargando docentes…</td>
                     </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ══ PANEL CURSOS ══ -->
+    <div id="panel-cursos" class="panel">
+        <div class="panel-header">
+            <div class="buscador-wrap">
+                <span class="buscador-ico">🔍</span>
+                <input class="buscador" id="buscar-cursos" type="text"
+                       placeholder="Buscar curso…" oninput="filtrarLista('cursos')">
+            </div>
+            <button class="btn-primary" onclick="abrirModal('modal-curso', 'nuevo')">
+                ➕ Nuevo curso
+            </button>
+        </div>
+        <div class="tabla-wrap">
+            <table class="tabla" id="tabla-cursos">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Nº Clases</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="tbody-cursos">
+                    <tr class="fila-vacia"><td colspan="3">Cargando cursos…</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ══ PANEL CLASES ══ -->
+    <div id="panel-clases" class="panel">
+        <div class="panel-header">
+            <div class="buscador-wrap">
+                <span class="buscador-ico">🔍</span>
+                <input class="buscador" id="buscar-clases" type="text"
+                       placeholder="Buscar clase…" oninput="filtrarLista('clases')">
+            </div>
+            <button class="btn-primary" onclick="abrirModal('modal-clase', 'nuevo')">
+                ➕ Nueva clase
+            </button>
+        </div>
+        <div class="tabla-wrap">
+            <table class="tabla" id="tabla-clases">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Curso</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="tbody-clases">
+                    <tr class="fila-vacia"><td colspan="3">Cargando clases…</td></tr>
                 </tbody>
             </table>
         </div>
@@ -389,6 +451,54 @@
         <div class="modal-actions">
             <button class="btn-ghost" onclick="cerrarModal('modal-tutor')">Cancelar</button>
             <button class="btn-primary" onclick="guardarTutor()">💾 Guardar tutor</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Curso -->
+<div class="modal-overlay" id="modal-curso">
+    <div class="modal" style="max-width:420px">
+        <div class="modal-head">
+            <div class="modal-titulo" id="modal-curso-titulo">➕ Nuevo curso</div>
+            <button class="modal-cerrar" onclick="cerrarModal('modal-curso')">✕</button>
+        </div>
+        <div id="alert-curso"></div>
+        <div class="modal-grid">
+            <div class="fgroup" style="grid-column:1/-1">
+                <label class="flabel">Nombre del curso *</label>
+                <input class="finput" id="c-nombre" type="text" placeholder="Ej: 1º ESO, 2º Bachillerato…">
+            </div>
+        </div>
+        <div class="modal-actions">
+            <button class="btn-ghost" onclick="cerrarModal('modal-curso')">Cancelar</button>
+            <button class="btn-primary" onclick="guardarCurso()">💾 Guardar curso</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Clase -->
+<div class="modal-overlay" id="modal-clase">
+    <div class="modal" style="max-width:420px">
+        <div class="modal-head">
+            <div class="modal-titulo" id="modal-clase-titulo">➕ Nueva clase</div>
+            <button class="modal-cerrar" onclick="cerrarModal('modal-clase')">✕</button>
+        </div>
+        <div id="alert-clase"></div>
+        <div class="modal-grid">
+            <div class="fgroup">
+                <label class="flabel">Curso *</label>
+                <select class="finput" id="cl-curso">
+                    <option value="">Seleccionar curso…</option>
+                </select>
+            </div>
+            <div class="fgroup">
+                <label class="flabel">Nombre de la clase *</label>
+                <input class="finput" id="cl-nombre" type="text" placeholder="Ej: A, B, C…">
+            </div>
+        </div>
+        <div class="modal-actions">
+            <button class="btn-ghost" onclick="cerrarModal('modal-clase')">Cancelar</button>
+            <button class="btn-primary" onclick="guardarClase()">💾 Guardar clase</button>
         </div>
     </div>
 </div>

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Docente;
 use App\Models\Horario;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -46,10 +47,15 @@ public function index()
 
         $horario = Horario::create($datosValidados);
 
+        // Sincronizar tabla pivote para que el docente vea la clase en "pasar lista"
+        Docente::find($horario->docente_id)
+            ->clases()
+            ->syncWithoutDetaching([$horario->clase_id]);
+
         return response()->json([
             'ok' => true,
             'mensaje' => 'Horario creado con éxito',
-            'horario' => $horario // Devolvemos el objeto recién creado
+            'horario' => $horario,
         ], 201);
     }
 
@@ -68,13 +74,30 @@ public function index()
             'asignatura'  => 'nullable|string|max:100',
         ]);
 
-        // Actualizamos de forma segura
+        $oldDocenteId = $horario->docente_id;
+        $oldClaseId   = $horario->clase_id;
+
         $horario->update($datosValidados);
+
+        // Adjuntar nueva combinación docente+clase a la pivote
+        Docente::find($horario->docente_id)
+            ->clases()
+            ->syncWithoutDetaching([$horario->clase_id]);
+
+        // Si cambió el docente o la clase, limpiar la combinación anterior si ya no tiene horarios
+        if ($oldDocenteId !== $horario->docente_id || $oldClaseId !== $horario->clase_id) {
+            $sigueExistiendo = Horario::where('docente_id', $oldDocenteId)
+                ->where('clase_id', $oldClaseId)
+                ->exists();
+            if (!$sigueExistiendo) {
+                Docente::find($oldDocenteId)->clases()->detach($oldClaseId);
+            }
+        }
 
         return response()->json([
             'ok' => true,
             'mensaje' => 'Horario actualizado con éxito',
-            'horario' => $horario
+            'horario' => $horario,
         ]);
     }
 
@@ -83,11 +106,22 @@ public function index()
      */
     public function destroy(Horario $horario)
     {
+        $docenteId = $horario->docente_id;
+        $claseId   = $horario->clase_id;
+
         $horario->delete();
-        
+
+        // Si ya no quedan horarios para esta combinación, quitar la clase de la pivote
+        $sigueExistiendo = Horario::where('docente_id', $docenteId)
+            ->where('clase_id', $claseId)
+            ->exists();
+        if (!$sigueExistiendo) {
+            Docente::find($docenteId)->clases()->detach($claseId);
+        }
+
         return response()->json([
             'ok' => true,
-            'mensaje' => 'Horario eliminado con éxito'
+            'mensaje' => 'Horario eliminado con éxito',
         ]);
     }
 

@@ -24,19 +24,14 @@ class CursoController extends Controller
      */
     
     public function store(Request $request) {
-        
-        $datosValidados = $request->validate([
-            'nombre' => 'required|string|max:30',
-            'colegio_id' => 'required|exists:colegios,id'
+        $request->validate(['nombre' => 'required|string|max:30']);
+
+        $curso = Curso::create([
+            'nombre'     => $request->nombre,
+            'colegio_id' => Auth::user()->colegio_id,
         ]);
 
-        $curso = Curso::create($datosValidados);
-
-        return response()->json([
-            'ok' => true, 
-            'mensaje' => 'Curso creado con éxito',
-            'curso' => $curso
-        ], 201);
+        return response()->json(['ok' => true, 'mensaje' => 'Curso creado con éxito', 'curso' => $curso], 201);
     }
 
     /**
@@ -44,12 +39,9 @@ class CursoController extends Controller
      */
     public function update(Request $request, Curso $curso)
     {       
-        $datosValidados = $request->validate([
-            'nombre' => 'sometimes|required|string|max:30',
-            'colegio_id' => 'sometimes|required|exists:colegios,id'
-        ]);
+        $request->validate(['nombre' => 'required|string|max:30']);
 
-        $curso->update($datosValidados);
+        $curso->update(['nombre' => $request->nombre]);
 
         return response()->json([
             'ok' => true, 

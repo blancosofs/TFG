@@ -83,12 +83,14 @@ async function cargarTodo() {
 }
 
 async function cargarCursos() {
-    
     const resCursos = await api('GET', '/api/cursos');
     const resClases = await api('GET', '/api/clases');
-    
+
     cursos = resCursos.error ? [] : resCursos;
     clases = resClases.error ? [] : resClases;
+
+    renderTabla('cursos');
+    renderTabla('clases');
 
     // Datos de prueba
     /*cursos = [
@@ -266,6 +268,42 @@ function renderTabla(tipo) {
                 </td>
             </tr>`).join('');
 
+    } else if (tipo === 'cursos') {
+        datos = cursos;
+        if (!datos.length) {
+            tbody.innerHTML = `<tr class="fila-vacia"><td colspan="3">No hay cursos registrados.<br>Pulsa "Nuevo curso" para añadir el primero.</td></tr>`;
+            return;
+        }
+        html = datos.map(c => {
+            const nClases = clases.filter(cl => cl.curso_id === c.id).length;
+            return `<tr>
+                <td>${c.nombre}</td>
+                <td>${nClases}</td>
+                <td><div class="acciones">
+                    <button class="btn-tabla" onclick="editarCurso(${c.id})">✏️ Editar</button>
+                    <button class="btn-tabla danger" onclick="confirmarEliminar('curso', ${c.id}, '${c.nombre}')">🗑️</button>
+                </div></td>
+            </tr>`;
+        }).join('');
+
+    } else if (tipo === 'clases') {
+        datos = clases;
+        if (!datos.length) {
+            tbody.innerHTML = `<tr class="fila-vacia"><td colspan="3">No hay clases registradas.<br>Pulsa "Nueva clase" para añadir la primera.</td></tr>`;
+            return;
+        }
+        html = datos.map(cl => {
+            const curso = cursos.find(c => c.id === cl.curso_id);
+            return `<tr>
+                <td>${cl.nombre}</td>
+                <td>${curso?.nombre ?? '—'}</td>
+                <td><div class="acciones">
+                    <button class="btn-tabla" onclick="editarClase(${cl.id})">✏️ Editar</button>
+                    <button class="btn-tabla danger" onclick="confirmarEliminar('clase', ${cl.id}, '${cl.nombre}')">🗑️</button>
+                </div></td>
+            </tr>`;
+        }).join('');
+
     } else if (tipo === 'horarios') {
         datos = horarios;
         if (!datos.length) {
@@ -309,30 +347,34 @@ function cambiarTab(tab, el) {
 ════════════════════════════════════════════ */
 function filtrarLista(tipo) {
     const q = document.getElementById(`buscar-${tipo}`).value.toLowerCase();
-    const mapa = { alumnos: alumnos, docentes: docentes, tutores: tutores, horarios: horarios };
+    const mapa = { alumnos, docentes, tutores, horarios, cursos, clases };
     const datos = mapa[tipo] ?? [];
 
     const filtrados = q
         ? datos.filter(x => {
             const texto = tipo === 'horarios'
                 ? `${x.docente} ${x.clase} ${x.dia_semana}`.toLowerCase()
-                : `${x.nombre} ${x.apellidos} ${x.email ?? ''}`.toLowerCase();
+                : tipo === 'cursos' || tipo === 'clases'
+                    ? `${x.nombre}`.toLowerCase()
+                    : `${x.nombre} ${x.apellidos} ${x.email ?? ''}`.toLowerCase();
             return texto.includes(q);
         })
         : datos;
 
+    const cols = { alumnos: 6, docentes: 6, tutores: 6, horarios: 7, cursos: 3, clases: 3 };
     const tbody = document.getElementById(`tbody-${tipo}`);
     if (!filtrados.length) {
-        tbody.innerHTML = `<tr class="fila-vacia"><td colspan="6">Sin resultados para "${q}"</td></tr>`;
+        tbody.innerHTML = `<tr class="fila-vacia"><td colspan="${cols[tipo] ?? 6}">Sin resultados para "${q}"</td></tr>`;
         return;
     }
 
     const backup = [...datos];
-    mapa[tipo] = filtrados;
     if (tipo === 'alumnos') alumnos = filtrados;
     else if (tipo === 'docentes') docentes = filtrados;
     else if (tipo === 'tutores') tutores = filtrados;
     else if (tipo === 'horarios') horarios = filtrados;
+    else if (tipo === 'cursos') cursos = filtrados;
+    else if (tipo === 'clases') clases = filtrados;
 
     renderTabla(tipo);
 
@@ -340,6 +382,8 @@ function filtrarLista(tipo) {
     else if (tipo === 'docentes') docentes = backup;
     else if (tipo === 'tutores') tutores = backup;
     else if (tipo === 'horarios') horarios = backup;
+    else if (tipo === 'cursos') cursos = backup;
+    else if (tipo === 'clases') clases = backup;
 }
 
 /* ════════════════════════════════════════════
@@ -393,6 +437,22 @@ function abrirModal(modalId, modo) {
     if (modalId === 'modal-docente') {
         ['d-nombre','d-apellidos','d-email','d-telefono','d-password','d-fnac'].forEach(id => set(id, ''));
         document.getElementById('modal-docente-titulo').textContent = '➕ Nuevo docente';
+    }
+
+    if (modalId === 'modal-curso') {
+        set('c-nombre', '');
+        document.getElementById('alert-curso').innerHTML = '';
+        document.getElementById('modal-curso-titulo').textContent = '➕ Nuevo curso';
+    }
+
+    if (modalId === 'modal-clase') {
+        document.getElementById('cl-curso').innerHTML =
+            '<option value="">Seleccionar curso…</option>' +
+            cursos.map(c => `<option value="${c.id}">${c.nombre}</option>`).join('');
+        set('cl-nombre', '');
+        set('cl-curso', '');
+        document.getElementById('alert-clase').innerHTML = '';
+        document.getElementById('modal-clase-titulo').textContent = '➕ Nueva clase';
     }
 
     if (modalId === 'modal-horario') {
@@ -646,6 +706,62 @@ function editarTutor(id) {
     document.getElementById('modal-tutor-titulo').textContent = '✏️ Editar tutor';
 }
 
+/* ════════════════════════════════════════════
+   GUARDAR CURSO
+════════════════════════════════════════════ */
+async function guardarCurso() {
+    const nombre = v('c-nombre');
+    if (!nombre) { alertModal('alert-curso', 'err', '⚠️ El nombre es obligatorio.'); return; }
+
+    const url    = modoModal === 'nuevo' ? '/api/cursos' : `/api/cursos/${idEditando}`;
+    const metodo = modoModal === 'nuevo' ? 'POST' : 'PUT';
+    const r = await api(metodo, url, { nombre });
+
+    if (!r?.ok) { alertModal('alert-curso', 'err', '❌ ' + (r?.mensaje || r?.message || 'Error desconocido')); return; }
+
+    await cargarCursos();
+    cerrarModal('modal-curso');
+    toast(modoModal === 'nuevo' ? '✓ Curso creado' : '✓ Curso actualizado');
+}
+
+function editarCurso(id) {
+    const c = cursos.find(x => x.id === id);
+    if (!c) return;
+    abrirModal('modal-curso', 'editar');
+    idEditando = id;
+    set('c-nombre', c.nombre);
+    document.getElementById('modal-curso-titulo').textContent = '✏️ Editar curso';
+}
+
+/* ════════════════════════════════════════════
+   GUARDAR CLASE
+════════════════════════════════════════════ */
+async function guardarClase() {
+    const nombre  = v('cl-nombre');
+    const cursoId = v('cl-curso');
+    if (!nombre || !cursoId) { alertModal('alert-clase', 'err', '⚠️ Nombre y curso son obligatorios.'); return; }
+
+    const url    = modoModal === 'nuevo' ? '/api/clases' : `/api/clases/${idEditando}`;
+    const metodo = modoModal === 'nuevo' ? 'POST' : 'PUT';
+    const r = await api(metodo, url, { nombre, curso_id: cursoId });
+
+    if (!r?.ok) { alertModal('alert-clase', 'err', '❌ ' + (r?.mensaje || r?.message || 'Error desconocido')); return; }
+
+    await cargarCursos();
+    cerrarModal('modal-clase');
+    toast(modoModal === 'nuevo' ? '✓ Clase creada' : '✓ Clase actualizada');
+}
+
+function editarClase(id) {
+    const cl = clases.find(x => x.id === id);
+    if (!cl) return;
+    abrirModal('modal-clase', 'editar');
+    idEditando = id;
+    set('cl-curso',  cl.curso_id);
+    set('cl-nombre', cl.nombre);
+    document.getElementById('modal-clase-titulo').textContent = '✏️ Editar clase';
+}
+
 function actualizarAsignaturasHorario(valorActual = '') {
     const docenteId = parseInt(document.getElementById('h-docente').value);
     const docente   = docentes.find(d => d.id === docenteId);
@@ -722,8 +838,10 @@ function confirmarEliminar(tipo, id, nombre) {
         if (tipo === 'docente') docentes = docentes.filter(x => x.id !== id);
         if (tipo === 'tutor')   tutores  = tutores.filter(x => x.id !== id);
         if (tipo === 'horario') horarios = horarios.filter(x => x.id !== id);
+        if (tipo === 'curso')   { cursos = cursos.filter(x => x.id !== id); clases = clases.filter(x => x.curso_id !== id); renderTabla('clases'); }
+        if (tipo === 'clase')   clases   = clases.filter(x => x.id !== id);
 
-        const tablaMap = { alumno: 'alumnos', docente: 'docentes', tutor: 'tutores', horario: 'horarios' };
+        const tablaMap = { alumno: 'alumnos', docente: 'docentes', tutor: 'tutores', horario: 'horarios', curso: 'cursos', clase: 'clases' };
         renderTabla(tablaMap[tipo] ?? tipo + 's');
         
         if (typeof actualizarStats === 'function') actualizarStats();
