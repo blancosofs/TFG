@@ -248,7 +248,7 @@
                 </thead>
                 <tbody id="tbody-horarios">
                     <tr class="fila-vacia">
-                        <td colspan="6">Cargando horarios…</td>
+                        <td colspan="7">Cargando horarios…</td>
                     </tr>
                 </tbody>
             </table>
@@ -494,6 +494,10 @@
             <div class="fgroup">
                 <label class="flabel">Nombre de la clase *</label>
                 <input class="finput" id="cl-nombre" type="text" placeholder="Ej: A, B, C…">
+            </div>
+            <div class="fgroup" style="grid-column:1/-1">
+                <label class="flabel">Código de acceso al aula virtual <span style="font-weight:normal;color:var(--texto-suave)">(opcional)</span></label>
+                <input class="finput" id="cl-codigo" type="text" maxlength="10" placeholder="Ej: ABC123">
             </div>
         </div>
         <div class="modal-actions">

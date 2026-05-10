@@ -737,13 +737,15 @@ function editarCurso(id) {
    GUARDAR CLASE
 ════════════════════════════════════════════ */
 async function guardarClase() {
-    const nombre  = v('cl-nombre');
-    const cursoId = v('cl-curso');
+    const nombre       = v('cl-nombre');
+    const cursoId      = v('cl-curso');
+    const codigoAcceso = v('cl-codigo') || null;
+
     if (!nombre || !cursoId) { alertModal('alert-clase', 'err', '⚠️ Nombre y curso son obligatorios.'); return; }
 
     const url    = modoModal === 'nuevo' ? '/api/clases' : `/api/clases/${idEditando}`;
     const metodo = modoModal === 'nuevo' ? 'POST' : 'PUT';
-    const r = await api(metodo, url, { nombre, curso_id: cursoId });
+    const r = await api(metodo, url, { nombre, curso_id: cursoId, codigo_acceso: codigoAcceso });
 
     if (!r?.ok) { alertModal('alert-clase', 'err', '❌ ' + (r?.mensaje || r?.message || 'Error desconocido')); return; }
 
@@ -759,6 +761,7 @@ function editarClase(id) {
     idEditando = id;
     set('cl-curso',  cl.curso_id);
     set('cl-nombre', cl.nombre);
+    set('cl-codigo', cl.codigo_acceso ?? '');
     document.getElementById('modal-clase-titulo').textContent = '✏️ Editar clase';
 }
 
