@@ -37,8 +37,10 @@
                 @elseif($user->tutor)
                     {{-- Nav tutor/familia --}}
                     <li><a href="{{ route('index') }}">Inicio</a></li>
+                    <li><a href="{{ route('tutor.faltas') }}">Faltas</a></li>
                     <li class="activo"><a href="{{ route('tablon') }}">Tablón</a></li>
-                    <li><a href="{{ route('perfil') }}">Mi Perfil</a></li>
+                    <li><a href="{{ route('tutor.materiales.index') }}">Material</a></li>
+                    <li><a href="{{ route('perfilFamilia') }}">Mi Perfil</a></li>
                 @else
                     <li><a href="{{ route('index') }}">Inicio</a></li>
                     <li class="activo"><a href="{{ route('tablon') }}">Tablón</a></li>
