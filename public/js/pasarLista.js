@@ -48,7 +48,7 @@ async function cargarClasesDocente() {
 
     const selClase = document.getElementById('filtro-clase');
     selClase.innerHTML = '<option value="">Seleccionar clase…</option>' +
-        clases.map(c => `<option value="${c.id}">${c.curso ? c.curso.nombre + ' — ' : ''}${c.nombre}</option>`).join('');
+        clases.map(c => `<option value="${c.id}">${c.curso && c.curso !== '—' ? c.curso + ' — ' : ''}${c.nombre}</option>`).join('');
 
     selClase.addEventListener('change', () => {
         actualizarAsignaturas();
