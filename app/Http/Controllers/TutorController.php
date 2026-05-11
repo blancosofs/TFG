@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 
 class TutorController extends Controller
@@ -186,7 +187,8 @@ class TutorController extends Controller
             return response()->json(['ok' => true, 'mensaje' => 'Tutor actualizado correctamente']);
 
         } catch (\Exception $e) {
-            return response()->json(['ok' => false, 'mensaje' => $e->getMessage()], 500);
+            Log::error('TutorController@update: ' . $e->getMessage());
+            return response()->json(['ok' => false, 'mensaje' => 'No se pudo actualizar el tutor. Inténtalo de nuevo.'], 500);
         }
     }
 
@@ -206,7 +208,8 @@ class TutorController extends Controller
             return response()->json(['ok' => true, 'mensaje' => 'Tutor eliminado correctamente']);
 
         } catch (\Exception $e) {
-            return response()->json(['ok' => false, 'mensaje' => $e->getMessage()], 500);
+            Log::error('TutorController@destroy: ' . $e->getMessage());
+            return response()->json(['ok' => false, 'mensaje' => 'No se pudo eliminar el tutor. Inténtalo de nuevo.'], 500);
         }
     }
 }

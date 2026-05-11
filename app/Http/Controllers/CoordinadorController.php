@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 
 class CoordinadorController extends Controller
@@ -58,7 +59,8 @@ class CoordinadorController extends Controller
             return response()->json(['ok' => true, 'mensaje' => 'Coordinador creado con éxito']);
 
         } catch (\Exception $e) {
-            return response()->json(['ok' => false, 'mensaje' => $e->getMessage()], 500);
+            Log::error('CoordinadorController@storeForColegio: ' . $e->getMessage());
+            return response()->json(['ok' => false, 'mensaje' => 'No se pudo crear el coordinador. Inténtalo de nuevo.'], 500);
         }
     }
 

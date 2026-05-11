@@ -6,6 +6,7 @@ use App\Models\Ausencia;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class AusenciaController extends Controller
 {
@@ -79,7 +80,8 @@ class AusenciaController extends Controller
             return response()->json(['ok' => true, 'mensaje' => 'Asistencia registrada correctamente.']);
 
         } catch (\Exception $e) {
-            return response()->json(['ok' => false, 'mensaje' => $e->getMessage()], 500);
+            Log::error('AusenciaController@storeAsistencia: ' . $e->getMessage());
+            return response()->json(['ok' => false, 'mensaje' => 'No se pudo registrar la asistencia. Inténtalo de nuevo.'], 500);
         }
     }
 

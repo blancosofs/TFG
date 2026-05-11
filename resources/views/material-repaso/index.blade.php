@@ -19,6 +19,7 @@
                 <li><a href="{{ route('index') }}">Inicio</a></li>
                 <li><a href="{{ route('calendario') }}">Mi Horario</a></li>
                 <li><a href="{{ route('pasarLista') }}">Pasar Lista</a></li>
+                <li><a href="{{ route('tablon') }}">Tablón</a></li>
                 <li class="activo"><a href="{{ route('material-repaso.index') }}">Material</a></li>
                 <li><a href="{{ route('perfil') }}">Mi Perfil</a></li>
                 <li class="derecha menuSesion">

@@ -17,6 +17,7 @@
             <ul class="menu">
                 <li class="logo"><img src="{{ asset('img/logo.svg') }}" alt="Edunoly"></li>
                 <li><a href="{{ route('index') }}">Inicio</a></li>
+                <li><a href="{{ route('tablon') }}">Tablón</a></li>
                 <li><a href="{{ route('material-repaso.index') }}">← Material</a></li>
                 <li class="derecha menuSesion">
                     <img src="{{ asset('img/perfil.png') }}" class="fotoPerfil" alt="Perfil">

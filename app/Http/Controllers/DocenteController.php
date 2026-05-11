@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class DocenteController extends Controller
 {
@@ -69,11 +70,8 @@ class DocenteController extends Controller
         ]);
 
         } catch (\Exception $e) {
-            // Si hay cualquier error (ej. se cae la base de datos), devolvemos el error en JSON
-            return response()->json([
-                'ok' => false,
-                'mensaje' => 'Error al crear el docente: ' . $e->getMessage()
-            ], 500);
+            Log::error('DocenteController@store: ' . $e->getMessage());
+            return response()->json(['ok' => false, 'mensaje' => 'No se pudo registrar el docente. Inténtalo de nuevo.'], 500);
         }
     }
 
@@ -118,7 +116,8 @@ class DocenteController extends Controller
             return response()->json(['ok' => true, 'mensaje' => 'Docente actualizado correctamente']);
 
         } catch (\Exception $e) {
-            return response()->json(['ok' => false, 'mensaje' => $e->getMessage()], 500);
+            Log::error('DocenteController@update: ' . $e->getMessage());
+            return response()->json(['ok' => false, 'mensaje' => 'No se pudo actualizar el docente. Inténtalo de nuevo.'], 500);
         }
     }
 
@@ -136,7 +135,8 @@ class DocenteController extends Controller
         return response()->json(['ok' => true, 'mensaje' => 'Docente eliminado por completo']);
 
         } catch (\Exception $e) {
-            return response()->json(['ok' => false, 'mensaje' => 'No se pudo eliminar: ' . $e->getMessage()], 500);
+            Log::error('DocenteController@destroy: ' . $e->getMessage());
+            return response()->json(['ok' => false, 'mensaje' => 'No se pudo eliminar el docente. Inténtalo de nuevo.'], 500);
         }
     }
 }

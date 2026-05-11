@@ -8,13 +8,18 @@ class Tablon extends Model
 {
     protected $table = 'tablon';
     protected $fillable = [
-        'docente_id', 'tutor_id', 'titulo', 'categoria',
+        'user_id', 'docente_id', 'tutor_id', 'titulo', 'categoria',
         'dirigido_a', 'contenido', 'clase_id', 'fecha_limite',
     ];
 
     protected $casts = [
         'fecha_limite' => 'date',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(\App\Models\User::class);
+    }
 
     public function docente()
     {

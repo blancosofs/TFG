@@ -17,17 +17,56 @@
         <div class="barraNav">
             <ul class="menu" id="menuPrincipal">
                 <li class="logo"><img src="{{ asset('img/logo.svg') }}" alt="Edunoly"></li>
-                <li id="nav-li-inicio"><a href="#" id="nav-inicio">Inicio</a></li>
-                <li id="nav-li-secundario" style="display:none"><a href="#" id="nav-secundario">—</a></li>
-                <li class="activo"><a href="{{ route('tablon') }}">Tablón</a></li>
-                <li id="nav-li-perfil"><a href="#" id="nav-perfil-link">Mi Perfil</a></li>
+
+                @php $user = auth()->user(); @endphp
+
+                @if($user->docente)
+                    {{-- Nav docente --}}
+                    <li><a href="{{ route('index') }}">Inicio</a></li>
+                    <li><a href="{{ route('calendario') }}">Mi Horario</a></li>
+                    <li><a href="{{ route('pasarLista') }}">Pasar Lista</a></li>
+                    <li class="activo"><a href="{{ route('tablon') }}">Tablón</a></li>
+                    <li><a href="{{ route('material-repaso.index') }}">Material</a></li>
+                    <li><a href="{{ route('perfil') }}">Mi Perfil</a></li>
+                @elseif($user->coordinador)
+                    {{-- Nav coordinador --}}
+                    <li><a href="{{ route('index') }}">Inicio</a></li>
+                    <li><a href="{{ route('coordinador') }}">Mi Centro</a></li>
+                    <li class="activo"><a href="{{ route('tablon') }}">Tablón</a></li>
+                                    <li><a href="{{ route('perfilCoordinador') }}">Mi Perfil</a></li>
+                @elseif($user->tutor)
+                    {{-- Nav tutor/familia --}}
+                    <li><a href="{{ route('index') }}">Inicio</a></li>
+                    <li class="activo"><a href="{{ route('tablon') }}">Tablón</a></li>
+                    <li><a href="{{ route('perfil') }}">Mi Perfil</a></li>
+                @else
+                    <li><a href="{{ route('index') }}">Inicio</a></li>
+                    <li class="activo"><a href="{{ route('tablon') }}">Tablón</a></li>
+                @endif
+
                 <li class="derecha menuSesion">
                     <img src="{{ asset('img/perfil.png') }}" class="fotoPerfil" alt="Perfil">
                     <ul class="dropdown">
-                        <li class="dropdown-nombre"><span id="nav-nombre">{{ auth()->user()->name ?? 'Usuario' }}</span></li>
-                        <li class="dropdown-rol"><span id="nav-rol-label">—</span></li>
+                        <li class="dropdown-nombre">
+                            <span id="nav-nombre">{{ trim(($user->name ?? '') . ' ' . ($user->apellidos ?? '')) }}</span>
+                        </li>
+                        <li class="dropdown-rol">
+                            <span id="nav-rol-label">
+                                @if($user->docente) Docente
+                                @elseif($user->coordinador) Coordinador
+                                @elseif($user->tutor) Tutor legal
+                                @else Usuario
+                                @endif
+                            </span>
+                        </li>
                         <li class="dropdown-sep"></li>
-                        <li><a href="#" id="nav-mi-perfil">👤 Mi perfil</a></li>
+                        @if($user->docente)
+                            <li><a href="{{ route('perfil') }}">👤 Mi perfil</a></li>
+                        @elseif($user->coordinador)
+                            <li><a href="{{ route('perfilCoordinador') }}">👤 Mi perfil</a></li>
+                        @elseif($user->tutor)
+                            <li><a href="{{ route('perfil') }}">👤 Mi perfil</a></li>
+                        @endif
                         <li><a href="{{ route('configPerfiles') }}">⚙️ Configuración</a></li>
                         <li><a href="#" id="btn-logout">Cerrar sesión</a></li>
                     </ul>

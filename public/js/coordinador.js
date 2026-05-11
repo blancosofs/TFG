@@ -19,25 +19,56 @@ let tabActiva    = 'alumnos';
 /* ════════════════════════════════════════════
    API
 ════════════════════════════════════════════ */
-async function api(method, ruta, body=null) {
-    
-        const opts = {
-            method,
-            credentials: 'include',
-            headers: {  'Content-Type': 'application/json', 
-                        'Accept': 'application/json', 
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content }
-        };
+async function api(method, ruta, body = null) {
+    const opts = {
+        method,
+        credentials: 'include',
+        headers: {
+            'Content-Type':  'application/json',
+            'Accept':        'application/json',
+            'X-CSRF-TOKEN':  document.querySelector('meta[name="csrf-token"]')?.content,
+        },
+    };
+    if (body) opts.body = JSON.stringify(body);
 
-        if (body) opts.body = JSON.stringify(body);
+    try {
+        const res  = await fetch(ruta, opts);
+        const data = await res.json().catch(() => ({}));
 
-        try {
-            const res = await fetch(ruta, opts);
-            return await res.json();
-        } catch (e) {
-            console.error("Error en la API:", e);
-            return { error: e.message };
+        if (!res.ok) {
+            // Errores de validación de Laravel (campos obligatorios, formato, etc.)
+            if (res.status === 422 && data.errors) {
+                const primer = Object.values(data.errors)[0];
+                return { ok: false, mensaje: Array.isArray(primer) ? primer[0] : primer };
+            }
+            // Sin sesión activa
+            if (res.status === 401) {
+                window.location.href = '/login';
+                return { ok: false, mensaje: 'Sesión expirada. Redirigiendo al inicio de sesión…' };
+            }
+            // Sin permisos
+            if (res.status === 403) {
+                return { ok: false, mensaje: 'No tienes permisos para realizar esta acción.' };
+            }
+            // Registro no encontrado
+            if (res.status === 404) {
+                return { ok: false, mensaje: 'El registro solicitado no existe.' };
+            }
+            // Error interno del servidor — no se expone el detalle al usuario
+            if (res.status >= 500) {
+                console.error(`[API ${method} ${ruta}]`, data);
+                return { ok: false, mensaje: 'Error interno del servidor. Inténtalo de nuevo más tarde.' };
+            }
+            // Cualquier otro error 4xx con mensaje propio del controlador
+            return { ok: false, mensaje: data.mensaje || data.message || 'Ha ocurrido un error inesperado.' };
         }
+
+        return data;
+
+    } catch (e) {
+        console.error('[API red]', e);
+        return { ok: false, mensaje: 'Error de conexión. Comprueba tu red e inténtalo de nuevo.' };
+    }
 }
 
 /* ════════════════════════════════════════════
@@ -50,19 +81,11 @@ async function api(method, ruta, body=null) {
     if (data.rol !== 'coordinador') { window.location.href = '/login'; return; }
     sesion = data;
 
-    // ── Datos de prueba — quitar cuando el servidor esté activo ──
-    /*sesion = {
-        id: 1,
-        nombre: 'Ana',
-        apellidos: 'Ruiz Sánchez',
-        email: 'aruiz@colegio.es',
-        rol: 'coordinador',
-        colegio: 'IES Ejemplo Madrid',
-        colegio_id: 1
-    };
-
-    document.getElementById('nav-nombre').textContent = `${sesion.nombre} ${sesion.apellidos}`;
-    document.getElementById('hero-colegio').textContent = sesion.colegio;*/
+    const nombreCompleto = `${sesion.nombre} ${sesion.apellidos}`.trim();
+    const navNombre = document.getElementById('nav-nombre');
+    if (navNombre) navNombre.textContent = nombreCompleto;
+    const heroColegio = document.getElementById('hero-colegio');
+    if (heroColegio) heroColegio.textContent = sesion.colegio ?? 'Mi centro educativo';
 
     await cargarTodo();
 })();
@@ -92,21 +115,6 @@ async function cargarCursos() {
     renderTabla('cursos');
     renderTabla('clases');
 
-    // Datos de prueba
-    /*cursos = [
-        { id: 1, nombre: '1º ESO' },
-        { id: 2, nombre: '2º ESO' },
-        { id: 3, nombre: '3º ESO' },
-        { id: 4, nombre: '4º ESO' },
-    ];
-    clases = [
-        { id: 1, nombre: 'A', curso_id: 1 },
-        { id: 2, nombre: 'B', curso_id: 1 },
-        { id: 3, nombre: 'A', curso_id: 2 },
-        { id: 4, nombre: 'B', curso_id: 2 },
-        { id: 5, nombre: 'A', curso_id: 3 },
-        { id: 6, nombre: 'A', curso_id: 4 },
-    ];*/
 }
 
 async function cargarAlumnos() {
@@ -156,13 +164,7 @@ async function cargarDocentes() {
     }
     renderTabla('docentes');
 
-    // Datos de prueba
-    /*docentes = [
-        { id: 1, nombre: 'Pedro',    apellidos: 'Fernández Gil',  email: 'pfernandez@colegio.es', telefono: '600 111 222', asignaturas: ['Matemáticas', 'Física'] },
-        { id: 2, nombre: 'Carmen',   apellidos: 'Torres Vega',    email: 'ctorres@colegio.es',    telefono: '600 333 444', asignaturas: ['Lengua', 'Literatura'] },
-        { id: 3, nombre: 'Roberto',  apellidos: 'Iglesias Mora',  email: 'riglesias@colegio.es',  telefono: '600 555 666', asignaturas: ['Historia'] },
-    ];
-    renderTabla('docentes');*/
+
 }
 
 async function cargarTutores() {
@@ -184,12 +186,6 @@ async function cargarTutores() {
     }
     renderTabla('tutores');
 
-    // Datos de prueba
-    /*tutores = [
-        { id: 1, nombre: 'María',  apellidos: 'López Sánchez',  email: 'mlopez@gmail.com',  telefono: '600 987 654', alumnos: ['Carlos García López'] },
-        { id: 2, nombre: 'Juan',   apellidos: 'Martínez García', email: 'jmartinez@gmail.com', telefono: '600 123 456', alumnos: ['Lucía Martínez Ruiz'] },
-    ];
-    renderTabla('tutores');*/
 }
 
 async function cargarHorarios() {

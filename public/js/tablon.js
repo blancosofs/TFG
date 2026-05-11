@@ -53,24 +53,8 @@ const CATEGORIAS = {
    CONFIGURAR SEGÚN ROL
 ════════════════════════════════════════════ */
 function configurarVistaPorRol() {
-    const nombre = `${sesion.nombre} ${sesion.apellidos}`;
-    document.getElementById('nav-nombre').textContent = nombre;
-
-    const etiquetas = { docente: 'Docente', tutor: 'Tutor legal', coordinador: 'Coordinador', admin: 'Administrador' };
-    document.getElementById('nav-rol-label').textContent = etiquetas[sesion.rol] ?? sesion.rol;
-
-    const nav = {
-        docente:     { inicio: '/calendario',        secundario: null,              perfil: '/perfilDocente',     publicar: true  },
-        tutor:       { inicio: '/',                  secundario: null,              perfil: '/perfilFamilia',     publicar: false },
-        coordinador: { inicio: '/dashboard',         secundario: null,              perfil: '/perfilCoordinador', publicar: true  },
-        admin:       { inicio: '/admin',             secundario: null,              perfil: '/perfilAdmin',       publicar: false },
-    };
-    const cfg = nav[sesion.rol] ?? nav.tutor;
-
-    document.getElementById('nav-inicio').href      = cfg.inicio;
-    document.getElementById('nav-perfil-link').href = cfg.perfil;
-    document.getElementById('nav-mi-perfil').href   = cfg.perfil;
-    document.getElementById('hero-acciones').style.display = cfg.publicar ? 'block' : 'none';
+    const puedePublicar = sesion.rol === 'docente' || sesion.rol === 'coordinador';
+    document.getElementById('hero-acciones').style.display = puedePublicar ? 'block' : 'none';
 }
 
 /* ════════════════════════════════════════════
@@ -431,10 +415,27 @@ function actualizarStats() {
 ════════════════════════════════════════════ */
 async function cargarClasesEnModal() {
     const clasesSel = document.getElementById('pub-clase');
-    const data = await api('GET', '/api/mis-clases');
-    const clases = Array.isArray(data) ? data : [];
-    clasesSel.innerHTML = '<option value="">Todas las clases</option>' +
-        clases.map(c => `<option value="${c.id}">${c.nombre}</option>`).join('');
+
+    if (sesion.rol === 'coordinador') {
+        // Coordinadores: todas las clases del colegio con nombre del curso
+        const [clasesData, cursosData] = await Promise.all([
+            api('GET', '/api/clases'),
+            api('GET', '/api/cursos'),
+        ]);
+        const clases = Array.isArray(clasesData) ? clasesData : [];
+        const cursos = Array.isArray(cursosData) ? cursosData : [];
+        clasesSel.innerHTML = '<option value="">Todas las clases</option>' +
+            clases.map(c => {
+                const curso = cursos.find(x => x.id === c.curso_id);
+                return `<option value="${c.id}">${curso ? curso.nombre + ' – ' : ''}${c.nombre}</option>`;
+            }).join('');
+    } else {
+        // Docentes: solo sus clases asignadas
+        const data = await api('GET', '/api/mis-clases');
+        const clases = Array.isArray(data) ? data : [];
+        clasesSel.innerHTML = '<option value="">Todas las clases</option>' +
+            clases.map(c => `<option value="${c.id}">${c.nombre}</option>`).join('');
+    }
 }
 
 /* ════════════════════════════════════════════
@@ -493,13 +494,35 @@ function toast(msg) {
     setTimeout(() => t.classList.remove('show'), 3000);
 }
 
-async function api(method, ruta, body) {
+async function api(method, ruta, body = null) {
+    const opts = {
+        method,
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': CSRF },
+    };
+    if (body) opts.body = JSON.stringify(body);
+
     try {
-        const opts = { method, credentials: 'include', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': CSRF } };
-        if (body) opts.body = JSON.stringify(body);
-        const r = await fetch(API + ruta, opts);
-        return await r.json();
-    } catch (e) { return { error: 'Error de conexión.' }; }
+        const res  = await fetch(API + ruta, opts);
+        const data = await res.json().catch(() => ({}));
+
+        if (!res.ok) {
+            if (res.status === 422 && data.errors) {
+                const primer = Object.values(data.errors)[0];
+                return { ok: false, mensaje: Array.isArray(primer) ? primer[0] : primer };
+            }
+            if (res.status === 401) { window.location.href = '/login'; return { ok: false }; }
+            if (res.status === 403) return { ok: false, mensaje: 'No tienes permisos para realizar esta acción.' };
+            if (res.status === 404) return { ok: false, mensaje: 'El registro solicitado no existe.' };
+            if (res.status >= 500) { console.error(`[API ${method} ${ruta}]`, data); return { ok: false, mensaje: 'Error interno del servidor. Inténtalo de nuevo más tarde.' }; }
+            return { ok: false, mensaje: data.mensaje || data.message || 'Ha ocurrido un error inesperado.' };
+        }
+
+        return data;
+    } catch (e) {
+        console.error('[API red]', e);
+        return { ok: false, mensaje: 'Error de conexión. Comprueba tu red e inténtalo de nuevo.' };
+    }
 }
 
 document.getElementById('btn-logout')?.addEventListener('click', async e => {
