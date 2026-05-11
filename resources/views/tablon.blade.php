@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -11,17 +11,16 @@
 </head>
 <body>
 
-<!-- ── NAVEGACIÓN ── -->
+@php $user = auth()->user(); @endphp
+
+{{-- ── NAVEGACIÓN ── --}}
 <header>
     <nav id="Navegador">
         <div class="barraNav">
             <ul class="menu" id="menuPrincipal">
                 <li class="logo"><img src="{{ asset('img/logo.svg') }}" alt="Edunoly"></li>
 
-                @php $user = auth()->user(); @endphp
-
                 @if($user->docente)
-                    {{-- Nav docente --}}
                     <li><a href="{{ route('index') }}">Inicio</a></li>
                     <li><a href="{{ route('calendario') }}">Mi Horario</a></li>
                     <li><a href="{{ route('pasarLista') }}">Pasar Lista</a></li>
@@ -29,13 +28,11 @@
                     <li><a href="{{ route('material-repaso.index') }}">Material</a></li>
                     <li><a href="{{ route('perfil') }}">Mi Perfil</a></li>
                 @elseif($user->coordinador)
-                    {{-- Nav coordinador --}}
                     <li><a href="{{ route('index') }}">Inicio</a></li>
                     <li><a href="{{ route('coordinador') }}">Mi Centro</a></li>
                     <li class="activo"><a href="{{ route('tablon') }}">Tablón</a></li>
-                                    <li><a href="{{ route('perfilCoordinador') }}">Mi Perfil</a></li>
+                    <li><a href="{{ route('perfilCoordinador') }}">Mi Perfil</a></li>
                 @elseif($user->tutor)
-                    {{-- Nav tutor/familia --}}
                     <li><a href="{{ route('index') }}">Inicio</a></li>
                     <li><a href="{{ route('tutor.faltas') }}">Faltas</a></li>
                     <li class="activo"><a href="{{ route('tablon') }}">Tablón</a></li>
@@ -67,10 +64,20 @@
                         @elseif($user->coordinador)
                             <li><a href="{{ route('perfilCoordinador') }}">👤 Mi perfil</a></li>
                         @elseif($user->tutor)
-                            <li><a href="{{ route('perfil') }}">👤 Mi perfil</a></li>
+                            <li><a href="{{ route('perfilFamilia') }}">👤 Mi perfil</a></li>
+                        @else
+                            <li><a href="#">👤 Mi perfil</a></li>
                         @endif
                         <li><a href="{{ route('configPerfiles') }}">⚙️ Configuración</a></li>
-                        <li><a href="#" id="btn-logout">Cerrar sesión</a></li>
+                        <li>
+                            <a href="#" id="btn-logout"
+                               onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                Cerrar sesión
+                            </a>
+                            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display:none">
+                                @csrf
+                            </form>
+                        </li>
                     </ul>
                 </li>
             </ul>
@@ -78,7 +85,7 @@
     </nav>
 </header>
 
-<!-- ── HERO ── -->
+{{-- ── HERO ── --}}
 <div class="tablon-hero">
     <div class="tablon-hero-inner">
         <div>
@@ -86,7 +93,7 @@
             <h1>Tablón de Anuncios</h1>
             <p class="hero-sub">Mantente informado de todo lo que ocurre en el centro.</p>
         </div>
-        <div id="hero-acciones" style="display:none">
+        <div id="hero-acciones" style="{{ ($user->docente || $user->coordinador) ? '' : 'display:none' }}">
             <button class="btn-primary" onclick="abrirModalPublicar()">
                 ✏️ Publicar anuncio
             </button>
@@ -94,7 +101,7 @@
     </div>
 </div>
 
-<!-- ── FILTROS ── -->
+{{-- ── FILTROS ── --}}
 <div class="filtros-wrap">
     <div class="filtros">
         <div class="chips-wrap">
@@ -113,10 +120,9 @@
     </div>
 </div>
 
-<!-- ── LAYOUT ── -->
+{{-- ── LAYOUT ── --}}
 <div class="tablon-layout">
 
-    <!-- Anuncios -->
     <main class="anuncios-col">
         <div id="anuncios-lista"></div>
         <div id="anuncios-vacio" class="vacio" style="display:none">
@@ -125,7 +131,6 @@
         </div>
     </main>
 
-    <!-- Sidebar -->
     <aside class="tablon-aside">
 
         <div class="aside-card">
@@ -169,7 +174,7 @@
     </aside>
 </div>
 
-<!-- ══ MODAL: Publicar anuncio ══ -->
+{{-- ══ MODAL: Publicar anuncio ══ --}}
 <div class="modal-overlay" id="modal-publicar">
     <div class="modal">
         <div class="modal-head">
@@ -206,6 +211,12 @@
                           placeholder="Escribe el contenido del anuncio…"></textarea>
             </div>
             <div class="fgroup">
+                <label class="flabel">Clase (opcional)</label>
+                <select class="finput" id="pub-clase">
+                    <option value="">Todas las clases</option>
+                </select>
+            </div>
+            <div class="fgroup">
                 <label class="flabel">Fecha límite (opcional)</label>
                 <input class="finput" id="pub-fecha-limite" type="date">
             </div>
@@ -217,7 +228,7 @@
     </div>
 </div>
 
-<!-- ══ MODAL: Ver anuncio completo ══ -->
+{{-- ══ MODAL: Ver anuncio completo ══ --}}
 <div class="modal-overlay" id="modal-ver">
     <div class="modal modal-grande">
         <div class="modal-head">
@@ -229,7 +240,6 @@
         <div id="ver-contenido" class="ver-contenido"></div>
         <div id="ver-footer" class="ver-footer"></div>
 
-        <!-- ── COMENTARIOS ── -->
         <div class="comentarios-seccion">
             <h4 class="comentarios-titulo">
                 💬 Comentarios
@@ -251,7 +261,7 @@
     </div>
 </div>
 
-<!-- ══ MODAL: Confirmar eliminar ══ -->
+{{-- ══ MODAL: Confirmar eliminar ══ --}}
 <div class="modal-overlay" id="modal-eliminar">
     <div class="modal" style="max-width:380px;text-align:center">
         <div style="font-size:36px;margin-bottom:12px">🗑️</div>
@@ -266,20 +276,19 @@
 
 <div class="toast" id="toast"></div>
 
+<script>
+    window.csrfToken = '{{ csrf_token() }}';
+    window._sesion = {
+        id:         {{ $user->id ?? 0 }},
+        nombre:     @json($user->name ?? 'Usuario'),
+        apellidos:  @json($user->apellidos ?? ''),
+        rol:        @json($user->docente ? 'docente' : ($user->coordinador ? 'coordinador' : ($user->tutor ? 'tutor' : 'admin'))),
+        colegio_id: {{ $user->colegio_id ?? 0 }}
+    };
+</script>
 <script src="{{ asset('js/MenuSesion.js') }}"></script>
 <script src="{{ asset('js/menuResponsive.js') }}"></script>
-<script>
-window.csrfToken = '{{ csrf_token() }}';
-
-document.getElementById('btn-logout')?.addEventListener('click', async e => {
-    e.preventDefault();
-    await fetch('/api/logout', {
-        method: 'POST',
-        headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
-    });
-    window.location.href = '{{ route("login") }}';
-});
-</script>
 <script src="{{ asset('js/tablon.js') }}"></script>
+
 </body>
 </html>

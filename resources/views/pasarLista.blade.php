@@ -1,15 +1,13 @@
-﻿<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Edunoly · Pasar Lista</title>
-    <script src="{{ asset('js/temas.js') }}"></script>
-    <link rel="stylesheet" href="{{ asset('css/temas.css') }}">
+﻿{{-- resources/views/pasarLista.blade.php --}}
+@extends('layouts.app')
+
+@section('title', 'Edunoly · Pasar Lista')
+
+@push('styles')
     <link rel="stylesheet" href="{{ asset('css/EstilosPasarLista.css') }}">
-</head>
-<body>
+@endpush
+
+@section('content')
 
 {{-- ── NAVEGACIÓN ── --}}
 <header>
@@ -90,8 +88,11 @@
 
         <div class="filtro-grupo">
             <label class="filtro-label">Clase</label>
-            <select class="filtro-input" id="filtro-clase">
+            <select class="filtro-input" id="filtro-clase" onchange="cargarAlumnos()">
                 <option value="">Seleccionar clase…</option>
+                @foreach ($clases ?? [] as $clase)
+                    <option value="{{ $clase->id }}">{{ $clase->nombre }}</option>
+                @endforeach
             </select>
         </div>
 
@@ -99,6 +100,9 @@
             <label class="filtro-label">Asignatura</label>
             <select class="filtro-input" id="filtro-asignatura">
                 <option value="">Seleccionar asignatura…</option>
+                @foreach ($asignaturas ?? [] as $asignatura)
+                    <option value="{{ $asignatura->id }}">{{ $asignatura->nombre }}</option>
+                @endforeach
             </select>
         </div>
 
@@ -135,9 +139,12 @@
         {{-- Tarjetas de alumnos --}}
         <div class="alumnos-grid" id="alumnos-grid"></div>
 
-        {{-- Botón guardar --}}
+        {{-- Botones de acción --}}
         <div class="guardar-wrap">
             <div id="resumen-texto" class="resumen-texto"></div>
+            <button class="btn-exportar-csv" onclick="exportarCSV()" title="Descargar CSV de asistencia">
+                📊 Exportar CSV
+            </button>
             <button class="btn-guardar-lista" id="btn-guardar" onclick="guardarLista()">
                 💾 Guardar lista
             </button>
@@ -186,9 +193,15 @@
 
 <div class="toast" id="toast"></div>
 
-<script src="{{ asset('js/MenuSesion.js') }}"></script>
-<script src="{{ asset('js/menuResponsive.js') }}"></script>
-<script src="{{ asset('js/pasarLista.js') }}"></script>
+@endsection
 
-</body>
-</html>
+@push('scripts')
+    <script src="{{ asset('js/auditoria.js') }}"></script>
+    <script src="{{ asset('js/MenuSesion.js') }}"></script>
+    <script src="{{ asset('js/menuResponsive.js') }}"></script>
+    <script src="{{ asset('js/pasarLista.js') }}"></script>
+    {{-- Token CSRF disponible para peticiones AJAX --}}
+    <script>
+        window.csrfToken = '{{ csrf_token() }}';
+    </script>
+@endpush

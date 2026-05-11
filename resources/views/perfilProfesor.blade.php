@@ -1,15 +1,12 @@
-﻿<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Edunoly · Mi Perfil</title>
-    <script src="{{ asset('js/temas.js') }}"></script>
-    <link rel="stylesheet" href="{{ asset('css/temas.css') }}">
+@extends('layouts.app')
+
+@section('title', 'Edunoly · Mi Perfil')
+
+@push('styles')
     <link rel="stylesheet" href="{{ asset('css/EstilosPerfil.css') }}">
-</head>
-<body>
+@endpush
+
+@section('content')
 
 <!-- ── NAVEGACIÓN ── -->
 <header>
@@ -34,7 +31,15 @@
                         <li class="dropdown-sep"></li>
                         <li><a href="{{ route('perfil') }}">👤 Mi perfil</a></li>
                         <li><a href="{{ route('configPerfiles') }}">⚙️ Configuración</a></li>
-                        <li><a href="#" id="btn-logout">Cerrar sesión</a></li>
+                        <li>
+                            <a href="#" id="btn-logout"
+                               onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                Cerrar sesión
+                            </a>
+                            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display:none">
+                                @csrf
+                            </form>
+                        </li>
                     </ul>
                 </li>
             </ul>
@@ -297,234 +302,9 @@
 
 <div class="toast" id="toast"></div>
 
-<script src="{{ asset('js/temas.js') }}"></script>
-<script src="{{ asset('js/MenuSesion.js') }}"></script>
-<script>
-/* ══════════════════════════════════════════════════════════════
-   CONFIG
-══════════════════════════════════════════════════════════════ */
-const API  = '';
-const CSRF = document.querySelector('meta[name="csrf-token"]')?.content ?? '';
+@endsection
 
-/* ══════════════════════════════════════════════════════════════
-   API
-══════════════════════════════════════════════════════════════ */
-async function api(method, ruta, body) {
-    try {
-        const opts = { method, credentials: 'include', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF } };
-        if (body) opts.body = JSON.stringify(body);
-        const r = await fetch(API + ruta, opts);
-        return await r.json();
-    } catch (e) {
-        return { error: 'Error de conexión.' };
-    }
-}
-
-/* ══════════════════════════════════════════════════════════════
-   ARRANQUE — comprueba sesión
-══════════════════════════════════════════════════════════════ */
- (async () => {
-     const data = await api('GET', '/api/me');
-     if (!data || !data.id) { window.location.href = '/login'; return; }
-     if (data.rol !== 'docente') { window.location.href = '/login'; return; }
-     cargarPerfil(data);
-})();
-
-
-/* ══════════════════════════════════════════════════════════════
-   CARGAR PERFIL
-══════════════════════════════════════════════════════════════ */
-async function cargarPerfil(usuario) {
-    const nombreCompleto = `${usuario.nombre} ${usuario.apellidos}`;
-
-    // Nav
-    document.getElementById('nav-nombre').textContent = nombreCompleto;
-
-    // Sidebar
-    document.getElementById('perfil-nombre-completo').textContent = nombreCompleto;
-    document.getElementById('perfil-email-corto').textContent     = usuario.email || '—';
-    document.getElementById('perfil-telefono-corto').textContent  = usuario.telefono || '—';
-    document.getElementById('perfil-colegio').textContent         = usuario.colegio || '—';
-
-    // Último acceso
-    if (usuario.ultimo_acceso) {
-        document.getElementById('ultimo-acceso').textContent =
-            new Date(usuario.ultimo_acceso).toLocaleString('es-ES');
-    }
-
-    // Datos personales
-    document.getElementById('v-nombre').textContent      = usuario.nombre      || '—';
-    document.getElementById('v-apellidos').textContent   = usuario.apellidos   || '—';
-    document.getElementById('v-email').textContent       = usuario.email       || '—';
-    document.getElementById('v-telefono').textContent    = usuario.telefono    || '—';
-    document.getElementById('v-usuario').textContent     = usuario.email       || '—';
-    document.getElementById('v-fnacimiento').textContent = usuario.fechaNacimiento
-        ? new Date(usuario.fechaNacimiento).toLocaleDateString('es-ES')
-        : '—';
-
-    // Prellenar campos de edición
-    set('e-nombre',      usuario.nombre      || '');
-    set('e-apellidos',   usuario.apellidos   || '');
-    set('e-telefono',    usuario.telefono    || '');
-    set('e-fnacimiento', usuario.fechaNacimiento?.slice(0,10) || '');
-
-    // Datos profesionales
-    document.getElementById('v-colegio').textContent = usuario.colegio || '—';
-
-    // Cargar asignaturas y clases desde la API
-    const misClases = await api('GET', '/api/mis-clases');
-    if (misClases && !misClases.error && misClases.length) {
-        // Asignaturas únicas del docente (todas las clases comparten el mismo CSV)
-        const asigs = misClases[0].asignaturas ?? [];
-
-        // Clases únicas (identificadores como "1A", "2B")
-        const clasesUnicas = [...new Set(misClases.map(c => c.nombre).filter(Boolean))];
-
-        document.getElementById('stat-clases').textContent      = clasesUnicas.length || '—';
-        document.getElementById('stat-asignaturas').textContent = asigs.length        || '—';
-
-        document.getElementById('v-asignaturas').innerHTML = asigs.length
-            ? asigs.map(a => `<span class="tag-item">${a}</span>`).join('')
-            : '<span class="dato-val">—</span>';
-
-        document.getElementById('v-clases').innerHTML = clasesUnicas.length
-            ? clasesUnicas.map(g => `<span class="tag-item tag-clase">${g}</span>`).join('')
-            : '<span class="dato-val">—</span>';
-
-        // Contar alumnos aproximados (clases × media)
-        document.getElementById('stat-alumnos').textContent = clasesUnicas.length
-            ? `~${clasesUnicas.length * 25}` : '—';
-    }
-}
-
-/* ══════════════════════════════════════════════════════════════
-   TOGGLE EDITAR
-══════════════════════════════════════════════════════════════ */
-function toggleEditar(seccion) {
-    const vistas = { personal: ['vista-personal','form-personal'], pass: ['vista-pass','form-pass'] };
-    const [vistaId, formId] = vistas[seccion];
-    const forma = document.getElementById(formId);
-    const vista = document.getElementById(vistaId);
-
-    const editando = forma.style.display !== 'none';
-    forma.style.display = editando ? 'none' : 'block';
-    vista.style.display = editando ? 'grid' : 'none';
-
-    const btn = document.getElementById(`btn-editar-${seccion === 'personal' ? 'personal' : 'pass'}`);
-    btn.textContent = editando
-        ? (seccion === 'personal' ? '✏️ Editar' : '🔑 Cambiar contraseña')
-        : '✕ Cancelar';
-}
-
-/* ══════════════════════════════════════════════════════════════
-   GUARDAR DATOS PERSONALES
-══════════════════════════════════════════════════════════════ */
-async function guardarPersonal() {
-    const payload = {
-        nombre:          v('e-nombre'),
-        apellidos:       v('e-apellidos'),
-        telefono:        v('e-telefono'),
-        fechaNacimiento: v('e-fnacimiento') || null,
-    };
-
-    if (!payload.nombre || !payload.apellidos) {
-        toast('⚠️ Nombre y apellidos son obligatorios.');
-        return;
-    }
-
-    const data = await api('PUT', '/api/me/datos', payload);
-
-    if (data.error) { toast('❌ ' + data.error); return; }
-
-    // Actualizar vista
-    document.getElementById('v-nombre').textContent    = payload.nombre;
-    document.getElementById('v-apellidos').textContent = payload.apellidos;
-    document.getElementById('v-telefono').textContent  = payload.telefono || '—';
-    document.getElementById('v-fnacimiento').textContent = payload.fechaNacimiento
-        ? new Date(payload.fechaNacimiento).toLocaleDateString('es-ES') : '—';
-
-    document.getElementById('perfil-nombre-completo').textContent = `${payload.nombre} ${payload.apellidos}`;
-    document.getElementById('nav-nombre').textContent             = `${payload.nombre} ${payload.apellidos}`;
-    document.getElementById('perfil-telefono-corto').textContent  = payload.telefono || '—';
-
-    toggleEditar('personal');
-    toast('✓ Datos actualizados correctamente');
-}
-
-/* ══════════════════════════════════════════════════════════════
-   CAMBIAR CONTRASEÑA
-══════════════════════════════════════════════════════════════ */
-async function guardarPassword() {
-    const actual   = v('p-actual');
-    const nueva    = v('p-nueva');
-    const repetir  = v('p-repetir');
-    const alertEl  = document.getElementById('alert-pass');
-
-    alertEl.innerHTML = '';
-
-    if (!actual || !nueva || !repetir) {
-        mostrarAlertPass('err', 'Todos los campos son obligatorios.');
-        return;
-    }
-
-    if (nueva.length < 8) {
-        mostrarAlertPass('err', 'La nueva contraseña debe tener al menos 8 caracteres.');
-        return;
-    }
-
-    if (nueva !== repetir) {
-        mostrarAlertPass('err', 'Las contraseñas no coinciden.');
-        return;
-    }
-
-    const data = await api('PUT', '/api/me/password', { passwordActual: actual, passwordNueva: nueva });
-
-    if (data.error) { mostrarAlertPass('err', data.error); return; }
-
-    ['p-actual','p-nueva','p-repetir'].forEach(id => set(id, ''));
-    toggleEditar('pass');
-    toast('🔒 Contraseña actualizada correctamente');
-}
-
-function mostrarAlertPass(tipo, texto) {
-    document.getElementById('alert-pass').innerHTML = `
-        <div class="alert-pass alert-pass-${tipo}">
-            ${tipo === 'err' ? '❌' : '✅'} ${texto}
-        </div>`;
-}
-
-/* ══════════════════════════════════════════════════════════════
-   FOTO DE PERFIL
-══════════════════════════════════════════════════════════════ */
-function previsualizarFoto(input) {
-    if (!input.files || !input.files[0]) return;
-    const reader = new FileReader();
-    reader.onload = e => {
-        document.getElementById('foto-preview').src = e.target.result;
-        document.querySelector('.fotoPerfil').src    = e.target.result;
-    };
-    reader.readAsDataURL(input.files[0]);
-    toast('📷 Foto actualizada (solo vista previa — sube al servidor cuando esté implementado)');
-}
-
-/* ══════════════════════════════════════════════════════════════
-   LOGOUT
-══════════════════════════════════════════════════════════════ */
-document.getElementById('btn-logout')?.addEventListener('click', async e => {
-    e.preventDefault();
-    await api('POST', '/api/logout');
-    window.location.href = '{{ route("login") }}';
-});
-
-/* ── Utilidades ── */
-function v(id)        { return document.getElementById(id)?.value.trim() || ''; }
-function set(id, val) { const el = document.getElementById(id); if (el) el.value = val; }
-
-function toast(msg) {
-    const t = document.getElementById('toast');
-    t.textContent = msg; t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 3000);
-}
-</script>
-</body>
-</html>
+@push('scripts')
+    <script src="{{ asset('js/MenuSesion.js') }}"></script>
+    <script src="{{ asset('js/perfil.js') }}"></script>
+@endpush
