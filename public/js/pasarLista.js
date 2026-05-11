@@ -13,8 +13,7 @@
       NO están presentes (ausencias y retrasos)
 ══════════════════════════════════════════════════════════════ */
 
-const API  = '';
-const CSRF = document.querySelector('meta[name="csrf-token"]')?.content ?? '';
+const API = '';
 
 /* ── Estado ── */
 let sesion        = null;
@@ -27,13 +26,20 @@ let alumnoModal   = null;     // id del alumno que se está editando en el modal
    ARRANQUE
 ════════════════════════════════════════════ */
 (async () => {
-    const data = await api('GET', '/api/me');
-    if (!data || !data.id) { window.location.href = '/login'; return; }
-    if (data.rol !== 'docente') { window.location.href = '/login'; return; }
-    sesion = data;
+    // const data = await api('GET', '/api/me');
+    // if (!data || !data.id) { window.location.href = 'login.html'; return; }
+    // if (data.rol !== 'docente') { window.location.href = 'login.html'; return; }
+    // sesion = data;
+
+    // Datos de prueba — quitar cuando el servidor esté activo
+    sesion = {
+        id: 1, nombre: 'Pedro', apellidos: 'Fernández Gil',
+        email: 'pfernandez@colegio.es', rol: 'docente', colegio_id: 1
+    };
 
     document.getElementById('nav-nombre').textContent = `${sesion.nombre} ${sesion.apellidos}`;
 
+    // Fecha de hoy por defecto
     const hoy = new Date().toISOString().slice(0, 10);
     document.getElementById('filtro-fecha').value = hoy;
 
@@ -44,8 +50,15 @@ let alumnoModal   = null;     // id del alumno que se está editando en el modal
    CARGAR CLASES DEL DOCENTE
 ════════════════════════════════════════════ */
 async function cargarClasesDocente() {
-    const data = await api('GET', '/api/mis-clases');
-    clases = Array.isArray(data) ? data : [];
+    // const data = await api('GET', '/api/clases');
+    // clases = data || [];
+
+    // Datos de prueba
+    clases = [
+        { id: 1, nombre: '1ºA', curso: '1º ESO', asignaturas: ['Matemáticas', 'Física'] },
+        { id: 2, nombre: '1ºB', curso: '1º ESO', asignaturas: ['Matemáticas'] },
+        { id: 3, nombre: '2ºA', curso: '2º ESO', asignaturas: ['Física', 'Programación'] },
+    ];
 
     const selClase = document.getElementById('filtro-clase');
     selClase.innerHTML = '<option value="">Seleccionar clase…</option>' +
@@ -84,8 +97,35 @@ async function cargarAlumnos() {
         return;
     }
 
-    const data = await api('GET', `/api/clases/${claseId}/alumnos`);
-    alumnos = Array.isArray(data) ? data : [];
+    // const data = await api('GET', `/api/clases/${claseId}/alumnos`);
+    // alumnos = data || [];
+
+    // Datos de prueba según la clase
+    const datosPrueba = {
+        1: [
+            { id: 1,  nombre: 'Carlos',    apellidos: 'García López' },
+            { id: 2,  nombre: 'Lucía',     apellidos: 'Martínez Ruiz' },
+            { id: 3,  nombre: 'Alejandro', apellidos: 'Sánchez Pérez' },
+            { id: 4,  nombre: 'María',     apellidos: 'López Torres' },
+            { id: 5,  nombre: 'Pablo',     apellidos: 'Fernández Gil' },
+            { id: 6,  nombre: 'Ana',       apellidos: 'Rodríguez Mora' },
+            { id: 7,  nombre: 'David',     apellidos: 'González Vega' },
+            { id: 8,  nombre: 'Laura',     apellidos: 'Díaz Serrano' },
+        ],
+        2: [
+            { id: 9,  nombre: 'Sofía',     apellidos: 'Ruiz Castillo' },
+            { id: 10, nombre: 'Marcos',    apellidos: 'Jiménez Ramos' },
+            { id: 11, nombre: 'Elena',     apellidos: 'Moreno Cruz' },
+            { id: 12, nombre: 'Hugo',      apellidos: 'Navarro Blanco' },
+        ],
+        3: [
+            { id: 13, nombre: 'Valentina', apellidos: 'Pérez Iglesias' },
+            { id: 14, nombre: 'Daniel',    apellidos: 'Herrera Nieto' },
+            { id: 15, nombre: 'Carmen',    apellidos: 'Romero Fuentes' },
+        ],
+    };
+
+    alumnos = datosPrueba[claseId] || [];
 
     // Inicializar asistencia — todos presentes por defecto
     asistencia = {};
@@ -291,26 +331,32 @@ async function confirmarGuardado() {
     const asignaturaEl = document.getElementById('filtro-asignatura');
     const asignatura = asignaturaEl.value || null;
 
-    // Solo enviamos los que NO son presentes (ausencias y retrasos)
+    // Construir payload — solo enviamos los que NO son presentes
+    // (los presentes no generan registro en la tabla ausencias)
     const registros = alumnos
         .filter(a => asistencia[a.id]?.estado !== 'presente')
         .map(a => ({
-            alumno_id: a.id,
-            estado:    asistencia[a.id].estado,
-            nota:      asistencia[a.id].nota || null,
+            alumno_idAlumno:   a.id,
+            estado:            asistencia[a.id].estado,   // 'ausente' | 'retraso'
+            nota:              asistencia[a.id].nota || null,
+            fecha,
+            clase_idClase:     parseInt(claseId),
+            asignatura:        asignatura || null,
         }));
 
-    const respuesta = await api('POST', '/api/asistencia', { fecha, clase_id: claseId, asignatura, registros });
+    // En producción:
+    // const data = await api('POST', '/api/asistencia', { fecha, clase_id: claseId, asignatura, registros });
+    // if (data.error) { toast('❌ ' + data.error); return; }
 
-    if (!respuesta.ok) {
-        toast('❌ ' + (respuesta.mensaje || 'Error al guardar la lista'));
-        cerrarModalConfirm();
-        return;
-    }
+    // Simulación de guardado exitoso
+    console.log('📋 Lista guardada:', { fecha, claseId, asignatura, registros });
 
     cerrarModalConfirm();
     toast('✅ Lista guardada correctamente');
+    const claseObj = clases.find(c => c.id == claseId);
+    if (typeof audit === 'function') audit('lista_guardada', 'asistencia', `${claseObj?.curso} ${claseObj?.nombre} · ${fecha}`);
 
+    // Deshabilitar el botón de guardar para evitar doble envío
     const btn = document.getElementById('btn-guardar');
     btn.textContent = '✓ Lista guardada';
     btn.disabled = true;
@@ -354,6 +400,61 @@ function actualizarResumen() {
 /* ════════════════════════════════════════════
    UTILIDADES
 ════════════════════════════════════════════ */
+function exportarCSV() {
+    const claseId = document.getElementById('filtro-clase').value;
+    const fecha   = document.getElementById('filtro-fecha').value;
+
+    if (!claseId || !alumnos.length) {
+        toast('⚠️ Selecciona una clase con alumnos antes de exportar.');
+        return;
+    }
+
+    const clase   = clases.find(c => c.id == claseId);
+    const docente = `${sesion.nombre} ${sesion.apellidos}`;
+    const ahora   = new Date().toLocaleString('es-ES');
+
+    const presentes = Object.values(asistencia).filter(x => x.estado === 'presente').length;
+    const ausentes  = Object.values(asistencia).filter(x => x.estado === 'ausente').length;
+    const retrasos  = Object.values(asistencia).filter(x => x.estado === 'retraso').length;
+    const pct       = alumnos.length ? Math.round((presentes / alumnos.length) * 100) : 0;
+
+    const LABEL = { presente: 'Presente', ausente: 'Ausente', retraso: 'Retraso' };
+
+    const filas = [
+        ['Clase',       `${clase?.curso} — ${clase?.nombre}`],
+        ['Docente',     docente],
+        ['Fecha',       fecha],
+        ['Generado',    ahora],
+        ['Presentes',   presentes],
+        ['Ausentes',    ausentes],
+        ['Retrasos',    retrasos],
+        ['% asistencia', pct + '%'],
+        [],
+        ['Nombre', 'Apellidos', 'Estado', 'Observación'],
+        ...alumnos.map(a => [
+            a.nombre,
+            a.apellidos,
+            LABEL[asistencia[a.id]?.estado] ?? 'Presente',
+            asistencia[a.id]?.nota ?? '',
+        ]),
+    ];
+
+    const csv = filas
+        .map(fila => fila.map(c => `"${String(c).replace(/"/g, '""')}"`).join(','))
+        .join('\r\n');
+
+    const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8' });
+    const url  = URL.createObjectURL(blob);
+    const el   = document.createElement('a');
+    el.href    = url;
+    el.download = `asistencia_${clase?.nombre || 'clase'}_${fecha}.csv`;
+    el.click();
+    URL.revokeObjectURL(url);
+
+    if (typeof audit === 'function') audit('lista_exportada', 'asistencia', `${clase?.curso} ${clase?.nombre} · ${fecha}`);
+    toast('📊 CSV exportado correctamente');
+}
+
 function formatFechaLarga(fecha) {
     if (!fecha) return '—';
     const opciones = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
@@ -368,7 +469,7 @@ function toast(msg) {
 
 async function api(method, ruta, body) {
     try {
-        const opts = { method, credentials: 'include', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF } };
+        const opts = { method, credentials: 'include', headers: { 'Content-Type': 'application/json' } };
         if (body) opts.body = JSON.stringify(body);
         const r = await fetch(API + ruta, opts);
         return await r.json();
@@ -386,4 +487,8 @@ document.querySelectorAll('.modal-overlay').forEach(o => {
     });
 });
 
-// El logout se gestiona desde el formulario Blade (#logout-form)
+document.getElementById('btn-logout')?.addEventListener('click', async e => {
+    e.preventDefault();
+    await api('POST', '/api/logout');
+    window.location.href = 'login.html';
+});

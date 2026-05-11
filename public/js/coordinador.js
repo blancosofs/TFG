@@ -5,16 +5,16 @@
 const API = '';
 
 /* ── Estado ── */
-let sesion       = null;   // datos del coordinador logueado
-let alumnos      = [];
-let docentes     = [];
-let tutores      = [];
-let cursos       = [];
-let clases       = [];
-let horarios     = [];
-let modoModal    = 'nuevo'; // 'nuevo' | 'editar'
-let idEditando   = null;
-let tabActiva    = 'alumnos';
+let sesion     = null;
+let alumnos    = [];
+let docentes   = [];
+let tutores    = [];
+let cursos     = [];
+let clases     = [];
+let horarios   = [];
+let modoModal  = 'nuevo';
+let idEditando = null;
+let tabActiva  = 'alumnos';
 
 /* ════════════════════════════════════════════
    API
@@ -36,35 +36,21 @@ async function api(method, ruta, body = null) {
         const data = await res.json().catch(() => ({}));
 
         if (!res.ok) {
-            // Errores de validación de Laravel (campos obligatorios, formato, etc.)
             if (res.status === 422 && data.errors) {
                 const primer = Object.values(data.errors)[0];
                 return { ok: false, mensaje: Array.isArray(primer) ? primer[0] : primer };
             }
-            // Sin sesión activa
-            if (res.status === 401) {
-                window.location.href = '/login';
-                return { ok: false, mensaje: 'Sesión expirada. Redirigiendo al inicio de sesión…' };
-            }
-            // Sin permisos
-            if (res.status === 403) {
-                return { ok: false, mensaje: 'No tienes permisos para realizar esta acción.' };
-            }
-            // Registro no encontrado
-            if (res.status === 404) {
-                return { ok: false, mensaje: 'El registro solicitado no existe.' };
-            }
-            // Error interno del servidor — no se expone el detalle al usuario
+            if (res.status === 401) { window.location.href = '/login'; return { ok: false }; }
+            if (res.status === 403) return { ok: false, mensaje: 'No tienes permisos para realizar esta acción.' };
+            if (res.status === 404) return { ok: false, mensaje: 'El registro solicitado no existe.' };
             if (res.status >= 500) {
                 console.error(`[API ${method} ${ruta}]`, data);
                 return { ok: false, mensaje: 'Error interno del servidor. Inténtalo de nuevo más tarde.' };
             }
-            // Cualquier otro error 4xx con mensaje propio del controlador
             return { ok: false, mensaje: data.mensaje || data.message || 'Ha ocurrido un error inesperado.' };
         }
 
         return data;
-
     } catch (e) {
         console.error('[API red]', e);
         return { ok: false, mensaje: 'Error de conexión. Comprueba tu red e inténtalo de nuevo.' };
@@ -75,7 +61,6 @@ async function api(method, ruta, body = null) {
    ARRANQUE
 ════════════════════════════════════════════ */
 (async () => {
-    // Verificar sesión
     const data = await api('GET', '/api/me');
     if (!data || !data.id) { window.location.href = '/login'; return; }
     if (data.rol !== 'coordinador') { window.location.href = '/login'; return; }
@@ -101,7 +86,6 @@ async function cargarTodo() {
         cargarTutores(),
         cargarHorarios(),
     ]);
-
     actualizarStats();
 }
 
@@ -109,83 +93,56 @@ async function cargarCursos() {
     const resCursos = await api('GET', '/api/cursos');
     const resClases = await api('GET', '/api/clases');
 
-    cursos = resCursos.error ? [] : resCursos;
-    clases = resClases.error ? [] : resClases;
+    cursos = resCursos.error ? [] : (Array.isArray(resCursos) ? resCursos : []);
+    clases = resClases.error ? [] : (Array.isArray(resClases) ? resClases : []);
 
     renderTabla('cursos');
     renderTabla('clases');
-
 }
 
 async function cargarAlumnos() {
     const data = await api('GET', '/api/alumnos');
-
-    if (data.error || !Array.isArray(data)) {
-        alumnos = [];
-    } else {
-        alumnos = data.map(a => ({
-            id: a.id,
-            nombre: a.nombre,
-            apellidos: a.apellidos,
-            fnac: a.fecha_nacimiento ? a.fecha_nacimiento : '',
-            curso: a.curso ? a.curso.nombre : '—',
-            clase: a.clase ? a.clase.nombre : '—',
-            curso_id: a.curso_id,
-            clase_id: a.clase_id
-        }));
-    }
+    alumnos = (data.error || !Array.isArray(data)) ? [] : data.map(a => ({
+        id:       a.id,
+        nombre:   a.nombre,
+        apellidos: a.apellidos,
+        fnac:     a.fecha_nacimiento ?? '',
+        curso:    a.curso  ? a.curso.nombre  : '—',
+        clase:    a.clase  ? a.clase.nombre  : '—',
+        curso_id: a.curso_id,
+        clase_id: a.clase_id,
+    }));
     renderTabla('alumnos');
-
-    // Datos de prueba
-    /*alumnos = [
-        { id: 1, nombre: 'Carlos',    apellidos: 'García López',    fnac: '2010-03-15', curso: '1º ESO', clase: 'A', tutor: 'María López' },
-        { id: 2, nombre: 'Lucía',     apellidos: 'Martínez Ruiz',   fnac: '2011-07-22', curso: '1º ESO', clase: 'B', tutor: 'Juan Martínez' },
-        { id: 3, nombre: 'Alejandro', apellidos: 'Sánchez Pérez',   fnac: '2010-11-03', curso: '2º ESO', clase: 'A', tutor: '' },
-    ];
-    renderTabla('alumnos');*/
 }
 
 async function cargarDocentes() {
     const data = await api('GET', '/api/docentes');
-    
-    if (data.error || !Array.isArray(data)) {
-        docentes = [];
-    } else {
-        docentes = data.map(d => ({
-            id: d.id,
-            nombre: d.user ? d.user.name : 'Sin nombre',
-            apellidos: d.user ? d.user.apellidos : '',
-            email: d.user ? d.user.email : '',
-            telefono: d.telefono || '—',
-            asignaturas: d.asignaturas
-                ? d.asignaturas.split(',').map(s => s.trim()).filter(Boolean)
-                : []
-        }));
-    }
+    docentes = (data.error || !Array.isArray(data)) ? [] : data.map(d => ({
+        id:          d.id,
+        nombre:      d.user ? d.user.name      : 'Sin nombre',
+        apellidos:   d.user ? d.user.apellidos  : '',
+        email:       d.user ? d.user.email      : '',
+        telefono:    d.telefono || '—',
+        asignaturas: d.asignaturas
+            ? d.asignaturas.split(',').map(s => s.trim()).filter(Boolean)
+            : [],
+    }));
     renderTabla('docentes');
-
-
 }
 
 async function cargarTutores() {
     const data = await api('GET', '/api/tutores');
-    
-    if (data.error || !Array.isArray(data)) {
-        tutores = [];
-    } else {
-        tutores = data.map(t => ({
-            id: t.id,
-            nombre: t.user ? t.user.name : 'Sin nombre',
-            apellidos: t.user ? t.user.apellidos : '',
-            email: t.user ? t.user.email : '',
-            telefono: t.telefono || '—',
-            alumnos: t.alumnos ? t.alumnos.map(hijo => `${hijo.nombre} ${hijo.apellidos}`) : [],
-            alumno_ids: t.alumnos ? t.alumnos.map(hijo => hijo.id) : [],
-            alumno_parentescos: t.alumnos ? t.alumnos.map(hijo => hijo.pivot ? hijo.pivot.parentesco : 'padre') : []
-        }));
-    }
+    tutores = (data.error || !Array.isArray(data)) ? [] : data.map(t => ({
+        id:                  t.id,
+        nombre:              t.user ? t.user.name      : 'Sin nombre',
+        apellidos:           t.user ? t.user.apellidos  : '',
+        email:               t.user ? t.user.email      : '',
+        telefono:            t.telefono || '—',
+        alumnos:             t.alumnos ? t.alumnos.map(h => `${h.nombre} ${h.apellidos}`) : [],
+        alumno_ids:          t.alumnos ? t.alumnos.map(h => h.id) : [],
+        alumno_parentescos:  t.alumnos ? t.alumnos.map(h => h.pivot?.parentesco ?? 'padre') : [],
+    }));
     renderTabla('tutores');
-
 }
 
 async function cargarHorarios() {
@@ -199,6 +156,7 @@ async function cargarHorarios() {
 ════════════════════════════════════════════ */
 function renderTabla(tipo) {
     const tbody = document.getElementById(`tbody-${tipo}`);
+    if (!tbody) return;
     let datos, html;
 
     if (tipo === 'alumnos') {
@@ -214,12 +172,10 @@ function renderTabla(tipo) {
                 <td>${a.fnac ? formatFecha(a.fnac) : '—'}</td>
                 <td>${a.curso || '—'}</td>
                 <td>${a.clase || '—'}</td>
-                <td>
-                    <div class="acciones">
-                        <button class="btn-tabla" onclick="editarAlumno(${a.id})">✏️ Editar</button>
-                        <button class="btn-tabla danger" onclick="confirmarEliminar('alumno', ${a.id}, '${a.nombre} ${a.apellidos}')">🗑️</button>
-                    </div>
-                </td>
+                <td><div class="acciones">
+                    <button class="btn-tabla" onclick="editarAlumno(${a.id})">✏️ Editar</button>
+                    <button class="btn-tabla danger" onclick="confirmarEliminar('alumno', ${a.id}, '${a.nombre} ${a.apellidos}')">🗑️</button>
+                </div></td>
             </tr>`).join('');
 
     } else if (tipo === 'docentes') {
@@ -235,12 +191,10 @@ function renderTabla(tipo) {
                 <td>${d.email}</td>
                 <td>${d.telefono || '—'}</td>
                 <td>${(d.asignaturas || []).map(a => `<span class="tag">${a}</span>`).join('') || '—'}</td>
-                <td>
-                    <div class="acciones">
-                        <button class="btn-tabla" onclick="editarDocente(${d.id})">✏️ Editar</button>
-                        <button class="btn-tabla danger" onclick="confirmarEliminar('docente', ${d.id}, '${d.nombre} ${d.apellidos}')">🗑️</button>
-                    </div>
-                </td>
+                <td><div class="acciones">
+                    <button class="btn-tabla" onclick="editarDocente(${d.id})">✏️ Editar</button>
+                    <button class="btn-tabla danger" onclick="confirmarEliminar('docente', ${d.id}, '${d.nombre} ${d.apellidos}')">🗑️</button>
+                </div></td>
             </tr>`).join('');
 
     } else if (tipo === 'tutores') {
@@ -256,12 +210,10 @@ function renderTabla(tipo) {
                 <td>${t.email}</td>
                 <td>${t.telefono || '—'}</td>
                 <td>${(t.alumnos || []).map(a => `<span class="tag">${a}</span>`).join('') || '—'}</td>
-                <td>
-                    <div class="acciones">
-                        <button class="btn-tabla" onclick="editarTutor(${t.id})">✏️ Editar</button>
-                        <button class="btn-tabla danger" onclick="confirmarEliminar('tutor', ${t.id}, '${t.nombre} ${t.apellidos}')">🗑️</button>
-                    </div>
-                </td>
+                <td><div class="acciones">
+                    <button class="btn-tabla" onclick="editarTutor(${t.id})">✏️ Editar</button>
+                    <button class="btn-tabla danger" onclick="confirmarEliminar('tutor', ${t.id}, '${t.nombre} ${t.apellidos}')">🗑️</button>
+                </div></td>
             </tr>`).join('');
 
     } else if (tipo === 'cursos') {
@@ -315,12 +267,10 @@ function renderTabla(tipo) {
                 <td>${diasLabel[h.dia_semana] ?? h.dia_semana}</td>
                 <td>${h.hora_inicio?.slice(0, 5) ?? '—'}</td>
                 <td>${h.hora_fin?.slice(0, 5) ?? '—'}</td>
-                <td>
-                    <div class="acciones">
-                        <button class="btn-tabla" onclick="editarHorario(${h.id})">✏️ Editar</button>
-                        <button class="btn-tabla danger" onclick="confirmarEliminar('horario', ${h.id}, '${h.docente} – ${h.clase}')">🗑️</button>
-                    </div>
-                </td>
+                <td><div class="acciones">
+                    <button class="btn-tabla" onclick="editarHorario(${h.id})">✏️ Editar</button>
+                    <button class="btn-tabla danger" onclick="confirmarEliminar('horario', ${h.id}, '${h.docente} – ${h.clase}')">🗑️</button>
+                </div></td>
             </tr>`).join('');
     }
 
@@ -350,7 +300,7 @@ function filtrarLista(tipo) {
         ? datos.filter(x => {
             const texto = tipo === 'horarios'
                 ? `${x.docente} ${x.clase} ${x.dia_semana}`.toLowerCase()
-                : tipo === 'cursos' || tipo === 'clases'
+                : (tipo === 'cursos' || tipo === 'clases')
                     ? `${x.nombre}`.toLowerCase()
                     : `${x.nombre} ${x.apellidos} ${x.email ?? ''}`.toLowerCase();
             return texto.includes(q);
@@ -365,61 +315,57 @@ function filtrarLista(tipo) {
     }
 
     const backup = [...datos];
-    if (tipo === 'alumnos') alumnos = filtrados;
+    if (tipo === 'alumnos')  alumnos  = filtrados;
     else if (tipo === 'docentes') docentes = filtrados;
-    else if (tipo === 'tutores') tutores = filtrados;
+    else if (tipo === 'tutores')  tutores  = filtrados;
     else if (tipo === 'horarios') horarios = filtrados;
-    else if (tipo === 'cursos') cursos = filtrados;
-    else if (tipo === 'clases') clases = filtrados;
+    else if (tipo === 'cursos')   cursos   = filtrados;
+    else if (tipo === 'clases')   clases   = filtrados;
 
     renderTabla(tipo);
 
-    if (tipo === 'alumnos') alumnos = backup;
+    if (tipo === 'alumnos')  alumnos  = backup;
     else if (tipo === 'docentes') docentes = backup;
-    else if (tipo === 'tutores') tutores = backup;
+    else if (tipo === 'tutores')  tutores  = backup;
     else if (tipo === 'horarios') horarios = backup;
-    else if (tipo === 'cursos') cursos = backup;
-    else if (tipo === 'clases') clases = backup;
+    else if (tipo === 'cursos')   cursos   = backup;
+    else if (tipo === 'clases')   clases   = backup;
 }
 
 /* ════════════════════════════════════════════
-   MODAL — ALUMNO
+   ABRIR MODAL
 ════════════════════════════════════════════ */
 function abrirModal(modalId, modo) {
     modoModal  = modo;
     idEditando = null;
 
-    document.getElementById('alert-alumno') && (document.getElementById('alert-alumno').innerHTML = '');
-    document.getElementById('alert-docente') && (document.getElementById('alert-docente').innerHTML = '');
-    document.getElementById('alert-tutor') && (document.getElementById('alert-tutor').innerHTML = '');
+    ['alert-alumno','alert-docente','alert-tutor','alert-curso','alert-clase','alert-horario']
+        .forEach(id => { const el = document.getElementById(id); if (el) el.innerHTML = ''; });
 
-    // Rellenar selects de cursos y tutores en modal alumno
     if (modalId === 'modal-alumno') {
         const selCurso = document.getElementById('a-curso');
         selCurso.innerHTML = '<option value="">Seleccionar curso…</option>' +
             cursos.map(c => `<option value="${c.id}">${c.nombre}</option>`).join('');
-
-        // Al cambiar curso filtrar clases
         selCurso.onchange = () => {
             const cursoId = parseInt(selCurso.value);
             const selClase = document.getElementById('a-clase');
-            const clasesDelCurso = clases.filter(c => c.curso_id === cursoId);
             selClase.innerHTML = '<option value="">Seleccionar clase…</option>' +
-                clasesDelCurso.map(c => `<option value="${c.id}">${c.nombre}</option>`).join('');
+                clases.filter(c => c.curso_id === cursoId)
+                      .map(c => `<option value="${c.id}">${c.nombre}</option>`).join('');
         };
-
         document.getElementById('a-clase').innerHTML = '<option value="">Seleccionar clase…</option>';
-
-        // Tutores disponibles
         document.getElementById('a-tutor').innerHTML =
             '<option value="">Sin tutor asignado</option>' +
             tutores.map(t => `<option value="${t.id}">${t.nombre} ${t.apellidos}</option>`).join('');
-
-        // Limpiar campos
         ['a-nombre','a-apellidos','a-fnac'].forEach(id => set(id, ''));
-        set('a-curso', '');
-        set('a-tutor', '');
+        set('a-curso', ''); set('a-tutor', '');
         document.getElementById('modal-alumno-titulo').textContent = '➕ Nuevo alumno';
+    }
+
+    if (modalId === 'modal-docente') {
+        ['d-nombre','d-apellidos','d-email','d-telefono','d-password','d-fnac','d-asignaturas']
+            .forEach(id => set(id, ''));
+        document.getElementById('modal-docente-titulo').textContent = '➕ Nuevo docente';
     }
 
     if (modalId === 'modal-tutor') {
@@ -430,14 +376,8 @@ function abrirModal(modalId, modo) {
         document.getElementById('modal-tutor-titulo').textContent = '➕ Nuevo tutor legal';
     }
 
-    if (modalId === 'modal-docente') {
-        ['d-nombre','d-apellidos','d-email','d-telefono','d-password','d-fnac'].forEach(id => set(id, ''));
-        document.getElementById('modal-docente-titulo').textContent = '➕ Nuevo docente';
-    }
-
     if (modalId === 'modal-curso') {
         set('c-nombre', '');
-        document.getElementById('alert-curso').innerHTML = '';
         document.getElementById('modal-curso-titulo').textContent = '➕ Nuevo curso';
     }
 
@@ -445,30 +385,21 @@ function abrirModal(modalId, modo) {
         document.getElementById('cl-curso').innerHTML =
             '<option value="">Seleccionar curso…</option>' +
             cursos.map(c => `<option value="${c.id}">${c.nombre}</option>`).join('');
-        set('cl-nombre', '');
-        set('cl-curso', '');
-        document.getElementById('alert-clase').innerHTML = '';
+        set('cl-nombre', ''); set('cl-curso', ''); set('cl-codigo', '');
         document.getElementById('modal-clase-titulo').textContent = '➕ Nueva clase';
     }
 
     if (modalId === 'modal-horario') {
         const selDocente = document.getElementById('h-docente');
-        selDocente.innerHTML =
-            '<option value="">Seleccionar docente…</option>' +
+        selDocente.innerHTML = '<option value="">Seleccionar docente…</option>' +
             docentes.map(d => `<option value="${d.id}">${d.nombre} ${d.apellidos}</option>`).join('');
-
-        document.getElementById('h-clase').innerHTML =
-            '<option value="">Seleccionar clase…</option>' +
+        document.getElementById('h-clase').innerHTML = '<option value="">Seleccionar clase…</option>' +
             clases.map(c => {
                 const curso = cursos.find(x => x.id === c.curso_id);
-                const label = curso ? `${curso.nombre} – ${c.nombre}` : c.nombre;
-                return `<option value="${c.id}">${label}</option>`;
+                return `<option value="${c.id}">${curso ? curso.nombre + ' – ' : ''}${c.nombre}</option>`;
             }).join('');
-
         selDocente.onchange = () => actualizarAsignaturasHorario();
-
         ['h-dia','h-inicio','h-fin','h-asignatura'].forEach(id => set(id, ''));
-        document.getElementById('alert-horario').innerHTML = '';
         document.getElementById('modal-horario-titulo').textContent = '➕ Nuevo horario';
     }
 
@@ -478,92 +409,54 @@ function abrirModal(modalId, modo) {
 /* ════════════════════════════════════════════
    GUARDAR ALUMNO
 ════════════════════════════════════════════ */
-
 async function guardarAlumno() {
     const nombre     = v('a-nombre');
     const apellidos  = v('a-apellidos');
-    const fnac       = v('a-fnac'); 
+    const fnac       = v('a-fnac');
     const cursoId    = v('a-curso');
     const claseId    = v('a-clase');
-    const tutorId    = v('a-tutor'); 
+    const tutorId    = v('a-tutor');
     const parentesco = v('a-parentesco');
 
     if (!nombre || !apellidos || !fnac || !cursoId || !claseId) {
-        alertModal('alert-alumno', '❌ Nombre, apellidos, fecha, curso y clase son obligatorios.'); 
+        alertModal('alert-alumno', 'err', '❌ Nombre, apellidos, fecha, curso y clase son obligatorios.');
         return;
     }
 
-        const payload = { 
-            nombre: nombre, 
-            apellidos: apellidos,
-            fecha_nacimiento: fnac,
-            curso_id: cursoId, 
-            clase_id: claseId,
-            tutor_id: tutorId || null,
-            parentesco: parentesco,
-            activo: true 
-        };
+    const payload = { nombre, apellidos, fecha_nacimiento: fnac, curso_id: cursoId, clase_id: claseId, tutor_id: tutorId || null, parentesco, activo: true };
+    const url    = modoModal === 'nuevo' ? '/api/alumnos' : `/api/alumnos/${idEditando}`;
+    const metodo = modoModal === 'nuevo' ? 'POST' : 'PUT';
 
-        let url = '/api/alumnos';
-        let metodo = 'POST'; // Por defecto es "Nuevo"
-
-        if (modoModal === 'editar' && idEditando) {
-            url = `/api/alumnos/${idEditando}`;
-            metodo = 'PUT'; // Si es "Editar", cambiamos a PUT y añadimos el ID
-        }
-
-        const respuesta = await api(metodo, url, payload);
-
-        if (respuesta.error || respuesta.message || respuesta.errors) {
-            let mensajeError = respuesta.error || respuesta.message || 'Error desconocido';
-            alertModal('alert-alumno', 'err', '❌ ' + mensajeError);
+    const btn = document.querySelector('#modal-alumno .modal-actions button:last-child');
+    setBtnLoading(btn, true);
+    try {
+        const r = await api(metodo, url, payload);
+        if (r.error || r.message || r.errors) {
+            alertModal('alert-alumno', 'err', '❌ ' + (r.error || r.message || 'Error desconocido'));
             return;
         }
-
-
-    await cargarTodo(); // Refrescamos las tablas
-    cerrarModal('modal-alumno'); // Cerramos ventana
-    
-    
-    if (modoModal === 'editar') {
-        toast('✅ Alumno actualizado correctamente');
-    } else {
-        toast('✅ Alumno registrado y vinculado');
+        await cargarTodo();
+        cerrarModal('modal-alumno');
+        toast(modoModal === 'nuevo' ? '✅ Alumno registrado' : '✅ Alumno actualizado');
+        if (typeof audit === 'function') audit(modoModal === 'nuevo' ? 'alumno_registrado' : 'alumno_actualizado', 'alumno', `${nombre} ${apellidos}`);
+    } finally {
+        setBtnLoading(btn, false);
     }
 }
 
-
 function editarAlumno(id) {
-    // 1.Buscamos el alumno en nuestro array local (que ya tiene curso y clase traducidos)
     const a = alumnos.find(x => x.id === id);
     if (!a) return;
-    
-
     abrirModal('modal-alumno', 'editar');
     idEditando = id;
-
-    document.getElementById('a-nombre').value = a.nombre;
-    document.getElementById('a-apellidos').value = a.apellidos;
-    document.getElementById('a-fnac').value = a.fnac || '';
-
+    set('a-nombre',    a.nombre);
+    set('a-apellidos', a.apellidos);
+    set('a-fnac',      a.fnac || '');
     const selCurso = document.getElementById('a-curso');
-    selCurso.value = a.curso_id; // Seleccionamos su curso
-
-    // Como hemos cambiado el curso por código, el navegador no se entera. 
-    // Tenemos que "forzar" el onchange para que pinte las clases de ese curso.
+    selCurso.value = a.curso_id;
     selCurso.dispatchEvent(new Event('change'));
-
-    // Ahora que ya están pintadas las clases, seleccionamos la suya
     document.getElementById('a-clase').value = a.clase_id;
-
-    if (a.tutores && a.tutores.length > 0) {
-        const relacion = a.tutores[0]; // Cogemos el primer tutor
-        document.getElementById('a-tutor').value = relacion.id;
-        document.getElementById('a-parentesco').value = relacion.pivot.parentesco || 'padre';
-    } else {
-        // Si no tiene tutor, lo dejamos en "Sin tutor asignado"
-        document.getElementById('a-tutor').value = "";
-    }
+    document.getElementById('modal-alumno-titulo').textContent = '✏️ Editar alumno';
 }
 
 /* ════════════════════════════════════════════
@@ -576,7 +469,7 @@ async function guardarDocente() {
     const telefono  = v('d-telefono');
     const password  = v('d-password');
     const fnac      = v('d-fnac');
-    const asignaturas = v('d-asignaturas'); // Por ahora dejamos asignaturas vacío, se asignarán después
+    const asignaturas = v('d-asignaturas');
 
     if (!nombre || !apellidos || !email) {
         alertModal('alert-docente', 'err', '⚠️ Nombre, apellidos y email son obligatorios.');
@@ -596,16 +489,22 @@ async function guardarDocente() {
 
     const url    = modoModal === 'nuevo' ? '/api/docentes' : `/api/docentes/${idEditando}`;
     const metodo = modoModal === 'nuevo' ? 'POST' : 'PUT';
-    const respuesta = await api(metodo, url, payload);
 
-    if (!respuesta.ok) {
-        alertModal('alert-docente', 'err', '❌ ' + (respuesta.mensaje || respuesta.message || 'Error desconocido'));
-        return;
+    const btn = document.querySelector('#modal-docente .modal-actions button:last-child');
+    setBtnLoading(btn, true);
+    try {
+        const r = await api(metodo, url, payload);
+        if (!r.ok) {
+            alertModal('alert-docente', 'err', '❌ ' + (r.mensaje || r.message || 'Error desconocido'));
+            return;
+        }
+        await cargarTodo();
+        cerrarModal('modal-docente');
+        toast(modoModal === 'nuevo' ? '✓ Docente registrado' : '✓ Docente actualizado');
+        if (typeof audit === 'function') audit(modoModal === 'nuevo' ? 'docente_registrado' : 'docente_actualizado', 'docente', `${nombre} ${apellidos}`);
+    } finally {
+        setBtnLoading(btn, false);
     }
-
-    await cargarTodo();
-    cerrarModal('modal-docente');
-    toast(modoModal === 'nuevo' ? '✓ Docente registrado' : '✓ Docente actualizado');
 }
 
 function editarDocente(id) {
@@ -625,15 +524,14 @@ function editarDocente(id) {
 /* ════════════════════════════════════════════
    GUARDAR TUTOR
 ════════════════════════════════════════════ */
-
 async function guardarTutor() {
-    const nombre      = v('t-nombre');
-    const apellidos   = v('t-apellidos');
-    const email       = v('t-email');
-    const telefono    = v('t-telefono');
-    const password    = v('t-password');
-    const alumnoId    = v('t-alumno');
-    const parentesco  = v('t-parentesco');
+    const nombre     = v('t-nombre');
+    const apellidos  = v('t-apellidos');
+    const email      = v('t-email');
+    const telefono   = v('t-telefono');
+    const password   = v('t-password');
+    const alumnoId   = v('t-alumno');
+    const parentesco = v('t-parentesco');
 
     if (!nombre || !apellidos || !email || !telefono) {
         alertModal('alert-tutor', 'err', '⚠️ Nombre, apellidos, email y teléfono son obligatorios.');
@@ -648,42 +546,25 @@ async function guardarTutor() {
         return;
     }
 
-    const alumno = alumnos.find(a => a.id == alumnoId);
-
-    if (modoModal === 'nuevo') {
-        const payload = {
-            nombre: nombre,
-            apellidos: apellidos,
-            email: email,
-            telefono: telefono,
-            password: password,
-            alumno_id: alumnoId || null,
-            parentesco: parentesco
-        };
-
-        // Hacemos la petición real a Laravel
-        const respuesta = await api('POST', '/api/tutores', payload);
-
-        if (respuesta.error) {
-            alertModal('alert-tutor', '❌ ' + respuesta.error);
-            return;
+    const btn = document.querySelector('#modal-tutor .modal-actions button:last-child');
+    setBtnLoading(btn, true);
+    try {
+        if (modoModal === 'nuevo') {
+            const r = await api('POST', '/api/tutores', { nombre, apellidos, email, telefono, password, alumno_id: alumnoId || null, parentesco });
+            if (r.error) { alertModal('alert-tutor', 'err', '❌ ' + r.error); return; }
+        } else {
+            const payload = { nombre, apellidos, email, telefono, alumno_id: alumnoId || null, parentesco };
+            if (password) payload.password = password;
+            const r = await api('PUT', `/api/tutores/${idEditando}`, payload);
+            if (!r.ok) { alertModal('alert-tutor', 'err', '❌ ' + (r.mensaje || r.message || 'Error desconocido')); return; }
         }
-
-    } else {
-        const editPayload = { nombre, apellidos, email, telefono, alumno_id: alumnoId || null, parentesco };
-        if (password) editPayload.password = password;
-
-        const respuestaEdit = await api('PUT', `/api/tutores/${idEditando}`, editPayload);
-
-        if (!respuestaEdit.ok) {
-            alertModal('alert-tutor', '❌ ' + (respuestaEdit.mensaje || respuestaEdit.message || 'Error desconocido'));
-            return;
-        }
+        await cargarTodo();
+        cerrarModal('modal-tutor');
+        toast(modoModal === 'nuevo' ? '✓ Tutor registrado' : '✓ Tutor actualizado');
+        if (typeof audit === 'function') audit(modoModal === 'nuevo' ? 'tutor_registrado' : 'tutor_actualizado', 'tutor', `${nombre} ${apellidos}`);
+    } finally {
+        setBtnLoading(btn, false);
     }
-
-    await cargarTodo();
-    cerrarModal('modal-tutor');
-    toast(modoModal === 'nuevo' ? '✓ Tutor registrado' : '✓ Tutor actualizado');
 }
 
 function editarTutor(id) {
@@ -695,7 +576,7 @@ function editarTutor(id) {
     set('t-apellidos', t.apellidos);
     set('t-email',     t.email);
     set('t-telefono',  t.telefono === '—' ? '' : t.telefono || '');
-    if (t.alumno_ids && t.alumno_ids.length > 0) {
+    if (t.alumno_ids?.length) {
         set('t-alumno',     t.alumno_ids[0]);
         set('t-parentesco', t.alumno_parentescos[0] || 'padre');
     }
@@ -712,7 +593,6 @@ async function guardarCurso() {
     const url    = modoModal === 'nuevo' ? '/api/cursos' : `/api/cursos/${idEditando}`;
     const metodo = modoModal === 'nuevo' ? 'POST' : 'PUT';
     const r = await api(metodo, url, { nombre });
-
     if (!r?.ok) { alertModal('alert-curso', 'err', '❌ ' + (r?.mensaje || r?.message || 'Error desconocido')); return; }
 
     await cargarCursos();
@@ -736,13 +616,11 @@ async function guardarClase() {
     const nombre       = v('cl-nombre');
     const cursoId      = v('cl-curso');
     const codigoAcceso = v('cl-codigo') || null;
-
     if (!nombre || !cursoId) { alertModal('alert-clase', 'err', '⚠️ Nombre y curso son obligatorios.'); return; }
 
     const url    = modoModal === 'nuevo' ? '/api/clases' : `/api/clases/${idEditando}`;
     const metodo = modoModal === 'nuevo' ? 'POST' : 'PUT';
     const r = await api(metodo, url, { nombre, curso_id: cursoId, codigo_acceso: codigoAcceso });
-
     if (!r?.ok) { alertModal('alert-clase', 'err', '❌ ' + (r?.mensaje || r?.message || 'Error desconocido')); return; }
 
     await cargarCursos();
@@ -761,20 +639,17 @@ function editarClase(id) {
     document.getElementById('modal-clase-titulo').textContent = '✏️ Editar clase';
 }
 
-function actualizarAsignaturasHorario(valorActual = '') {
-    const docenteId = parseInt(document.getElementById('h-docente').value);
-    const docente   = docentes.find(d => d.id === docenteId);
-    const asigs     = docente?.asignaturas ?? [];
-
-    document.getElementById('h-asignatura-list').innerHTML =
-        asigs.map(a => `<option value="${a}">`).join('');
-
-    if (valorActual) set('h-asignatura', valorActual);
-}
-
 /* ════════════════════════════════════════════
    GUARDAR HORARIO
 ════════════════════════════════════════════ */
+function actualizarAsignaturasHorario(valorActual = '') {
+    const docenteId = parseInt(document.getElementById('h-docente').value);
+    const docente   = docentes.find(d => d.id === docenteId);
+    document.getElementById('h-asignatura-list').innerHTML =
+        (docente?.asignaturas ?? []).map(a => `<option value="${a}">`).join('');
+    if (valorActual) set('h-asignatura', valorActual);
+}
+
 async function guardarHorario() {
     const docenteId = v('h-docente');
     const claseId   = v('h-clase');
@@ -797,10 +672,7 @@ async function guardarHorario() {
     const metodo = modoModal === 'nuevo' ? 'POST' : 'PUT';
 
     const r = await api(metodo, url, payload);
-    if (!r?.ok) {
-        alertModal('alert-horario', 'err', '❌ ' + (r?.mensaje || r?.message || 'Error desconocido'));
-        return;
-    }
+    if (!r?.ok) { alertModal('alert-horario', 'err', '❌ ' + (r?.mensaje || r?.message || 'Error desconocido')); return; }
 
     await cargarHorarios();
     cerrarModal('modal-horario');
@@ -814,10 +686,10 @@ function editarHorario(id) {
     idEditando = id;
     set('h-docente', h.docente_id);
     actualizarAsignaturasHorario(h.asignatura ?? '');
-    set('h-clase',   h.clase_id);
-    set('h-dia',     h.dia_semana);
-    set('h-inicio',  h.hora_inicio?.slice(0, 5) ?? '');
-    set('h-fin',     h.hora_fin?.slice(0, 5) ?? '');
+    set('h-clase',  h.clase_id);
+    set('h-dia',    h.dia_semana);
+    set('h-inicio', h.hora_inicio?.slice(0, 5) ?? '');
+    set('h-fin',    h.hora_fin?.slice(0, 5) ?? '');
     document.getElementById('modal-horario-titulo').textContent = '✏️ Editar horario';
 }
 
@@ -829,27 +701,23 @@ function confirmarEliminar(tipo, id, nombre) {
         `Vas a eliminar a "${nombre}". Esta acción no se puede deshacer.`;
 
     document.getElementById('btn-confirm-ok').onclick = async () => {
-        const respuesta = await api('DELETE', `/api/${tipo}s/${id}`);
+        const r = await api('DELETE', `/api/${tipo}s/${id}`);
+        if (r.ok || r.mensaje) {
+            if (tipo === 'alumno')  alumnos  = alumnos.filter(x => x.id !== id);
+            if (tipo === 'docente') docentes = docentes.filter(x => x.id !== id);
+            if (tipo === 'tutor')   tutores  = tutores.filter(x => x.id !== id);
+            if (tipo === 'horario') horarios = horarios.filter(x => x.id !== id);
+            if (tipo === 'curso')   { cursos = cursos.filter(x => x.id !== id); clases = clases.filter(x => x.curso_id !== id); renderTabla('clases'); }
+            if (tipo === 'clase')   clases   = clases.filter(x => x.id !== id);
 
-        if (respuesta.ok || respuesta.mensaje) {
-
-        if (tipo === 'alumno')  alumnos  = alumnos.filter(x => x.id !== id);
-        if (tipo === 'docente') docentes = docentes.filter(x => x.id !== id);
-        if (tipo === 'tutor')   tutores  = tutores.filter(x => x.id !== id);
-        if (tipo === 'horario') horarios = horarios.filter(x => x.id !== id);
-        if (tipo === 'curso')   { cursos = cursos.filter(x => x.id !== id); clases = clases.filter(x => x.curso_id !== id); renderTabla('clases'); }
-        if (tipo === 'clase')   clases   = clases.filter(x => x.id !== id);
-
-        const tablaMap = { alumno: 'alumnos', docente: 'docentes', tutor: 'tutores', horario: 'horarios', curso: 'cursos', clase: 'clases' };
-        renderTabla(tablaMap[tipo] ?? tipo + 's');
-        
-        if (typeof actualizarStats === 'function') actualizarStats();
-        
-        cerrarModal('modal-confirmar');
-        toast(`🗑️ ${nombre} eliminado`);
-
+            const tablaMap = { alumno: 'alumnos', docente: 'docentes', tutor: 'tutores', horario: 'horarios', curso: 'cursos', clase: 'clases' };
+            renderTabla(tablaMap[tipo] ?? tipo + 's');
+            actualizarStats();
+            cerrarModal('modal-confirmar');
+            toast(`🗑️ ${nombre} eliminado`);
+            if (typeof audit === 'function') audit('eliminado', tipo, nombre);
         } else {
-            alert('No se pudo eliminar: ' + (respuesta.message || respuesta.error || 'Error desconocido'));
+            alert('No se pudo eliminar: ' + (r.message || r.error || 'Error desconocido'));
             cerrarModal('modal-confirmar');
         }
     };
@@ -867,9 +735,67 @@ function actualizarStats() {
 }
 
 /* ════════════════════════════════════════════
+   INFORME DEL CENTRO
+════════════════════════════════════════════ */
+function calcularEstadisticasCentro() {
+    const porCurso = {};
+    alumnos.forEach(a => {
+        const c = a.curso || 'Sin curso';
+        porCurso[c] = (porCurso[c] || 0) + 1;
+    });
+
+    const ratioAlumnoDocente = docentes.length
+        ? (alumnos.length / docentes.length).toFixed(1)
+        : '—';
+
+    const alumnosConTutor = new Set(tutores.flatMap(t => t.alumno_ids ?? []));
+    const conTutor = alumnos.filter(a => alumnosConTutor.has(a.id)).length;
+    const pctConTutor = alumnos.length
+        ? Math.round((conTutor / alumnos.length) * 100)
+        : 0;
+
+    return { totalAlumnos: alumnos.length, totalDocentes: docentes.length, totalTutores: tutores.length, ratioAlumnoDocente, pctConTutor, distribucionCursos: porCurso };
+}
+
+function generarInformeCentro() {
+    const stats = calcularEstadisticasCentro();
+    const ahora = new Date().toLocaleString('es-ES');
+    const coord = `${sesion.nombre} ${sesion.apellidos}`;
+
+    const lineas = [
+        `INFORME DEL CENTRO — ${sesion.colegio}`,
+        `Generado por: ${coord}`,
+        `Fecha: ${ahora}`,
+        '═'.repeat(50),
+        '',
+        'RESUMEN',
+        `  Alumnos:             ${stats.totalAlumnos}`,
+        `  Docentes:            ${stats.totalDocentes}`,
+        `  Tutores legales:     ${stats.totalTutores}`,
+        `  Ratio alumnos/doc.:  ${stats.ratioAlumnoDocente}`,
+        `  Alumnos con tutor:   ${stats.pctConTutor}%`,
+        '',
+        'DISTRIBUCIÓN POR CURSO',
+        ...Object.entries(stats.distribucionCursos).map(
+            ([curso, n]) => `  ${curso.padEnd(20)} ${n} alumno${n !== 1 ? 's' : ''}`
+        ),
+    ];
+
+    const blob = new Blob([lineas.join('\n')], { type: 'text/plain;charset=utf-8' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href = url;
+    a.download = `informe_centro_${new Date().toISOString().slice(0, 10)}.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
+
+    if (typeof audit === 'function') audit('informe_generado', 'centro', sesion.colegio);
+    toast('📄 Informe del centro descargado');
+}
+
+/* ════════════════════════════════════════════
    UTILIDADES
 ════════════════════════════════════════════ */
-
 function cerrarModal(id) { document.getElementById(id).classList.remove('open'); }
 
 document.querySelectorAll('.modal-overlay').forEach(o => {
@@ -890,13 +816,25 @@ function alertModal(contenedorId, tipo, texto) {
         `<div class="alert-modal alert-${tipo}">${texto}</div>`;
 }
 
+function setBtnLoading(btn, loading) {
+    if (!btn) return;
+    if (loading) {
+        btn.disabled = true;
+        btn.dataset.orig = btn.innerHTML;
+        btn.innerHTML = '⏳ Guardando…';
+    } else {
+        btn.disabled = false;
+        btn.innerHTML = btn.dataset.orig ?? btn.innerHTML;
+        delete btn.dataset.orig;
+    }
+}
+
 function toast(msg) {
     const t = document.getElementById('toast');
     t.textContent = msg; t.classList.add('show');
     setTimeout(() => t.classList.remove('show'), 3000);
 }
 
-/* ── Logout ── */
 document.getElementById('btn-logout')?.addEventListener('click', async e => {
     e.preventDefault();
     await api('POST', '/api/logout');

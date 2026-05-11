@@ -1,15 +1,12 @@
-﻿<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Edunoly · Panel Coordinador</title>
-    <script src="{{ asset('js/temas.js') }}"></script>
-    <link rel="stylesheet" href="{{ asset('css/temas.css') }}">
+@extends('layouts.app')
+
+@section('title', 'Edunoly · Panel Coordinador')
+
+@push('styles')
     <link rel="stylesheet" href="{{ asset('css/EstilosCoordinador.css') }}">
-</head>
-<body>
+@endpush
+
+@section('content')
 
 <!-- ── NAVEGACIÓN ── -->
 <header>
@@ -22,19 +19,28 @@
                         <span></span><span></span><span></span>
                     </button>
                 </li>
-                <li><a href="{{ route('index') }}">Inicio</a></li>
-                <li class="activo"><a href="{{ route('coordinador') }}">Mi Centro</a></li>
-                <li><a href="{{ route('tablon') }}">Tablón</a></li>
                 <li><a href="{{ route('perfilCoordinador') }}">Mi Perfil</a></li>
+                <li class="activo"><a href="{{ route('coordinador') }}">Mi centro</a></li>
+                <li><a href="{{ route('tablon') }}">Tablón anuncios</a></li>
+                <li><a href="{{ route('configPerfiles') }}">Configuración</a></li>
 
                 <li class="derecha menuSesion">
                     <img src="{{ asset('img/perfil.png') }}" class="fotoPerfil" alt="Perfil">
                     <ul class="dropdown">
                         <li class="dropdown-nombre"><span id="nav-nombre">Coordinador</span></li>
-                        <li class="dropdown-rol">Coordinador</li>
+                        <li class="dropdown-rol"><span id="nav-rol">Coordinador</span></li>
                         <li class="dropdown-sep"></li>
+                        <li><a href="{{ route('perfilCoordinador') }}">👤 Mi perfil</a></li>
                         <li><a href="{{ route('configPerfiles') }}">⚙️ Configuración</a></li>
-                        <li><a href="#" id="btn-logout">Cerrar sesión</a></li>
+                        <li>
+                            <a href="#" id="btn-logout"
+                               onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                Cerrar sesión
+                            </a>
+                            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display:none">
+                                @csrf
+                            </form>
+                        </li>
                     </ul>
                 </li>
             </ul>
@@ -50,19 +56,24 @@
             <h1 id="hero-colegio">Mi centro educativo</h1>
             <p class="hero-sub">Gestiona los alumnos, docentes y tutores de tu centro.</p>
         </div>
-        <div class="stats-row">
-            <div class="stat-chip">
-                <div class="stat-chip-num" id="stat-alumnos">0</div>
-                <div class="stat-chip-label">Alumnos</div>
+        <div style="display:flex;flex-direction:column;gap:12px;align-items:flex-end">
+            <div class="stats-row">
+                <div class="stat-chip">
+                    <div class="stat-chip-num" id="stat-alumnos">0</div>
+                    <div class="stat-chip-label">Alumnos</div>
+                </div>
+                <div class="stat-chip">
+                    <div class="stat-chip-num" id="stat-docentes">0</div>
+                    <div class="stat-chip-label">Docentes</div>
+                </div>
+                <div class="stat-chip">
+                    <div class="stat-chip-num" id="stat-tutores">0</div>
+                    <div class="stat-chip-label">Tutores</div>
+                </div>
             </div>
-            <div class="stat-chip">
-                <div class="stat-chip-num" id="stat-docentes">0</div>
-                <div class="stat-chip-label">Docentes</div>
-            </div>
-            <div class="stat-chip">
-                <div class="stat-chip-num" id="stat-tutores">0</div>
-                <div class="stat-chip-label">Tutores</div>
-            </div>
+            <button class="btn-informe-centro" onclick="generarInformeCentro()" title="Descargar informe del centro en .txt">
+                📄 Generar informe
+            </button>
         </div>
     </div>
 </div>
@@ -164,6 +175,41 @@
         </div>
     </div>
 
+    <!-- ══ PANEL TUTORES ══ -->
+    <div id="panel-tutores" class="panel">
+
+        <div class="panel-header">
+            <div class="buscador-wrap">
+                <span class="buscador-ico">🔍</span>
+                <input class="buscador" id="buscar-tutores" type="text"
+                       placeholder="Buscar tutor…" oninput="filtrarLista('tutores')">
+            </div>
+            <button class="btn-primary" onclick="abrirModal('modal-tutor', 'nuevo')">
+                ➕ Nuevo tutor
+            </button>
+        </div>
+
+        <div class="tabla-wrap">
+            <table class="tabla" id="tabla-tutores">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Apellidos</th>
+                        <th>Email</th>
+                        <th>Teléfono</th>
+                        <th>Alumnos a cargo</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="tbody-tutores">
+                    <tr class="fila-vacia">
+                        <td colspan="6">Cargando tutores…</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
     <!-- ══ PANEL CURSOS ══ -->
     <div id="panel-cursos" class="panel">
         <div class="panel-header">
@@ -222,7 +268,6 @@
 
     <!-- ══ PANEL HORARIOS ══ -->
     <div id="panel-horarios" class="panel">
-
         <div class="panel-header">
             <div class="buscador-wrap">
                 <span class="buscador-ico">🔍</span>
@@ -233,7 +278,6 @@
                 ➕ Nuevo horario
             </button>
         </div>
-
         <div class="tabla-wrap">
             <table class="tabla" id="tabla-horarios">
                 <thead>
@@ -250,41 +294,6 @@
                 <tbody id="tbody-horarios">
                     <tr class="fila-vacia">
                         <td colspan="7">Cargando horarios…</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <!-- ══ PANEL TUTORES ══ -->
-    <div id="panel-tutores" class="panel">
-
-        <div class="panel-header">
-            <div class="buscador-wrap">
-                <span class="buscador-ico">🔍</span>
-                <input class="buscador" id="buscar-tutores" type="text"
-                       placeholder="Buscar tutor…" oninput="filtrarLista('tutores')">
-            </div>
-            <button class="btn-primary" onclick="abrirModal('modal-tutor', 'nuevo')">
-                ➕ Nuevo tutor
-            </button>
-        </div>
-
-        <div class="tabla-wrap">
-            <table class="tabla" id="tabla-tutores">
-                <thead>
-                    <tr>
-                        <th>Nombre</th>
-                        <th>Apellidos</th>
-                        <th>Email</th>
-                        <th>Teléfono</th>
-                        <th>Alumnos a cargo</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody id="tbody-tutores">
-                    <tr class="fila-vacia">
-                        <td colspan="6">Cargando tutores…</td>
                     </tr>
                 </tbody>
             </table>
@@ -578,9 +587,11 @@
 
 <div class="toast" id="toast"></div>
 
-<script src="{{ asset('js/temas.js') }}"></script>
-<script src="{{ asset('js/MenuSesion.js') }}"></script>
-<script src="{{ asset('js/menuResponsive.js') }}"></script>
-<script src="{{ asset('js/coordinador.js') }}"></script>
-</body>
-</html>
+@endsection
+
+@push('scripts')
+    <script src="{{ asset('js/auditoria.js') }}"></script>
+    <script src="{{ asset('js/MenuSesion.js') }}"></script>
+    <script src="{{ asset('js/menuResponsive.js') }}"></script>
+    <script src="{{ asset('js/coordinador.js') }}"></script>
+@endpush
