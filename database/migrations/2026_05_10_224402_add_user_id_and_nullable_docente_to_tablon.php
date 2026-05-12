@@ -10,6 +10,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('tablon', function (Blueprint $table) {
+
+            if (!Schema::hasColumn('tablon', 'user_id')){
+                $table->integer('user_id')->nullable();
+            }
+
             // Rastrear al creador independientemente del rol
             $table->foreignId('user_id')->nullable()->after('id')
                   ->constrained('users')->onDelete('cascade');
