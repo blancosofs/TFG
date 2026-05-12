@@ -145,9 +145,9 @@
 
       <!-- Pie del card -->
       <div class="card-foot">
-        <a href="{{ route('privacidad') }}">Política de privacidad</a>
-        <a href="{{ route('legal') }}">Aviso legal</a>
-        <a href="{{ route('accesibilidad') }}">Accesibilidad</a>
+        <a href="#">Política de privacidad</a>
+        <a href="#">Aviso legal</a>
+        <a href="#">Accesibilidad</a>
         <a href="{{ route('contacto') }}">Contacto</a>
       </div>
 
@@ -155,7 +155,7 @@
 
     <p class="page-footer">
       © 2026 Edunoly · Plataforma de gestión educativa ·
-      <a href="{{ route('legal') }}">Condiciones de uso</a>
+      <a href="#">Condiciones de uso</a>
     </p>
 
   </div>
