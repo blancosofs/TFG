@@ -43,7 +43,7 @@
             </nav>
         </header>
             <div id="contPrincipal">
-                <h1 class="titulo">Bienvenidos a educamos</h1>
+                <h1 class="titulo">Bienvenidos a Edunoly</h1>
                 <div class="subtitulo">La plataforma educativa pensada para todos.</div>
             </div>
             <div id="contSobreNosotros">
