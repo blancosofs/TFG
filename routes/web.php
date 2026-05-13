@@ -193,6 +193,6 @@ Route::prefix('api')->middleware(['auth'])->group(function () {
         Route::post('/admin/colegios/{id}/coordinador', [CoordinadorController::class, 'storeForColegio']);
     });
 });
-
+//sos
 // Rutas de autenticación por defecto (Laravel Breeze)
 require __DIR__.'/auth.php';
