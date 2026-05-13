@@ -112,7 +112,7 @@ Route::middleware(['auth'])->group(function () {
         // Vistas
         Route::view('/admin', 'admin')->name('admin');
         Route::view('/perfilAdmin', 'perfilAdmin')->name('perfilAdmin');
-        Route::view('/registro', 'PaginaUnete')->name('solicitud.enviar');//ver registro
+        Route::view('/registro', 'PaginaUnete')->name('solicitud.enviar.unete');//ver registro
 
         // CRUD de Admin
         Route::prefix('admin')->group(function () {
@@ -193,6 +193,6 @@ Route::prefix('api')->middleware(['auth'])->group(function () {
         Route::post('/admin/colegios/{id}/coordinador', [CoordinadorController::class, 'storeForColegio']);
     });
 });
-
+//sos
 // Rutas de autenticación por defecto (Laravel Breeze)
 require __DIR__.'/auth.php';
