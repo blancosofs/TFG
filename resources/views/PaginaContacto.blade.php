@@ -57,7 +57,7 @@
                         <div class="caja1">
                             <h1 class="titulo">Contactenos</h1>
                             <div class="texto-informacion">
-                                Solicita información sobre Educamos y un asesor se pondrá en contacto contigo lo antes posible. Si ya eres usuario y necesitas resolver cualquier cuestión, dirígete a tu centro escolar para que sean ellos quienes abran un canal de comunicación con nosotros a través de Educamos Cerca.
+                                Solicita información sobre Edunoly y un asesor se pondrá en contacto contigo lo antes posible. Si ya eres usuario y necesitas resolver cualquier cuestión, dirígete a tu centro escolar para que sean ellos quienes abran un canal de comunicación con nosotros a través de Edunoly Cerca.
 
                             </div>
                             <div class="texto-direccion">
