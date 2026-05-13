@@ -287,24 +287,22 @@ function guardarLista() {
 async function confirmarGuardado() {
     const claseId    = document.getElementById('filtro-clase').value;
     const fecha      = document.getElementById('filtro-fecha').value;
-    const asignaturaEl = document.getElementById('filtro-asignatura');
-    const asignatura = asignaturaEl.value || null;
+    const asignatura = document.getElementById('filtro-asignatura')?.value || null;
 
-    // Construir payload — solo enviamos los que NO son presentes
-    // (los presentes no generan registro en la tabla ausencias)
+    // Solo enviamos ausentes y retrasos; los presentes no generan registro
     const registros = alumnos
         .filter(a => asistencia[a.id]?.estado !== 'presente')
         .map(a => ({
-            alumno_idAlumno:   a.id,
-            estado:            asistencia[a.id].estado,   // 'ausente' | 'retraso'
-            nota:              asistencia[a.id].nota || null,
-            fecha,
-            clase_idClase:     parseInt(claseId),
-            asignatura:        asignatura || null,
+            alumno_id: a.id,
+            estado:    asistencia[a.id].estado,   // 'ausente' | 'retraso'
+            nota:      asistencia[a.id].nota || null,
         }));
 
     const data = await api('POST', '/api/asistencia', { fecha, clase_id: claseId, asignatura, registros });
-    if (!data || data.error) { toast('❌ ' + (data?.error || 'Error al guardar')); return; }
+    if (!data || data.ok === false || data.errors || data.error) {
+        toast('❌ ' + (data?.error || data?.mensaje || data?.message || 'Error al guardar'));
+        return;
+    }
 
     cerrarModalConfirm();
     toast('✅ Lista guardada correctamente');
@@ -435,8 +433,11 @@ async function api(method, ruta, body) {
         };
         if (body) opts.body = JSON.stringify(body);
         const r = await fetch(API + ruta, opts);
-        return await r.json();
+        const json = await r.json().catch(() => ({ error: `Error HTTP ${r.status}` }));
+        if (!r.ok) console.error('[API]', method, ruta, r.status, json);
+        return json;
     } catch (e) {
+        console.error('[API] Red:', e);
         return { error: 'Error de conexión.' };
     }
 }

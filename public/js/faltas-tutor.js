@@ -170,7 +170,7 @@ function iniciales(nombre, apellidos) {
 
 function formatFecha(f) {
     if (!f) return '—';
-    const d = new Date(f + 'T12:00:00');
+    const d = new Date(f.slice(0, 10) + 'T12:00:00');
     return d.toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' });
 }
 
@@ -233,6 +233,8 @@ async function guardarJustificacion() {
     cerrarModalJustificar();
     toast('✓ Justificación guardada correctamente');
 }
+
+
 
 /* Cerrar al hacer clic fuera */
 document.getElementById('modal-justificar')?.addEventListener('click', e => {

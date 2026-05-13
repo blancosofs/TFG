@@ -177,6 +177,13 @@ function toast(msg, duracion = 2800) {
     setTimeout(() => t.classList.remove('show'), duracion);
 }
 
+/* ── Logout ── */
+document.getElementById('btn-logout')?.addEventListener('click', async e => {
+    e.preventDefault();
+    await api('POST', '/logout');
+    window.location.href = '/login';
+});
+
 function mostrarAlert(tipo, titulo, texto) {
     document.getElementById('alert-form').innerHTML = `
         <div class="alert alert-${tipo === 'ok' ? 'ok' : 'err'}">
