@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -24,8 +24,8 @@
                 <li class="derecha menuSesion">
                     <img src="{{ asset('img/perfil.png') }}" class="fotoPerfil" alt="Perfil">
                     <ul class="dropdown">
-                        <li class="dropdown-nombre"><span id="nav-nombre">{{ Auth::user()->name }}</span></li>
-                        <li class="dropdown-rol"><span id="nav-rol">Tutor legal</span></li>
+                        <li class="dropdown-nombre"><span id="nav-nombre">{{ auth()->user()->name }} {{ auth()->user()->apellidos }}</span></li>
+                        <li class="dropdown-rol">Tutor legal</li>
                         <li class="dropdown-sep"></li>
                         <li><a href="{{ route('perfilFamilia') }}">👤 Mi perfil</a></li>
                         <li><a href="{{ route('configPerfiles') }}">⚙️ Configuración</a></li>
@@ -46,51 +46,13 @@
 </div>
 
 <main class="mat-main">
-
-    @if($materiales->count())
-        @foreach($materiales as $m)
-        <div class="mat-card-lista">
-            <div class="mat-card-info">
-                <h3>{{ $m->titulo }}</h3>
-                <div>
-                    @if($m->materia)<span class="badge badge-tipo">{{ $m->materia }}</span>@endif
-                    @if($m->tema)<span class="badge badge-tipo">{{ $m->tema }}</span>@endif
-                </div>
-                <p>Prof. {{ $m->docente->user->name }} {{ $m->docente->user->apellidos }}
-                   · {{ $m->created_at->format('d/m/Y') }}</p>
-                @if($m->descripcion)
-                    <p>{{ Str::limit($m->descripcion, 100) }}</p>
-                @endif
-            </div>
-            <div class="mat-card-acciones">
-                <a href="{{ route('tutor.materiales.show', $m) }}" class="btn-accion btn-ver">Ver</a>
-                @if($m->tipo_contenido === 'archivo')
-                    <a href="{{ route('tutor.materiales.descargar', $m) }}" class="btn-descargar">Descargar</a>
-                @else
-                    <a href="{{ $m->url_externa }}" target="_blank" class="btn-enlace">Abrir</a>
-                @endif
-            </div>
-        </div>
-        @endforeach
-        <div class="mat-paginacion">{{ $materiales->links() }}</div>
-    @else
-        <div class="mat-vacio">
-            <p>No hay materiales disponibles para ti en este momento.</p>
-        </div>
-    @endif
-
+    <!-- El JS rellena este bloque con las tarjetas de materiales -->
+    <div id="mat-contenido">
+        <div style="padding:2rem;text-align:center;color:var(--texto-suave)">Cargando...</div>
+    </div>
 </main>
 
 <script src="{{ asset('js/MenuSesion.js') }}"></script>
-<script>
-document.getElementById('btn-logout')?.addEventListener('click', async e => {
-    e.preventDefault();
-    await fetch('/api/logout', {
-        method: 'POST',
-        headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content }
-    });
-    window.location.href = '{{ route("login") }}';
-});
-</script>
+<script src="{{ asset('js/tutor-materiales-index.js') }}"></script>
 </body>
 </html>

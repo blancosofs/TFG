@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -25,8 +25,8 @@
                 <li class="derecha menuSesion">
                     <img src="{{ asset('img/perfil.png') }}" class="fotoPerfil" alt="Perfil">
                     <ul class="dropdown">
-                        <li class="dropdown-nombre"><span id="nav-nombre">{{ Auth::user()->name }}</span></li>
-                        <li class="dropdown-rol"><span id="nav-rol">Docente</span></li>
+                        <li class="dropdown-nombre"><span id="nav-nombre">{{ auth()->user()->name }} {{ auth()->user()->apellidos }}</span></li>
+                        <li class="dropdown-rol">Docente</li>
                         <li class="dropdown-sep"></li>
                         <li><a href="{{ route('perfil') }}">👤 Mi perfil</a></li>
                         <li><a href="{{ route('configPerfiles') }}">⚙️ Configuración</a></li>
@@ -48,76 +48,36 @@
 
 <main class="mat-main">
 
-    @if(session('success'))
-        <div class="flash-ok">{{ session('success') }}</div>
-    @endif
+    <div id="flash-ok" class="flash-ok" style="display:none"></div>
 
     <div class="mat-cabecera">
         <h2>Mis materiales</h2>
         <a href="{{ route('material-repaso.create') }}" class="btn-crear">+ Nuevo material</a>
     </div>
 
-    @if($materiales->count())
-        <table class="mat-tabla">
-            <thead>
-                <tr>
-                    <th>Título</th>
-                    <th>Tipo</th>
-                    <th>Materia</th>
-                    <th>Tutores</th>
-                    <th>Estado</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach($materiales as $m)
-                <tr>
-                    <td>
-                        <strong>{{ $m->titulo }}</strong>
-                        @if($m->tema)<br><small>{{ $m->tema }}</small>@endif
-                    </td>
-                    <td><span class="badge badge-tipo">{{ $m->tipo_contenido === 'archivo' ? 'Archivo' : 'URL' }}</span></td>
-                    <td>{{ $m->materia ?? '—' }}</td>
-                    <td><span class="badge badge-num">{{ $m->tutores->count() }}</span></td>
-                    <td>
-                        @if($m->publicado)
-                            <span class="badge badge-pub">Publicado</span>
-                        @else
-                            <span class="badge badge-bor">Borrador</span>
-                        @endif
-                    </td>
-                    <td>
-                        <a href="{{ route('material-repaso.show', $m) }}" class="btn-accion btn-ver">Ver</a>
-                        <a href="{{ route('material-repaso.edit', $m) }}" class="btn-accion btn-editar-accion">Editar</a>
-                        <form action="{{ route('material-repaso.destroy', $m) }}" method="POST" style="display:inline" onsubmit="return confirm('¿Eliminar este material?')">
-                            @csrf @method('DELETE')
-                            <button type="submit" class="btn-accion btn-eliminar">Eliminar</button>
-                        </form>
-                    </td>
-                </tr>
-                @endforeach
-            </tbody>
-        </table>
-        <div class="mat-paginacion">{{ $materiales->links() }}</div>
-    @else
-        <div class="mat-vacio">
-            <p>No has subido ningún material aún.</p>
-            <a href="{{ route('material-repaso.create') }}" class="btn-crear">Crear el primero</a>
-        </div>
-    @endif
+    <!-- El JS rellena este bloque con la tabla o el aviso de vacío -->
+    <div id="mat-contenido">
+        <div id="mat-loading" style="padding:2rem;text-align:center;color:var(--texto-suave)">Cargando...</div>
+    </div>
 
 </main>
 
+<!-- Modal confirmación eliminar -->
+<div class="modal-overlay" id="modal-confirmar">
+    <div class="modal-confirmar-box">
+        <div style="font-size:40px;margin-bottom:12px">⚠️</div>
+        <h3>¿Eliminar material?</h3>
+        <p id="confirm-texto">Esta acción no se puede deshacer.</p>
+        <div class="modal-btns">
+            <button class="btn-modal-cancelar" id="btn-confirm-cancel">Cancelar</button>
+            <button class="btn-modal-eliminar" id="btn-confirm-ok">🗑️ Eliminar</button>
+        </div>
+    </div>
+</div>
+
+<div class="mat-toast" id="toast"></div>
+
 <script src="{{ asset('js/MenuSesion.js') }}"></script>
-<script>
-document.getElementById('btn-logout')?.addEventListener('click', async e => {
-    e.preventDefault();
-    await fetch('/api/logout', {
-        method: 'POST',
-        headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content }
-    });
-    window.location.href = '{{ route("login") }}';
-});
-</script>
+<script src="{{ asset('js/material-repaso-index.js') }}"></script>
 </body>
 </html>

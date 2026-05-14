@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -22,8 +22,8 @@
                 <li class="derecha menuSesion">
                     <img src="{{ asset('img/perfil.png') }}" class="fotoPerfil" alt="Perfil">
                     <ul class="dropdown">
-                        <li class="dropdown-nombre"><span id="nav-nombre">{{ Auth::user()->name }}</span></li>
-                        <li class="dropdown-rol"><span id="nav-rol">Docente</span></li>
+                        <li class="dropdown-nombre"><span id="nav-nombre">{{ auth()->user()->name }} {{ auth()->user()->apellidos }}</span></li>
+                        <li class="dropdown-rol">Docente</li>
                         <li class="dropdown-sep"></li>
                         <li><a href="{{ route('perfil') }}">👤 Mi perfil</a></li>
                         <li><a href="{{ route('configPerfiles') }}">⚙️ Configuración</a></li>
@@ -46,42 +46,30 @@
 <main class="mat-main">
 <div class="mat-form-card">
 
-    @if($errors->any())
-    <div class="flash-err">
-        <strong>Corrige los siguientes errores:</strong>
-        <ul style="margin:.4rem 0 0 1.2rem">
-            @foreach($errors->all() as $e)<li>{{ $e }}</li>@endforeach
-        </ul>
-    </div>
-    @endif
+    <!-- El JS muestra aquí los errores de validación -->
+    <div id="alert-errores" style="display:none"></div>
 
-    <form action="{{ route('material-repaso.store') }}" method="POST" enctype="multipart/form-data">
-        @csrf
+    <form id="form-crear" enctype="multipart/form-data">
 
         <div class="fgroup">
             <label class="flabel">Título *</label>
-            <input type="text" name="titulo"
-                   class="finput @error('titulo') is-invalid @enderror"
-                   value="{{ old('titulo') }}" required>
-            @error('titulo')<div class="invalid-feedback">{{ $message }}</div>@enderror
+            <input type="text" id="titulo" name="titulo" class="finput" required>
         </div>
 
         <div class="fgroup">
             <label class="flabel">Descripción</label>
-            <textarea name="descripcion" class="finput" rows="3">{{ old('descripcion') }}</textarea>
+            <textarea id="descripcion" name="descripcion" class="finput" rows="3"></textarea>
         </div>
 
         <div class="fgroup">
             <label class="flabel">Tipo de contenido *</label>
             <div class="radio-fila">
                 <label class="radio-opcion">
-                    <input type="radio" name="tipo_contenido" value="archivo" id="tipo_archivo"
-                        {{ old('tipo_contenido', 'archivo') === 'archivo' ? 'checked' : '' }}>
+                    <input type="radio" name="tipo_contenido" value="archivo" id="tipo_archivo" checked>
                     Archivo
                 </label>
                 <label class="radio-opcion">
-                    <input type="radio" name="tipo_contenido" value="url_externa" id="tipo_url"
-                        {{ old('tipo_contenido') === 'url_externa' ? 'checked' : '' }}>
+                    <input type="radio" name="tipo_contenido" value="url_externa" id="tipo_url">
                     URL externa
                 </label>
             </div>
@@ -89,89 +77,54 @@
 
         <div class="fgroup" id="seccionArchivo">
             <label class="flabel">Archivo (máx. 50 MB) *</label>
-            <input type="file" name="archivo"
-                   class="finput @error('archivo') is-invalid @enderror"
+            <input type="file" id="archivo" name="archivo" class="finput"
                    accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.jpg,.jpeg,.png,.mp4,.zip">
-            @error('archivo')<div class="invalid-feedback">{{ $message }}</div>@enderror
         </div>
 
         <div class="fgroup" id="seccionUrl" style="display:none">
             <label class="flabel">URL externa *</label>
-            <input type="url" name="url_externa"
-                   class="finput @error('url_externa') is-invalid @enderror"
-                   value="{{ old('url_externa') }}" placeholder="https://...">
-            @error('url_externa')<div class="invalid-feedback">{{ $message }}</div>@enderror
+            <input type="url" id="url_externa" name="url_externa" class="finput" placeholder="https://...">
         </div>
 
         <div class="frow">
             <div class="fgroup">
                 <label class="flabel">Materia</label>
-                <input type="text" name="materia" class="finput" value="{{ old('materia') }}">
+                <input type="text" id="materia" name="materia" class="finput">
             </div>
             <div class="fgroup">
                 <label class="flabel">Tema</label>
-                <input type="text" name="tema" class="finput" value="{{ old('tema') }}">
+                <input type="text" id="tema" name="tema" class="finput">
             </div>
         </div>
 
         <div class="fgroup">
             <label class="flabel">Tutores destinatarios</label>
-            <div class="tutores-scroll">
-                @forelse($tutores as $tutor)
-                <div class="tutor-item">
-                    <input type="checkbox" name="tutores[]" value="{{ $tutor->id }}"
-                           id="tutor_{{ $tutor->id }}"
-                           {{ in_array($tutor->id, old('tutores', [])) ? 'checked' : '' }}>
-                    <label for="tutor_{{ $tutor->id }}">
-                        {{ $tutor->user->name }} {{ $tutor->user->apellidos }}
-                    </label>
-                </div>
-                @empty
-                <p style="color:var(--texto-suave);padding:.5rem;font-size:.9rem">No hay tutores registrados en este colegio.</p>
-                @endforelse
+            <!-- El JS rellena este bloque con los checkboxes de tutores -->
+            <div class="tutores-scroll" id="tutores-lista">
+                <div style="color:var(--texto-suave);font-size:.9rem;padding:.5rem">Cargando tutores...</div>
             </div>
         </div>
 
         <div class="fgroup">
             <div class="check-publicar">
-                <input type="checkbox" name="publicado" value="1" id="chk-publicado"
-                       {{ old('publicado', '1') ? 'checked' : '' }}>
+                <input type="checkbox" id="chk-publicado" name="publicado" value="1" checked>
                 <label for="chk-publicado">Publicar ahora</label>
             </div>
         </div>
 
         <div class="form-acciones">
-            <button type="submit" class="btn-submit">Crear Material</button>
+            <button type="submit" class="btn-submit" id="btn-submit">Crear Material</button>
             <a href="{{ route('material-repaso.index') }}" class="btn-cancelar">Cancelar</a>
         </div>
+
     </form>
 
 </div>
 </main>
 
+<div class="mat-toast" id="toast"></div>
+
 <script src="{{ asset('js/MenuSesion.js') }}"></script>
-<script>
-document.getElementById('btn-logout')?.addEventListener('click', async e => {
-    e.preventDefault();
-    await fetch('/api/logout', {
-        method: 'POST',
-        headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content }
-    });
-    window.location.href = '{{ route("login") }}';
-});
-
-const radios = document.querySelectorAll('input[name="tipo_contenido"]');
-const secArchivo = document.getElementById('seccionArchivo');
-const secUrl     = document.getElementById('seccionUrl');
-
-function actualizarSecciones() {
-    const val = document.querySelector('input[name="tipo_contenido"]:checked')?.value;
-    secArchivo.style.display = val === 'archivo'     ? '' : 'none';
-    secUrl.style.display     = val === 'url_externa' ? '' : 'none';
-}
-
-radios.forEach(r => r.addEventListener('change', actualizarSecciones));
-actualizarSecciones();
-</script>
+<script src="{{ asset('js/material-repaso-create.js') }}"></script>
 </body>
 </html>

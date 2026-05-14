@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const nombre = localStorage.getItem("nombreUsuario");
 
     const destinosPerfil = {
-        docente:     "/perfilDocente", // O la ruta que hayas puesto en web.php
+        docente:     "/perfil", // O la ruta que hayas puesto en web.php
         coordinador: "/perfilCoordinador",
         familiar:    "/perfilFamilia",
         admin:       "/perfilAdmin",
@@ -42,4 +42,13 @@ document.addEventListener("DOMContentLoaded", function () {
     if (navRol)
         navRol.textContent = (rol && etiquetasRol[rol]) || navRol.textContent || "—";
 
+});
+
+document.getElementById('btn-logout')?.addEventListener('click', async e => {
+    e.preventDefault();
+    await fetch('/api/logout', {
+        method: 'POST',
+        headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content }
+    });
+    window.location.href = '/login';
 });

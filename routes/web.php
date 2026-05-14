@@ -192,6 +192,22 @@ Route::prefix('api')->middleware(['auth'])->group(function () {
         Route::post('/admin/colegios', [ColegioController::class, 'store']);
         Route::post('/admin/colegios/{id}/coordinador', [CoordinadorController::class, 'storeForColegio']);
     });
+
+       // Material de repaso — docente (lectura y escritura JSON)
+    Route::middleware(['role:docente'])->group(function () {
+        Route::get('/material-repaso',                     [MaterialRepasoController::class, 'listar']);
+        Route::get('/material-repaso/tutores',             [MaterialRepasoController::class, 'tutoresDelColegio']);
+        Route::post('/material-repaso',                    [MaterialRepasoController::class, 'store']);
+        Route::get('/material-repaso/{materialRepaso}',    [MaterialRepasoController::class, 'detallar']);
+        Route::put('/material-repaso/{materialRepaso}',    [MaterialRepasoController::class, 'update']);
+        Route::delete('/material-repaso/{materialRepaso}', [MaterialRepasoController::class, 'destroy']);
+    });
+
+    // Material de repaso — tutor (solo lectura)
+    Route::middleware(['role:tutor'])->group(function () {
+        Route::get('/tutor/materiales',                    [TutorMaterialController::class, 'listar']);
+        Route::get('/tutor/materiales/{materialRepaso}',   [TutorMaterialController::class, 'detallar']);
+    });
 });
 //sos
 // Rutas de autenticación por defecto (Laravel Breeze)

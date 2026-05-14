@@ -30,18 +30,18 @@ body {
 
 .dropdown {
     position: absolute; top: 100%; right: 0; margin-top: 8px;
-    background: white; min-width: 180px; list-style: none; padding: 8px 0;
+    background: var(--card-fondo); min-width: 180px; list-style: none; padding: 8px 0;
     border-radius: 8px; box-shadow: 0 8px 20px rgba(0,0,0,0.15);
     opacity: 0; visibility: hidden; transform: translateY(-10px);
     transition: all 0.2s ease; z-index: 1000;
 }
 .dropdown.show { opacity: 1; visibility: visible; transform: translateY(0); }
 .menu > li { position: relative; }
-.dropdown li a { display: block; padding: 10px 15px; text-decoration: none; color: #333; }
-.dropdown li a:hover { background-color: #f2f2f2; }
-.dropdown-nombre { padding: 10px 15px 2px; font-size: 13px; font-weight: 700; color: #111; }
-.dropdown-rol    { padding: 0 15px 8px; font-size: 11px; color: #888; border-bottom: 1px solid #eee; }
-.dropdown-sep    { height: 1px; background: #eee; margin: 4px 0; }
+.dropdown li a { display: block; padding: 10px 15px; text-decoration: none; color: var(--texto); }
+.dropdown li a:hover { background-color: color-mix(in srgb, var(--texto) 8%, transparent); }
+.dropdown-nombre { padding: 10px 15px 2px; font-size: 13px; font-weight: 700; color: var(--texto); }
+.dropdown-rol    { padding: 0 15px 8px; font-size: 11px; color: var(--texto-suave); border-bottom: 1px solid var(--borde); }
+.dropdown-sep    { height: 1px; background: var(--borde); margin: 4px 0; }
 
 /* ── Hero ── */
 .mat-hero {
@@ -414,17 +414,6 @@ body {
 
 .form-acciones { display: flex; gap: 1rem; margin-top: 1.75rem; }
 
-/* ── Toast ── */
-.toast {
-    position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(20px);
-    background: color-mix(in srgb, var(--acento) 20%, var(--fondo-oscuro) 80%);
-    color: var(--texto); padding: .75rem 1.5rem; border-radius: 10px;
-    font-size: .9rem; font-weight: 600; opacity: 0; pointer-events: none;
-    transition: all .3s; z-index: 9999;
-    border: 1px solid color-mix(in srgb, var(--acento) 30%, transparent);
-}
-.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
 /* ── Paginación ── */
 .mat-paginacion { margin-top: 1.5rem; }
 
@@ -438,3 +427,74 @@ body {
     .frow { grid-template-columns: 1fr; }
     .mat-card-lista { flex-direction: column; align-items: flex-start; }
 }
+
+/* ── Modal de confirmación ── */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.5);
+    z-index: 900;
+    align-items: center;
+    justify-content: center;
+}
+.modal-overlay.open { display: flex; }
+
+.modal-confirmar-box {
+    background: var(--card-fondo);
+    border-radius: 16px;
+    padding: 36px 32px 28px;
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0,0,0,.2);
+}
+.modal-confirmar-box h3 { font-size: 1.15rem; margin-bottom: 8px; color: var(--texto); }
+.modal-confirmar-box p  { color: var(--texto-suave); font-size: .9rem; margin-bottom: 24px; line-height: 1.5; }
+
+.modal-btns { display: flex; gap: 12px; justify-content: center; }
+
+.btn-modal-cancelar {
+    background: transparent;
+    border: 1px solid var(--borde);
+    border-radius: 8px;
+    padding: 10px 22px;
+    cursor: pointer;
+    font-size: .9rem;
+    color: var(--texto);
+    transition: background .15s;
+}
+.btn-modal-cancelar:hover { background: color-mix(in srgb, var(--texto) 8%, transparent); }
+
+.btn-modal-eliminar {
+    background: #e53e3e;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 22px;
+    cursor: pointer;
+    font-size: .9rem;
+    font-weight: 600;
+    transition: background .15s;
+}
+.btn-modal-eliminar:hover { background: #c53030; }
+
+/* ── Toast ── */
+.mat-toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--fondo-oscuro);
+    color: var(--texto);
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-size: .9rem;
+    z-index: 1000;
+    transition: transform .3s;
+    white-space: nowrap;
+    pointer-events: none;
+    border: 1px solid var(--borde);
+}
+.mat-toast.show { transform: translateX(-50%) translateY(0); }
+
