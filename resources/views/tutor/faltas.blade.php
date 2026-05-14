@@ -24,7 +24,7 @@
                 <li class="derecha menuSesion">
                     <img src="{{ asset('img/perfil.png') }}" class="fotoPerfil" alt="Perfil">
                     <ul class="dropdown">
-                        <li class="dropdown-nombre"><span id="nav-nombre">{{ Auth::user()->name }}</span></li>
+                        <li class="dropdown-nombre"><span id="nav-nombre">{{ auth()->user()->name }} {{ auth()->user()->apellidos }}</span></li>
                         <li class="dropdown-rol"><span id="nav-rol">Tutor legal</span></li>
                         <li class="dropdown-sep"></li>
                         <li><a href="{{ route('perfilFamilia') }}">👤 Mi perfil</a></li>
@@ -85,16 +85,6 @@
 <div id="toast" class="toast-faltas"></div>
 
 <script src="{{ asset('js/MenuSesion.js') }}"></script>
-<script>
-document.getElementById('btn-logout')?.addEventListener('click', async e => {
-    e.preventDefault();
-    await fetch('/api/logout', {
-        method: 'POST',
-        headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content }
-    });
-    window.location.href = '{{ route("login") }}';
-});
-</script>
 <script src="{{ asset('js/faltas-tutor.js') }}"></script>
 </body>
 </html>
