@@ -685,14 +685,44 @@ input[type="email"]:focus {
 
 
 /* ── Dropdown siempre con fondo blanco y texto oscuro ──
-   El dropdown tiene background blanco en todos los temas,
-   por eso el texto debe ser siempre oscuro independientemente
-   del tema activo.                                         ── */
-.dropdown                { background: white !important; }
-.dropdown li a           { color: #333 !important; }
-.dropdown li a:hover     { background-color: #f2f2f2 !important; color: #111 !important; }
-.dropdown-nombre         { color: #111 !important; padding: 10px 15px 2px !important; font-size: 13px !important; font-weight: 700 !important; }
-.dropdown-rol            { color: #888 !important; padding: 0 15px 8px !important; font-size: 11px !important; }
+   Usamos .menuSesion como prefijo para superar en especificidad
+   a .menu li a (0,1,2) y al bloque global span/li/div (0,0,1).
+   Así el dropdown se muestra igual en todos los temas.       ── */
+.menuSesion .dropdown {
+    background: white !important;
+}
+.menuSesion .dropdown li {
+    color: #333 !important;
+    background: transparent !important;
+}
+.menuSesion .dropdown li span {
+    color: inherit !important;
+    background: transparent !important;
+}
+.menuSesion .dropdown li a,
+.menuSesion .dropdown li a:link,
+.menuSesion .dropdown li a:visited {
+    color: #333 !important;
+    text-decoration: none !important;
+    background: transparent !important;
+}
+.menuSesion .dropdown li a:hover {
+    background-color: #f2f2f2 !important;
+    color: #111 !important;
+}
+.menuSesion .dropdown .dropdown-nombre {
+    color: #111 !important;
+    background: transparent !important;
+    padding: 10px 15px 2px !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+}
+.menuSesion .dropdown .dropdown-rol {
+    color: #888 !important;
+    background: transparent !important;
+    padding: 0 15px 8px !important;
+    font-size: 11px !important;
+}
 
 
 /* ══════════════════════════════════════════════════════════════

@@ -43,6 +43,11 @@
                     <li class="activo"><a href="{{ route('tablon') }}">Tablón</a></li>
                 @endif
 
+                <li class="menu-toggle-li">
+                    <button class="menu-toggle" id="menuToggle" aria-label="Abrir menú">
+                        <span></span><span></span><span></span>
+                    </button>
+                </li>
                 <li class="derecha menuSesion">
                     <img src="{{ asset('img/perfil.png') }}" class="fotoPerfil" alt="Perfil">
                     <ul class="dropdown">
@@ -176,7 +181,7 @@
 
 {{-- ══ MODAL: Publicar anuncio ══ --}}
 <div class="modal-overlay" id="modal-publicar">
-    <div class="modal">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-pub-titulo">
         <div class="modal-head">
             <div class="modal-titulo" id="modal-pub-titulo">✏️ Publicar anuncio</div>
             <button class="modal-cerrar" onclick="cerrarModal('modal-publicar')">✕</button>
@@ -185,30 +190,35 @@
         <div class="modal-grid">
             <div class="fgroup full">
                 <label class="flabel">Título *</label>
-                <input class="finput" id="pub-titulo" type="text" placeholder="Título del anuncio">
+                <input class="finput" id="pub-titulo" type="text" placeholder="Título del anuncio" maxlength="120">
             </div>
             <div class="fgroup">
                 <label class="flabel">Categoría *</label>
                 <select class="finput" id="pub-categoria">
-                    <option value="General">📢 General</option>
-                    <option value="Examen">📝 Examen</option>
-                    <option value="Evento">🎉 Evento</option>
-                    <option value="Urgente">🚨 Urgente</option>
-                    <option value="Tarea">📚 Tarea</option>
+                    <option value="general">📢 General</option>
+                    <option value="examen">📝 Examen</option>
+                    <option value="evento">🎉 Evento</option>
+                    <option value="urgente">🚨 Urgente</option>
+                    <option value="tarea">📚 Tarea</option>
                 </select>
             </div>
             <div class="fgroup">
                 <label class="flabel">Dirigido a</label>
-                <select class="finput" id="pub-dirigido">
-                    <option value="Todos">Todos</option>
-                    <option value="Solo familias">Solo familias</option>
-                    <option value="Solo docentes">Solo docentes</option>
+                <select class="finput" id="pub-dirigido" onchange="actualizarAvisoNotificacion()">
+                    <option value="todos">Todos</option>
+                    <option value="familias">Solo familias</option>
+                    <option value="docentes">Solo docentes</option>
                 </select>
+            </div>
+            <div class="fgroup full">
+                <p id="aviso-notificacion-texto" style="font-size:12px;color:var(--texto-suave);margin:0">
+                    Se enviará una notificación a todas las familias y docentes del centro.
+                </p>
             </div>
             <div class="fgroup full">
                 <label class="flabel">Contenido *</label>
                 <textarea class="finput" id="pub-contenido" rows="5"
-                          placeholder="Escribe el contenido del anuncio…"></textarea>
+                          placeholder="Escribe el contenido del anuncio…" maxlength="2000"></textarea>
             </div>
             <div class="fgroup">
                 <label class="flabel">Clase (opcional)</label>
@@ -230,7 +240,7 @@
 
 {{-- ══ MODAL: Ver anuncio completo ══ --}}
 <div class="modal-overlay" id="modal-ver">
-    <div class="modal modal-grande">
+    <div class="modal modal-grande" role="dialog" aria-modal="true" aria-labelledby="ver-titulo">
         <div class="modal-head">
             <span id="ver-badge" class="cat-badge"></span>
             <button class="modal-cerrar" onclick="cerrarModal('modal-ver')">✕</button>
@@ -250,7 +260,7 @@
                 <div class="nuevo-comentario-avatar" id="nuevo-avatar">—</div>
                 <div class="nuevo-comentario-form">
                     <textarea class="comentario-input" id="comentario-texto"
-                              placeholder="Escribe un comentario…" rows="2"></textarea>
+                              placeholder="Escribe un comentario…" rows="2" maxlength="500"></textarea>
                     <div class="comentario-acciones">
                         <span class="comentario-aviso">Los comentarios son visibles para docentes y familias del centro.</span>
                         <button class="btn-comentar" onclick="enviarComentario()">Enviar ›</button>
@@ -263,9 +273,9 @@
 
 {{-- ══ MODAL: Confirmar eliminar ══ --}}
 <div class="modal-overlay" id="modal-eliminar">
-    <div class="modal" style="max-width:380px;text-align:center">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-eliminar-titulo" style="max-width:380px;text-align:center">
         <div style="font-size:36px;margin-bottom:12px">🗑️</div>
-        <h3 style="font-size:16px;font-weight:700;color:var(--texto);margin-bottom:8px">¿Eliminar anuncio?</h3>
+        <h3 id="modal-eliminar-titulo" style="font-size:16px;font-weight:700;color:var(--texto);margin-bottom:8px">¿Eliminar anuncio?</h3>
         <p style="font-size:13px;color:var(--texto-suave)">Esta acción no se puede deshacer.</p>
         <div class="modal-actions" style="justify-content:center;margin-top:20px">
             <button class="btn-ghost" onclick="cerrarModal('modal-eliminar')">Cancelar</button>
