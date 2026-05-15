@@ -769,6 +769,7 @@ input[type="email"]:focus {
     .menu {
         flex-wrap: wrap;
         align-items: center;
+        justify-content: space-between;
     }
 
     /* Ocultar todos los li excepto logo y botón hamburguesa */
