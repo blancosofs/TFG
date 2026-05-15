@@ -21,25 +21,21 @@
                 <li class="logo"><img src="{{ asset('img/logo.svg') }}" alt="Edunoly"></li>
 
                 @if($user->docente)
-                    <li><a href="{{ route('index') }}">Inicio</a></li>
+                    <li><a href="{{ route('perfil') }}">Mi Perfil</a></li>
                     <li><a href="{{ route('calendario') }}">Mi Horario</a></li>
                     <li><a href="{{ route('pasarLista') }}">Pasar Lista</a></li>
                     <li class="activo"><a href="{{ route('tablon') }}">Tablón</a></li>
                     <li><a href="{{ route('material-repaso.index') }}">Material</a></li>
-                    <li><a href="{{ route('perfil') }}">Mi Perfil</a></li>
                 @elseif($user->coordinador)
-                    <li><a href="{{ route('index') }}">Inicio</a></li>
+                    <li><a href="{{ route('perfilCoordinador') }}">Mi Perfil</a></li>
                     <li><a href="{{ route('coordinador') }}">Mi Centro</a></li>
                     <li class="activo"><a href="{{ route('tablon') }}">Tablón</a></li>
-                    <li><a href="{{ route('perfilCoordinador') }}">Mi Perfil</a></li>
                 @elseif($user->tutor)
-                    <li><a href="{{ route('index') }}">Inicio</a></li>
+                    <li><a href="{{ route('perfilFamilia') }}">Mi Perfil</a></li>
                     <li><a href="{{ route('tutor.faltas') }}">Faltas</a></li>
                     <li class="activo"><a href="{{ route('tablon') }}">Tablón</a></li>
                     <li><a href="{{ route('tutor.materiales.index') }}">Material</a></li>
-                    <li><a href="{{ route('perfilFamilia') }}">Mi Perfil</a></li>
                 @else
-                    <li><a href="{{ route('index') }}">Inicio</a></li>
                     <li class="activo"><a href="{{ route('tablon') }}">Tablón</a></li>
                 @endif
 
@@ -49,7 +45,7 @@
                     </button>
                 </li>
                 <li class="derecha menuSesion">
-                    <img src="{{ asset('img/perfil.png') }}" class="fotoPerfil" alt="Perfil">
+                    <div class="fotoPerfil avatar-iniciales">{{ strtoupper(mb_substr($user->name ?? 'U', 0, 1)) . strtoupper(mb_substr($user->apellidos ?? '', 0, 1)) }}</div>
                     <ul class="dropdown">
                         <li class="dropdown-nombre">
                             <span id="nav-nombre">{{ trim(($user->name ?? '') . ' ' . ($user->apellidos ?? '')) }}</span>

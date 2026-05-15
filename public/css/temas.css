@@ -938,6 +938,22 @@ body.alto-contraste .opcion-fila {
     border-color: var(--acento) !important;
 }
 
+/* ── Avatar de iniciales en la nav ── */
+.avatar-iniciales {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,0.18);
+    color: #ffffff;
+    border: 1.5px solid rgba(255,255,255,0.3);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    user-select: none;
+    flex-shrink: 0;
+    object-fit: unset;
+}
+
 /* En tema blanco el texto ya es oscuro, solo aumentamos peso */
 [data-tema="blanco"] body.alto-contraste p,
 [data-tema="blanco"] body.alto-contraste span,

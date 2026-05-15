@@ -23,12 +23,11 @@
                         <span></span><span></span><span></span>
                     </button>
                 </li>
-                <li><a href="{{ route('index') }}">Inicio</a></li>
+                <li class="activo"><a href="{{ route('perfilCoordinador') }}">Mi Perfil</a></li>
                 <li><a href="{{ route('coordinador') }}">Mi Centro</a></li>
                 <li><a href="{{ route('tablon') }}">Tablón</a></li>
-                <li class="activo"><a href="{{ route('perfilCoordinador') }}">Mi Perfil</a></li>
                 <li class="derecha menuSesion">
-                    <img src="{{ asset('img/perfil.png') }}" class="fotoPerfil" alt="Perfil">
+                    <div class="fotoPerfil avatar-iniciales">{{ strtoupper(mb_substr(auth()->user()->name ?? 'U', 0, 1)) . strtoupper(mb_substr(auth()->user()->apellidos ?? '', 0, 1)) }}</div>
                     <ul class="dropdown">
                         <li class="dropdown-nombre"><span id="nav-nombre">Coordinador</span></li>
                         <li class="dropdown-rol">Coordinador</li>

@@ -127,8 +127,8 @@ function renderHijos(hijosData) {
 function verFaltas(idAlumno) {
     window.location.href = '/faltas';
 }
-function justificarFalta(idAlumno) { 
-    window.location.href = '/faltas/ausencias';
+function justificarFalta(idAlumno) {
+    window.location.href = '/faltas';
 }
 
 /* ── Contactar docente — abre el modal ── */

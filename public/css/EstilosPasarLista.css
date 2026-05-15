@@ -197,6 +197,25 @@ body {
 }
 .btn-nota:hover { border-color: var(--acento); color: var(--acento); }
 
+/* ── Badges de justificación ── */
+.badge-justif {
+    font-size: 11px;
+    font-weight: 600;
+    border-radius: 6px;
+    padding: 4px 8px;
+    line-height: 1.4;
+}
+.badge-justif.sin-justif {
+    background: rgba(230, 168, 48, .12);
+    color: #c8930a;
+    border: 1px solid rgba(230, 168, 48, .3);
+}
+.badge-justif.con-justif {
+    background: rgba(71, 173, 121, .1);
+    color: #2d8f5e;
+    border: 1px solid rgba(71, 173, 121, .25);
+}
+
 /* ── Barra guardar ── */
 .guardar-wrap {
     display: flex; align-items: center; justify-content: space-between;

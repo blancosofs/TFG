@@ -21,6 +21,7 @@ let clases        = [];       // clases del docente
 let alumnos       = [];       // alumnos de la clase seleccionada
 let asistencia    = {};       // { alumno_id: { estado: 'presente'|'ausente'|'retraso', nota: '' } }
 let alumnoModal   = null;     // id del alumno que se está editando en el modal
+let ausenciasClase = {};      // { alumno_id: [ausencias] } — histórico de la clase cargada
 
 /* ════════════════════════════════════════════
    ARRANQUE
@@ -53,6 +54,10 @@ async function cargarClasesDocente() {
     selClase.addEventListener('change', () => {
         actualizarAsignaturas();
         cargarAlumnos();
+    });
+
+    document.getElementById('filtro-fecha').addEventListener('change', () => {
+        if (document.getElementById('filtro-clase').value) cargarAlumnos();
     });
 }
 
@@ -104,9 +109,29 @@ async function cargarAlumnos() {
     document.getElementById('aviso-seleccionar').style.display = 'none';
     document.getElementById('lista-alumnos').style.display     = 'block';
 
+    await cargarAusenciasClase(claseId, fecha);
     renderAlumnos();
     actualizarStats();
     actualizarResumen();
+}
+
+async function cargarAusenciasClase(claseId, fecha) {
+    ausenciasClase = {};
+    const data = await api('GET', `/api/ausencias/clase/${claseId}`);
+    if (!Array.isArray(data)) return;
+
+    data.forEach(a => {
+        if (!ausenciasClase[a.alumno_id]) ausenciasClase[a.alumno_id] = [];
+        ausenciasClase[a.alumno_id].push(a);
+    });
+
+    // Pre-rellenar asistencia con los registros ya guardados para la fecha seleccionada
+    data.filter(a => a.fecha?.slice(0, 10) === fecha).forEach(a => {
+        asistencia[a.alumno_id] = {
+            estado: a.tipo === 'retraso' ? 'retraso' : 'ausente',
+            nota:   a.justificacion || ''
+        };
+    });
 }
 
 /* ════════════════════════════════════════════
@@ -124,10 +149,21 @@ function renderAlumnos(filtro = '') {
         return;
     }
 
+    const fechaHoy = document.getElementById('filtro-fecha').value;
+
     grid.innerHTML = lista.map(a => {
         const est  = asistencia[a.id]?.estado || 'presente';
         const nota = asistencia[a.id]?.nota   || '';
         const ini  = a.nombre.charAt(0) + a.apellidos.charAt(0);
+
+        const hist      = ausenciasClase[a.id] || [];
+        const sinJustif = hist.filter(x => !x.justificada && x.fecha?.slice(0, 10) !== fechaHoy);
+        const conJustif = hist.filter(x => x.justificada).sort((b, c) => b.fecha < c.fecha ? 1 : -1);
+        const badgeHtml = sinJustif.length
+            ? `<div class="badge-justif sin-justif">⚠️ ${sinJustif.length} falta${sinJustif.length > 1 ? 's' : ''} sin justificar</div>`
+            : conJustif.length
+                ? `<div class="badge-justif con-justif">✓ Justificada: ${conJustif[0].justificacion || '—'}</div>`
+                : '';
 
         return `
         <div class="alumno-card ${est}" id="card-${a.id}">
@@ -138,6 +174,8 @@ function renderAlumnos(filtro = '') {
                     <div class="alumno-curso">Alumno</div>
                 </div>
             </div>
+
+            ${badgeHtml}
 
             ${nota ? `<div class="alumno-nota visible">📝 ${nota}</div>` : `<div class="alumno-nota" id="nota-${a.id}"></div>`}
 

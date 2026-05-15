@@ -22,14 +22,13 @@
                         <span></span><span></span><span></span>
                     </button>
                 </li>
-                <li><a href="{{ route('index') }}">Inicio</a></li>
+                <li><a href="{{ route('perfil') }}">Mi Perfil</a></li>
                 <li><a href="{{ route('calendario') }}">Mi Horario</a></li>
                 <li class="activo"><a href="{{ route('pasarLista') }}">Pasar Lista</a></li>
                 <li><a href="{{ route('tablon') }}">Tablón</a></li>
                 <li><a href="{{ route('material-repaso.index') }}">Material</a></li>
-                <li><a href="{{ route('perfil') }}">Mi Perfil</a></li>
                 <li class="derecha menuSesion">
-                    <img src="{{ asset('img/perfil.png') }}" class="fotoPerfil" alt="Perfil">
+                    <div class="fotoPerfil avatar-iniciales">{{ strtoupper(mb_substr(auth()->user()->name ?? 'U', 0, 1)) . strtoupper(mb_substr(auth()->user()->apellidos ?? '', 0, 1)) }}</div>
                     <ul class="dropdown">
                         <li class="dropdown-nombre">
                             <span id="nav-nombre">{{ auth()->user()->name ?? 'Docente' }}</span>

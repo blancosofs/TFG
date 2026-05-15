@@ -175,6 +175,7 @@ Route::prefix('api')->middleware(['auth'])->group(function () {
     Route::get('/clases/{id}/alumnos', [ClaseController::class, 'visualizarAlumnos']);
     Route::post('/asistencia', [AusenciaController::class, 'storeAsistencia']);
     Route::get('/ausencias/alumno/{alumnoId}', [AusenciaController::class, 'porAlumno']);
+    Route::get('/ausencias/clase/{claseId}',  [AusenciaController::class, 'porClase']);
 
     Route::get('/tutor/alumnos', [TutorController::class, 'misAlumnos']);
     Route::put('/me/datos',      [\App\Http\Controllers\ProfileController::class, 'actualizarDatos']);

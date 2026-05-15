@@ -26,7 +26,7 @@
                 <li><a href="#" id="linkPerfil" data-i18n="nav.miPerfil">Mi Perfil</a></li>
                 <li class="activo"><a href="{{ route('configPerfiles') }}" data-i18n="nav.configuracion">Configuración</a></li>
                 <li class="derecha menuSesion">
-                    <img src="{{ asset('img/perfil.png') }}" class="fotoPerfil" alt="Perfil">
+                    <div class="fotoPerfil avatar-iniciales">{{ strtoupper(mb_substr(auth()->user()->name ?? 'U', 0, 1)) . strtoupper(mb_substr(auth()->user()->apellidos ?? '', 0, 1)) }}</div>
                     <ul class="dropdown">
                         <li class="dropdown-nombre"><span id="nav-nombre"></span></li>
                         <li class="dropdown-rol"><span id="nav-rol"></span></li>

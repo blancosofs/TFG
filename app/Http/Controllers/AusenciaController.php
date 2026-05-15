@@ -104,6 +104,20 @@ class AusenciaController extends Controller
     }
 
 
+    public function porClase(Request $request, $claseId)
+    {
+        $docente = Auth::user()->docente;
+        if (!$docente) return response()->json([], 403);
+
+        $alumnoIds = \App\Models\Alumno::where('clase_id', $claseId)->pluck('id');
+
+        return response()->json(
+            Ausencia::whereIn('alumno_id', $alumnoIds)
+                ->orderBy('fecha', 'desc')
+                ->get(['id', 'alumno_id', 'fecha', 'tipo', 'justificada', 'justificacion'])
+        );
+    }
+
     public function update(Request $request, Ausencia $ausencia)
     {
         $tutor = Auth::user()->tutor;

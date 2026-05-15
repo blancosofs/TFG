@@ -20,14 +20,13 @@
                 <li class="logo">
                     <img src="{{ asset('img/logo.svg') }}" alt="Edunoly">
                 </li>
-                <li><a href="{{ route('index') }}">Inicio</a></li>
+                <li class="activo"><a href="{{ route('perfilFamilia') }}">Mi Perfil</a></li>
                 <li><a href="{{ route('tutor.faltas') }}">Faltas</a></li>
                 <li><a href="{{ route('tablon') }}">Tablón</a></li>
                 <li><a href="{{ route('tutor.materiales.index') }}">Material</a></li>
-                <li class="activo"><a href="{{ route('perfilFamilia') }}">Mi Perfil</a></li>
 
                 <li class="derecha menuSesion">
-                    <img src="{{ asset('img/perfil.png') }}" class="fotoPerfil" alt="Perfil">
+                    <div class="fotoPerfil avatar-iniciales">{{ strtoupper(mb_substr(auth()->user()->name ?? 'U', 0, 1)) . strtoupper(mb_substr(auth()->user()->apellidos ?? '', 0, 1)) }}</div>
                     <ul class="dropdown">
                         <li class="dropdown-nombre"><span id="nav-nombre"></span></li>
                         <li class="dropdown-rol"><span id="nav-rol">Tutor legal</span></li>
@@ -110,11 +109,6 @@
             <a href="{{ route('configPerfiles') }}" class="link-rapido">
                 <span class="link-ico">⚙️</span>
                 <span>Configuración</span>
-                <span class="link-arrow">›</span>
-            </a>
-            <a href="{{ route('contacto') }}" class="link-rapido">
-                <span class="link-ico">✉️</span>
-                <span>Contactar con el centro</span>
                 <span class="link-arrow">›</span>
             </a>
         </div>

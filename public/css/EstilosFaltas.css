@@ -38,13 +38,13 @@ body {
     border-bottom: 1px solid color-mix(in srgb, var(--texto) 10%, transparent);
     padding: 2.5rem 40px 2rem;
 }
-.faltas-hero-inner { max-width: 1000px; margin: 0 auto; }
+.faltas-hero-inner { max-width: 1200px; margin: 0 auto; }
 .faltas-etiqueta { font-size: 11px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--acento); margin-bottom: .3rem; }
 .faltas-hero h1 { font-size: clamp(22px, 3vw, 30px); font-weight: 700; color: var(--texto); }
 .faltas-sub { font-size: 13px; color: var(--texto-suave); margin-top: .3rem; }
 
 /* ── Main ── */
-.faltas-main { max-width: 1000px; margin: 0 auto; padding: 28px 40px; display: flex; flex-direction: column; gap: 20px; }
+.faltas-main { max-width: 1200px; margin: 0 auto; padding: 28px 40px; display: flex; flex-direction: column; gap: 20px; }
 
 /* ── Loading / vacío ── */
 .faltas-loading { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 60px 20px; color: var(--texto-suave); font-size: 14px; }
