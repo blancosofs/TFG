@@ -8,7 +8,7 @@ class Tablon extends Model
 {
     protected $table = 'tablon';
     protected $fillable = [
-        'user_id', 'docente_id', 'tutor_id', 'titulo', 'categoria',
+        'docente_id', 'tutor_id', 'titulo', 'categoria',
         'dirigido_a', 'contenido', 'clase_id', 'fecha_limite',
     ];
 

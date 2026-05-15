@@ -94,7 +94,7 @@
             <h1>Tablón de Anuncios</h1>
             <p class="hero-sub">Mantente informado de todo lo que ocurre en el centro.</p>
         </div>
-        <div id="hero-acciones" style="{{ ($user->docente || $user->coordinador) ? '' : 'display:none' }}">
+        <div id="hero-acciones" style="{{ $user->docente ? '' : 'display:none' }}">
             <button class="btn-primary" onclick="abrirModalPublicar()">
                 ✏️ Publicar anuncio
             </button>
@@ -251,7 +251,7 @@
                 💬 Comentarios
                 <span id="comentarios-count" class="comentarios-count">0</span>
             </h4>
-            <div id="comentarios-lista"></div>
+            <div id="comentarios-lista" class="comentarios-lista"></div>
             <div class="nuevo-comentario">
                 <div class="nuevo-comentario-avatar" id="nuevo-avatar">—</div>
                 <div class="nuevo-comentario-form">

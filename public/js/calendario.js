@@ -89,14 +89,6 @@ function iniciarApp() {
     cargarYRenderizar();
 }
 
-/* ══════════════════════════════════════════════════════════════
-   LOGOUT
-══════════════════════════════════════════════════════════════ */
-document.getElementById('btn-logout').addEventListener('click', async e => {
-    e.preventDefault();
-    await api('POST', '/api/logout');
-    window.location.href = '/login';
-});
 
 /* ══════════════════════════════════════════════════════════════
    CARGA DE DATOS DESDE LA BASE DE DATOS
@@ -431,12 +423,3 @@ function mostrarToast(msg) {
     setTimeout(()=>t.classList.remove('show'), 2800);
 }
 
-/* ── Menú desplegable perfil ── */
-document.addEventListener('DOMContentLoaded', () => {
-    const perfil = document.querySelector('.fotoPerfil');
-    const menu   = document.querySelector('.dropdown');
-    if (perfil && menu) {
-        perfil.addEventListener('click', e => { e.stopPropagation(); menu.classList.toggle('show'); });
-        document.addEventListener('click', () => menu.classList.remove('show'));
-    }
-});

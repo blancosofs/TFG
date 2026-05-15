@@ -125,7 +125,7 @@ function renderTarjeta(a) {
             </div>
             <div style="display:flex;gap:10px;align-items:center">
                 <button class="btn-comentarios-tarjeta comentarios-tarjeta-count"
-                        onclick="verAnuncio(${a.id})" id="cnt-${a.id}">
+                        onclick="verAnuncio(${a.id}, true)" id="cnt-${a.id}">
                     💬 ${(a.comentarios_count || 0) > 0 ? a.comentarios_count : 'Comentar'}
                 </button>
                 ${a.fecha_limite
@@ -140,7 +140,7 @@ function renderTarjeta(a) {
 /* ════════════════════════════════════════════
    VER ANUNCIO COMPLETO
 ════════════════════════════════════════════ */
-function verAnuncio(id) {
+function verAnuncio(id, scrollAComentarios = false) {
     const a = anuncios.find(x => x.id === id);
     if (!a) return;
     const cat = CATEGORIAS[a.categoria] || CATEGORIAS.general;
@@ -167,6 +167,12 @@ function verAnuncio(id) {
 
     renderComentarios(id);
     abrirModalConScroll('modal-ver');
+    if (scrollAComentarios) {
+        setTimeout(() => {
+            const inner = document.querySelector('#modal-ver .modal');
+            if (inner) inner.scrollTop = inner.scrollHeight;
+        }, 450);
+    }
 }
 
 /* ════════════════════════════════════════════

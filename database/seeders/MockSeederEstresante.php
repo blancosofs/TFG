@@ -248,9 +248,9 @@ class MockSeederEstresante extends Seeder
 
         // IDs de alumnos por clase
         $alumnosClase1A  = DB::table('alumnos')->where('clase_id', $clase1A)->where('activo', true)->pluck('id');
-        $alumnosClase1B  = DB::table('alumnos')->where('clase_id', $clase1B)->pluck('id');
-        $alumnosClase2A  = DB::table('alumnos')->where('clase_id', $clase2A)->pluck('id');
-        $alumnosClaseDA1 = DB::table('alumnos')->where('clase_id', $claseDA1)->pluck('id');
+        $alumnosClase1B  = DB::table('alumnos')->where('clase_id', $clase1B)->where('activo', true)->pluck('id');
+        $alumnosClase2A  = DB::table('alumnos')->where('clase_id', $clase2A)->where('activo', true)->pluck('id');
+        $alumnosClaseDA1 = DB::table('alumnos')->where('clase_id', $claseDA1)->where('activo', true)->pluck('id');
 
         // ─────────────────────────────────────────
         // 9. DOCENTES_CLASES (qué docente imparte en qué clase)

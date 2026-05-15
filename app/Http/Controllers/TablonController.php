@@ -23,16 +23,9 @@ class TablonController extends Controller
         $user      = Auth::user();
         $colegioId = $user->colegio_id;
 
-        $query = Tablon::with(['user', 'docente.user', 'clase', 'comentarios.user.docente', 'comentarios.user.tutor'])
-            ->where(function ($q) use ($colegioId) {
-                // Publicaciones de docentes del mismo colegio
-                $q->whereHas('docente', fn($q2) => $q2->where('colegio_id', $colegioId))
-                // Publicaciones de coordinadores del mismo colegio (sin docente_id)
-                  ->orWhere(function ($q2) use ($colegioId) {
-                      $q2->whereNull('docente_id')
-                         ->whereHas('user', fn($q3) => $q3->where('colegio_id', $colegioId));
-                  });
-            })
+        // Solo docentes pueden publicar (docente_id NOT NULL en BD), filtramos por colegio
+        $query = Tablon::with(['docente.user', 'clase', 'comentarios.user.docente', 'comentarios.user.tutor'])
+            ->whereHas('docente', fn($q) => $q->where('colegio_id', $colegioId))
             ->orderBy('created_at', 'desc');
 
         if ($user->tutor) {
@@ -47,15 +40,11 @@ class TablonController extends Controller
             'dirigido_a'      => $p->dirigido_a,
             'fecha_limite'    => $p->fecha_limite,
             'created_at'      => $p->created_at,
-            // user_id del creador (sirve para saber si el usuario actual es autor)
-            'autor_user_id'   => $p->user_id,
-            // Para retrocompatibilidad con el JS existente
-            'docente_user_id' => $p->docente?->user_id ?? $p->user_id,
+            // user_id del docente autor (el JS lo usa para saber si el usuario puede editar)
+            'docente_user_id' => $p->docente?->user_id,
             'docente'         => $p->docente ? [
                 'user' => ['name' => $p->docente->user->name, 'apellidos' => $p->docente->user->apellidos ?? ''],
-            ] : ($p->user ? [
-                'user' => ['name' => $p->user->name, 'apellidos' => $p->user->apellidos ?? ''],
-            ] : null),
+            ] : null,
             'clase'           => $p->clase ? ['id' => $p->clase->id, 'nombre' => $p->clase->nombre] : null,
             'comentarios'     => $p->comentarios->map(fn($c) => [
                 'id'      => $c->id,
@@ -81,17 +70,16 @@ class TablonController extends Controller
             'fecha_limite'=> 'nullable|date',
         ]);
 
-        $user        = Auth::user();
-        $docente     = $user->docente;
-        $coordinador = $user->coordinador;
+        $user    = Auth::user();
+        $docente = $user->docente;
 
-        if (!$docente && !$coordinador) {
-            return response()->json(['ok' => false, 'mensaje' => 'Solo docentes y coordinadores pueden publicar.'], 403);
+        // Solo los docentes pueden publicar (la BD requiere docente_id NOT NULL)
+        if (!$docente) {
+            return response()->json(['ok' => false, 'mensaje' => 'Solo los docentes pueden publicar anuncios.'], 403);
         }
 
         $tablon = Tablon::create([
-            'user_id'     => $user->id,
-            'docente_id'  => $docente?->id,
+            'docente_id'  => $docente->id,
             'titulo'      => $request->titulo,
             'categoria'   => $request->categoria,
             'dirigido_a'  => $request->dirigido_a,
@@ -112,8 +100,7 @@ class TablonController extends Controller
     public function update(Request $request, Tablon $tablon)
     {
         $user    = Auth::user();
-        $esAutor = $tablon->user_id === $user->id
-                || ($user->docente && $tablon->docente_id === $user->docente->id);
+        $esAutor = $user->docente && $tablon->docente_id === $user->docente->id;
 
         if (!$esAutor) {
             return response()->json(['ok' => false, 'mensaje' => 'No autorizado.'], 403);
@@ -138,8 +125,7 @@ class TablonController extends Controller
     public function destroy(Tablon $tablon)
     {
         $user          = Auth::user();
-        $esAutor       = $tablon->user_id === $user->id
-                      || ($user->docente && $tablon->docente_id === $user->docente->id);
+        $esAutor       = $user->docente && $tablon->docente_id === $user->docente->id;
         $esCoordinador = (bool) $user->coordinador;
 
         if (!$esAutor && !$esCoordinador) {
