@@ -180,7 +180,7 @@ body::before {
 
 .login-wrap {
   width: 100%;
-  max-width: 460px;
+  max-width: 470px;
   animation: fadeUp .5s ease both;
 }
 
