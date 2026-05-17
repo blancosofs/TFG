@@ -146,10 +146,26 @@ class FinalSeeder extends Seeder
             DB::table('tutores_alumnos')->insert(['tutor_id' => $tPatricia, 'alumno_id' => $alId, 'parentesco' => 'Tutor legal']);
         }
 
-        // Anuncios Tablón Colegio 1
+        // Anuncios Tablón Colegio 1 (Adaptados a las columnas reales: docente_id)
         $anunciosC1 = [
-            ['user_id' => $coord1UserId, 'clase_id' => null, 'titulo' => 'Mensaje de bienvenida general', 'categoria' => 'General', 'dirigido_a' => 'Todos', 'contenido' => '¡Bienvenidos al nuevo portal Edunoly! Desde hoy coordinaremos las asistencias y comunicaciones a través de esta plataforma.'],
-            ['user_id' => $docenteC1Ids['samuel.docente@edunoly.com'], 'clase_id' => $clase2DAM, 'titulo' => 'Urgente: Entrega final TFG', 'categoria' => 'Urgente', 'dirigido_a' => 'Todos', 'contenido' => 'Recordatorio importante: La entrega final y defensa de los proyectos de TFG de 2DAM se realizará el próximo 18 de mayo. Revisad que los entornos de despliegue estén operativos.']
+            [
+                'docente_id' => $docenteC1Ids['samuel.docente@edunoly.com'], 
+                'tutor_id'   => null,
+                'clase_id'   => null, 
+                'titulo'     => 'Mensaje de bienvenida general', 
+                'categoria'  => 'General', 
+                'dirigido_a' => 'Todos', 
+                'contenido'  => '¡Bienvenidos al nuevo portal Edunoly! Desde hoy coordinaremos las asistencias y comunicaciones a través de esta plataforma.'
+            ],
+            [
+                'docente_id' => $docenteC1Ids['samuel.docente@edunoly.com'], 
+                'tutor_id'   => null,
+                'clase_id'   => $clase2DAM, 
+                'titulo'     => 'Urgente: Entrega final TFG', 
+                'categoria'  => 'Urgente', 
+                'dirigido_a' => 'Todos', 
+                'contenido'  => 'Recordatorio importante: La entrega final y defensa de los proyectos de TFG de 2DAM se realizará el próximo 18 de mayo. Revisad que los entornos de despliegue estén operativos.'
+            ]
         ];
         foreach ($anunciosC1 as $an) {
             DB::table('tablon')->insert(array_merge($an, ['created_at' => $now, 'updated_at' => $now]));
