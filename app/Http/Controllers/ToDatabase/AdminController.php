@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Http\Controllers\toDatabase;
+namespace App\Http\Controllers\ToDatabase;
 
 use App\Http\Controllers\Controller;
 
