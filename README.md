@@ -14,17 +14,40 @@ A continuación se detallan las instrucciones técnicas necesarias para desplega
  ```bash
    cp .env.example .env
    ```
-4. **Inicializar la infraestructura Cloud local:** Levante los contenedores del servidor de aplicaciones, Mailpit y la base de datos relacional MySQL en segundo plano:
+4. **Construcción de la Carpeta vendor (Descarga de Dependencias)**: vamos a generar de forma temporal las dependencias correspondiente a su sistema operativo para generar el entorno de forma aislada
+*En macOS / Linux / Windows (Terminal Git Bash):*
+ ```bash
+   docker run --rm -u "$(id -u):$(id -g)" -v "$(pwd):/var/www/html" -w /var/www/html laravelsail/php84-composer:latest composer install
+   ```
+*En Windows (Terminal PowerShell estándar):*
+   ```bash
+   docker run --rm -v "${PWD}:/var/www/html" -w /var/www/html laravelsail/php84-composer:latest composer install
+   ```
+5. **Inicializar la infraestructura Cloud local:** Levante los contenedores del servidor de aplicaciones, Mailpit y la base de datos relacional MySQL en segundo plano:
+*En macOS / Linux / Windows (Terminal Git Bash):*
  ```bash
    ./vendor/bin/sail up -d
    ```
-5. **Generar la clave criptográfica del sistema:** Registre una clave única de cifrado de sesiones ejecutando:
+*En Windows (Terminal PowerShell estándar):*
+   ```bash
+   bash vendor/bin/sail up -d
+   ```
+6. **Generar la clave criptográfica del sistema:** Registre una clave única de cifrado de sesiones ejecutando:
+*En macOS / Linux / Windows (Terminal Git Bash):*
  ```bash
    ./vendor/bin/sail artisan key:generate
    ```
-6. **Construir y poblar la Base de Datos:** Ejecute las migraciones cronológicas estructurales para armar las tablas en Tercera Forma Normal (3NF) y realice la siembra automatizada del set de datos de prueba:
+*En Windows (Terminal PowerShell estándar):*
+ ```bash
+   bash ./vendor/bin/sail artisan key:generate
+   ```
+7. **Construir y poblar la Base de Datos:** Ejecute las migraciones cronológicas estructurales para armar las tablas en Tercera Forma Normal (3NF) y realice la siembra automatizada del set de datos de prueba:
  ```bash
    ./vendor/bin/sail artisan migrate:fresh --seed
+   ```
+*En Windows (Terminal PowerShell estándar):*
+ ```bash
+   bash ./vendor/bin/sail artisan migrate:fresh --seed
    ```
 
 ### Visualizacion en el navegador
