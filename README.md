@@ -14,8 +14,12 @@ A continuación se detallan las instrucciones técnicas necesarias para desplega
 ```bash
    cp .env.example .env
 ```
-
+⚠️ CRÍTICO PARA WINDOWS: Abra el archivo .env recién creado con cualquier editor de texto (Notepad, VS Code, etc.) y añada la siguiente línea al principio del archivo para evitar que Docker asigne nombres aleatorios a los contenedores:
+```
+COMPOSE_PROJECT_NAME=tfg-main
+```
 4. **Construcción de la Carpeta vendor (Descarga de Dependencias)**: vamos a generar de forma temporal las dependencias correspondiente a su sistema operativo para generar el entorno de forma aislada.
+
 *En macOS / Linux / Windows (Terminal Git Bash):*
 ```bash
    docker run --rm -u "$(id -u):$(id -g)" -v "$(pwd):/var/www/html" -w /var/www/html laravelsail/php84-composer:latest composer install
@@ -25,30 +29,34 @@ A continuación se detallan las instrucciones técnicas necesarias para desplega
    docker run --rm -v "${PWD}:/var/www/html" -w /var/www/html laravelsail/php84-composer:latest composer install
 ```
 5. **Inicializar la infraestructura Cloud local:** Levante los contenedores del servidor de aplicaciones, Mailpit y la base de datos relacional MySQL en segundo plano.
+
 *En macOS / Linux / Windows (Terminal Git Bash):*
 ```bash
-   /vendor/bin/sail up -d
-```
-*En Windows (Terminal PowerShell estándar):*
-   ```powershell
-   bash vendor/bin/sail up -d
-   ```
-6. **Generar la clave criptográfica del sistema:** Registre una clave única de cifrado de sesiones ejecutando.
-*En macOS / Linux / Windows (Terminal Git Bash):*
-```bash
-   /vendor/bin/sail artisan key:generate
+   vendor/bin/sail up -d
 ```
 *En Windows (Terminal PowerShell estándar):*
 ```powershell
-   bash /vendor/bin/sail artisan key:generate
+   bash vendor/bin/sail up -d
+```
+6. **Generar la clave criptográfica del sistema:** Registre una clave única de cifrado de sesiones ejecutando.
+
+*En macOS / Linux / Windows (Terminal Git Bash):*
+```bash
+   vendor/bin/sail artisan key:generate
+```
+*En Windows (Terminal PowerShell estándar):*
+```powershell
+   bash vendor/bin/sail artisan key:generate
 ```
 7. **Construir y poblar la Base de Datos:** Ejecute las migraciones cronológicas estructurales para armar las tablas en Tercera Forma Normal (3NF) y realice la siembra automatizada del set de datos de prueba.
+
+*En macOS / Linux / Windows (Terminal Git Bash):*
 ```bash
-   /vendor/bin/sail artisan migrate:fresh --seed
+   vendor/bin/sail artisan migrate:fresh --seed
 ```
 *En Windows (Terminal PowerShell estándar):*
 ```powershell
-   bash /vendor/bin/sail artisan migrate:fresh --seed
+   bash vendor/bin/sail artisan migrate:fresh --seed
 ```
 
 ### Visualizacion en el navegador
