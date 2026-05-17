@@ -551,7 +551,7 @@ async function guardarTutor() {
     try {
         if (modoModal === 'nuevo') {
             const r = await api('POST', '/api/tutores', { nombre, apellidos, email, telefono, password, alumno_id: alumnoId || null, parentesco });
-            if (r.error) { alertModal('alert-tutor', 'err', '❌ ' + r.error); return; }
+            if (!r.ok) { alertModal('alert-tutor', 'err', '❌ ' + (r.mensaje || r.message || 'Error desconocido')); return; }
         } else {
             const payload = { nombre, apellidos, email, telefono, alumno_id: alumnoId || null, parentesco };
             if (password) payload.password = password;

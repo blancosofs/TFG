@@ -49,7 +49,8 @@ class DocenteController extends Controller
                 'name'       => $request->nombre,
                 'apellidos'  => $request->apellidos,
                 'email'      => $request->email,
-                'password'   => Hash::make($request->password), // Encriptamos la clave
+                'password'   => Hash::make($request->password),
+                'colegio_id' => Auth::user()->colegio_id,
                 'activo'     => true,
             ]);
 
