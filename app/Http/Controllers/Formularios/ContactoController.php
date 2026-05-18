@@ -30,7 +30,7 @@ class ContactoController extends Controller
     $datos = $request->all();
 
     // Enviamos el mail
-    Mail::to('admin@demo.com')->send(new NuevoContactoMail($datos));
+    Mail::to('admin@edunoly.com')->send(new NuevoContactoMail($datos));
 
     //si funciona
     return back()->with('success', 'Solicitud enviada. Revisa Mailtrap!');
