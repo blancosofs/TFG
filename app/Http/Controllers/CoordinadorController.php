@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\WelcomeCoordinatorMail;
 
 
 class CoordinadorController extends Controller
@@ -54,6 +56,8 @@ class CoordinadorController extends Controller
                     'colegio_id' => $colegioId,
                     'user_id'    => $user->id,
                 ]);
+                //mandamos el correo de bienvenida al coordinador recién creado
+                Mail::to($user->email)->send(new WelcomeCoordinatorMail($user, $request->password));
             });
 
             return response()->json(['ok' => true, 'mensaje' => 'Coordinador creado con éxito']);
@@ -93,6 +97,8 @@ class CoordinadorController extends Controller
                 'colegio_id'     => $request->colegio_id,
                 'user_id'        => $user->id, // <--- El puente entre ambos
             ]);
+            //mail
+            Mail::to($user->email)->send(new WelcomeCoordinatorMail($user, $request->password));
         });
 
         return response()->json(['ok' => true, 'mensaje' => 'Coordinador creado con éxito']);

@@ -24,14 +24,24 @@ class WelcomeCoordinatorMail extends Mailable
         $this->pass = $pass;
     }
 
+   /**
+     * Le añadimos un asunto (título) al correo electrónico
+     */
+    public function envelope(): \Illuminate\Mail\Mailables\Envelope
+    {
+        return new \Illuminate\Mail\Mailables\Envelope(
+            subject: 'Acceso a Edunoly',
+        );
+    }
+
     /**
      * Get the message content definition.
      */
     public function content(): Content
     {
-        // Ahora $this->pass ya no dará error porque está declarada arriba
+        // Se queda con tu htmlString, sin usar archivos Blade adicionales
         return new Content(
-            htmlString: "Hola {$this->user->name}, tus claves de Edunoly son: " . $this->pass
+            htmlString: "<h3>¡Hola {$this->user->name}!</h3><p>Tus claves de Edunoly son:</p><ul><li><strong>Usuario:</strong> {$this->user->email}</li><li><strong>Contraseña:</strong> {$this->pass}</li></ul>"
         );
     }
 }
